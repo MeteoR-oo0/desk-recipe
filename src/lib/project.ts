@@ -196,3 +196,22 @@ export function parseProject(text: string): {
   }
   return { project: p, image };
 }
+
+export function createPhotoProject(
+  current: ProjectData,
+  photo: Photo,
+  imported?: ProjectData,
+): ProjectData {
+  if (imported) return { ...imported, photo };
+  return {
+    ...current,
+    photo,
+    labels: [],
+    adjustment: { brightness: 0, contrast: 0, overlay: 0 },
+    canvas: {
+      width: 1200,
+      height: Math.round((1200 * photo.height) / photo.width),
+      aspectRatio: "Original",
+    },
+  };
+}

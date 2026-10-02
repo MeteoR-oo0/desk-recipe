@@ -1,0 +1,237 @@
+.tutorial-progress {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 18px 0 14px;
+}
+.tutorial-progress > span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.tutorial-progress > div {
+  display: flex;
+  gap: 5px;
+  flex: 1;
+}
+.tutorial-progress > div > span {
+  height: 4px;
+  flex: 1;
+  background: #e7eee9;
+  border-radius: 10px;
+}
+.tutorial-progress .done {
+  background: var(--accent);
+}
+.tutorial-description {
+  min-height: 64px;
+}
+.tutorial-photo {
+  margin: 20px 0 15px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #f2f6f3;
+}
+.tutorial-photo img {
+  width: 100%;
+  max-height: 230px;
+  object-fit: cover;
+  display: block;
+}
+.tutorial-photo > span {
+  display: block;
+  padding: 12px;
+  font-size: 13px;
+  color: #6a8174;
+}
+.tutorial-demo-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 8px;
+  font-size: 13px;
+  color: #678370;
+}
+.tutorial-demo-toolbar button {
+  font-size: 12px;
+  min-height: 32px;
+}
+.tutorial-demo-toolbar .active {
+  background: #e2f3e8;
+  color: var(--accent);
+}
+.tutorial-demo {
+  height: 230px;
+  border: 1px solid #dce5df;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #eef3ef;
+}
+.tutorial-demo > .canvas-holder {
+  height: 100%;
+  min-height: 0;
+}
+.tutorial-practice-note {
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  margin: 10px 0;
+  color: #81988a !important;
+}
+.tutorial-handle-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 14px 0 10px;
+  font-size: 13px;
+  color: #527360;
+}
+.tutorial-handle-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.tutorial-handle-legend i {
+  width: 12px;
+  height: 12px;
+  display: block;
+  flex-shrink: 0;
+  background: #d9f4e5;
+  border: 2px solid #377460;
+}
+.tutorial-handle-legend .round {
+  border-radius: 50%;
+  background: white;
+}
+.tutorial-handle-legend .resize {
+  background: linear-gradient(
+    135deg,
+    #fff 44%,
+    #377460 44%,
+    #377460 55%,
+    #fff 55%
+  );
+}
+.tutorial-handle-legend .diamond {
+  transform: rotate(45deg);
+  border-color: #3476b6;
+  background: #dcecff;
+}
+.tutorial-demo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 15px 0;
+}
+.tutorial-demo-form .font-list {
+  max-height: 170px;
+}
+.tutorial-demo-form .switch-row {
+  font-size: 14px;
+}
+.tutorial-loop-size {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: #597664;
+  margin: 16px 0;
+}
+.tutorial-loop-size input {
+  grid-column: auto;
+  height: 12px;
+}
+.tutorial-mobile-note {
+  margin: 16px 0 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #5b7a68;
+  padding: 10px 12px;
+  border-radius: 7px;
+  background: #f1f6f2;
+}
+.tutorial-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.tutorial-navigation > div {
+  display: flex;
+  gap: 7px;
+}
+.tutorial-navigation button {
+  min-height: 42px;
+}
+.tutorial-navigation > button {
+  border: 0;
+  background: none;
+  color: #7c8d82;
+  font-size: 13px;
+}
+.tutorial-export-example {
+  margin-top: 24px;
+  padding: 24px;
+  background: #f1f6f2;
+  border-radius: 9px;
+}
+.tutorial-export-example > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 17px;
+}
+.tutorial-export-example strong {
+  font-size: 21px;
+  color: #377460;
+}
+.tutorial-export-example span {
+  font-size: 15px;
+  color: #789382;
+}
+.tutorial-export-example p {
+  font-size: 14px;
+  line-height: 1.9;
+}
+@media (max-width: 800px) {
+  .tutorial-demo {
+    height: 210px;
+  }
+  .tutorial-navigation {
+    gap: 4px;
+  }
+  .tutorial-navigation .primary {
+    font-size: 13px;
+    padding: 8px 11px;
+  }
+  .tutorial-description {
+    min-height: 0;
+  }
+  .tutorial-photo img {
+    max-height: 185px;
+  }
+  .tutorial-mobile-note {
+    font-size: 12px;
+    margin: 12px 0 16px;
+  }
+  .tutorial-demo-form .font-trigger > span > span {
+    font-size: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-progress * {
+    transition: none;
+  }
+}
+
+.modal:has(.tutorial-progress) {
+  overflow-anchor: none;
+}
+.tutorial-navigation {
+  position: sticky;
+  bottom: -2px;
+  background: #fff;
+  padding-top: 10px;
+  z-index: 2;
+}

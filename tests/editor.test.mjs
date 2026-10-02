@@ -1,4 +1,6 @@
 import test from "node:test";
+import { initialProject } from "../src/types/project.ts";
+import { createPhotoProject } from "../src/lib/project.ts";
 import {
   routeConnector,
   segmentHitsBox,
@@ -203,4 +205,31 @@ test("connectors route around text instead of clipping pieces out of the stroke"
       moved.y - (obstacle.y + obstacle.height),
     );
   assert.ok(Math.hypot(dx, dy) >= 40);
+});
+
+test("fresh photos start at zero darkness while imported projects keep their adjustments", () => {
+  const fresh = initialProject();
+  assert.equal(fresh.adjustment.overlay, 0);
+  const photo = {
+    id: "new",
+    name: "new.png",
+    width: 2000,
+    height: 1000,
+    previewSrc: "data:image/png;base64,AA==",
+  };
+  const saved = {
+    ...fresh,
+    adjustment: { brightness: 10, contrast: 15, overlay: 35 },
+  };
+  const uploaded = createPhotoProject(saved, photo);
+  assert.deepEqual(uploaded.adjustment, {
+    brightness: 0,
+    contrast: 0,
+    overlay: 0,
+  });
+  assert.equal(uploaded.labels.length, 0);
+  assert.equal(uploaded.canvas.height, 600);
+  const imported = createPhotoProject(fresh, photo, saved);
+  assert.deepEqual(imported.adjustment, saved.adjustment);
+  assert.deepEqual(imported.labels, saved.labels);
 });

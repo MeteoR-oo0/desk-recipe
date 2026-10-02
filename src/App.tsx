@@ -10,7 +10,8 @@ import { useInstall } from "./hooks/useInstall";
 import { blobToDataURL, downloadBlob, parseProject } from "./lib/project";
 import { exportImage } from "./lib/exportImage";
 import { ExportDialog } from "./components/ExportDialog";
-import { Modal } from "./components/Modal";
+import { Tutorial } from "./components/Tutorial";
+import { MobileBottomSheet } from "./components/MobileBottomSheet";
 import { parseClipboardLabel, serializeLabel } from "./lib/clipboard";
 import { type CanvasHandle } from "./components/CanvasEditor";
 import { LabelPanel } from "./components/LabelPanel";
@@ -28,7 +29,8 @@ export default function App() {
     [selectedId, setSelectedId] = useState<string | null>("keyboard"),
     [mode, setMode] = useState<"select" | "add" | "pan">("select"),
     [zoom, setZoom] = useState(1),
-    [tab, setTab] = useState("label");
+    [tab, setTab] = useState<"photo" | "label" | "export">("label"),
+    [sheetCollapsed, setSheetCollapsed] = useState(false);
   const history = useProjectState(),
     p = history.value,
     t = getText(lang),
@@ -57,6 +59,7 @@ export default function App() {
     setSelectedId(l.id);
     setMode("select");
     setTab("label");
+    setSheetCollapsed(false);
     return l.id;
   };
   const duplicate = () => {
@@ -111,7 +114,12 @@ export default function App() {
       const editing = (e.target as HTMLElement).closest(
         "input,textarea,select,[contenteditable]",
       );
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !editing) {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.key.toLowerCase() === "z" &&
+        !editing &&
+        !dialog
+      ) {
         e.preventDefault();
         e.shiftKey ? history.redo() : history.undo();
       }
@@ -131,9 +139,18 @@ export default function App() {
   }, [history.undo, history.redo, selectedId, dialog]);
   useWebMCP(
     p,
-    add,
-    (id, changes) => patch(id, changes),
-    (mode) => history.update((v) => ({ ...v, priceMode: mode })),
+    (x, y, info) => {
+      if (dialog) throw Error("Close the dialog before editing");
+      return add(x, y, info);
+    },
+    (id, changes) => {
+      if (dialog) throw Error("Close the dialog before editing");
+      patch(id, changes);
+    },
+    (mode) => {
+      if (dialog) throw Error("Close the dialog before editing");
+      history.update((v) => ({ ...v, priceMode: mode }));
+    },
   );
   const upload = async (file: File) => {
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
@@ -147,6 +164,7 @@ export default function App() {
       setZoom(1);
       setMode("add");
       setTab("photo");
+      setSheetCollapsed(false);
     } catch {
       setToast({ text: t.photoError, error: true });
     } finally {
@@ -245,6 +263,7 @@ export default function App() {
     history.update((v) => ({ ...v, labels: [...v.labels, l] }));
     setSelectedId(l.id);
     setTab("label");
+    setSheetCollapsed(false);
     setToast({ text: t.pasted });
   };
   const copyLabel = async () => {
@@ -298,6 +317,16 @@ export default function App() {
       window.removeEventListener("paste", paste);
     };
   }, [selected, p.canvas, dialog, t]);
+  const guideChecked = useRef(false);
+  useEffect(() => {
+    if (!history.ready || guideChecked.current) return;
+    guideChecked.current = true;
+    if (import.meta.env.DEV && new URLSearchParams(location.search).has("qa"))
+      return;
+    try {
+      if (!localStorage.getItem("desk-recipe-tutorial-v1")) setDialog("help");
+    } catch {}
+  }, [history.ready]);
   const projectActions = (
     <div className="project-actions">
       <button disabled={busy} onClick={saveJSON}>
@@ -388,6 +417,7 @@ export default function App() {
                 onClick={() => {
                   setSelectedId(l.id);
                   setTab("label");
+                  setSheetCollapsed(false);
                 }}
               >
                 <span className="label-index">
@@ -424,36 +454,29 @@ export default function App() {
           onHelp={() => setDialog("help")}
         />
         <aside className="right-sidebar">{editing}</aside>
-        <div className="mobile-sheet">
-          <div className="sheet-grip" />
-          <nav className="mobile-tabs">
-            {(["photo", "label", "export"] as const).map((v, i) => (
-              <button
-                key={v}
-                className={tab === v ? "active" : ""}
-                onClick={() => setTab(v)}
-              >
-                {[t.imageTab, t.editTab, t.exportTab][i]}
+        <MobileBottomSheet
+          collapsed={sheetCollapsed}
+          onCollapsedChange={setSheetCollapsed}
+          tab={tab}
+          onTabChange={setTab}
+          t={t}
+          onHelp={() => setDialog("help")}
+        >
+          {tab === "photo" ? (
+            settings
+          ) : tab === "label" ? (
+            editing
+          ) : (
+            <div className="mobile-export">
+              <button className="primary" onClick={() => setDialog("export")}>
+                <Download size={17} />
+                {t.export}
               </button>
-            ))}
-          </nav>
-          <div className="mobile-sheet-content">
-            {tab === "photo" ? (
-              settings
-            ) : tab === "label" ? (
-              editing
-            ) : (
-              <div className="mobile-export">
-                <button className="primary" onClick={() => setDialog("export")}>
-                  <Download size={17} />
-                  {t.export}
-                </button>
-                {projectActions}
-                <p className="local-note">{t.localNote}</p>
-              </div>
-            )}
-          </div>
-        </div>
+              {projectActions}
+              <p className="local-note">{t.localNote}</p>
+            </div>
+          )}
+        </MobileBottomSheet>
       </main>
       {dialog === "export" && (
         <ExportDialog
@@ -463,23 +486,7 @@ export default function App() {
           onExport={doExport}
         />
       )}{" "}
-      {dialog === "help" && (
-        <Modal
-          title={t.helpTitle}
-          closeText={t.close}
-          onClose={() => setDialog(null)}
-        >
-          <ol className="help-steps">
-            {[t.help1, t.help2, t.help3, t.help4].map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
-          <p>
-            {t.shortcuts}: Ctrl / ⌘ + Z · Ctrl / ⌘ + Shift + Z · Ctrl / ⌘ + C /
-            V
-          </p>
-        </Modal>
-      )}
+      {dialog === "help" && <Tutorial t={t} onClose={() => setDialog(null)} />}
       {toast && (
         <div className={"toast " + (toast.error ? "error" : "")} role="status">
           {toast.text}

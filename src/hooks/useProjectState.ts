@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { initialProject, type ProjectData } from "../types/project";
 import { useHistory } from "./useHistory";
 import * as storage from "../lib/storage";
-import { photoFromBlob } from "../lib/project";
+import { photoFromBlob, createPhotoProject } from "../lib/project";
 export function useProjectState() {
   const testing =
     import.meta.env.DEV && new URLSearchParams(location.search).has("qa");
@@ -129,20 +129,7 @@ export function useProjectState() {
     async (blob: Blob, name: string, project?: ProjectData) => {
       const photo = await photoFromBlob(blob, name);
       assets.current.set(photo.id, blob);
-      history.update((p) =>
-        project
-          ? { ...project, photo }
-          : {
-              ...p,
-              photo,
-              labels: [],
-              canvas: {
-                width: 1200,
-                height: Math.round((1200 * photo.height) / photo.width),
-                aspectRatio: "Original",
-              },
-            },
-      );
+      history.update((current) => createPhotoProject(current, photo, project));
       return photo;
     },
     [history.update],

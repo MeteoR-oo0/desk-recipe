@@ -84,14 +84,15 @@ export const initialProject = (): ProjectData => ({
   photo: {
     id: "sample-user-photo",
     name: "my-desk.png",
-    previewSrc: import.meta.env.BASE_URL+"sample-desk.png?v=user-photo",
+    previewSrc:
+      (import.meta.env?.BASE_URL ?? "/") + "sample-desk.png?v=user-photo",
     width: 1568,
     height: 1044,
   },
   canvas: { width: 1200, height: 799, aspectRatio: "Original" },
   priceMode: "individual",
   priceFormat: "yen",
-  adjustment: { brightness: 0, contrast: 0, overlay: 25 },
+  adjustment: { brightness: 0, contrast: 0, overlay: 0 },
   labels: [
     {
       ...makeLabel(160, 285),

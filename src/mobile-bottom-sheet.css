@@ -1,0 +1,67 @@
+@media (max-width: 800px) {
+  .mobile-sheet .mobile-sheet-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 3px 12px 0;
+  }
+
+  .mobile-sheet .mobile-sheet-toggle,
+  .mobile-sheet .mobile-sheet-help {
+    min-height: 40px;
+    min-width: 40px;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    border-color: transparent;
+    background: transparent;
+    padding: 6px 8px;
+  }
+
+  .mobile-sheet .mobile-sheet-toggle {
+    flex: 1;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .mobile-sheet .mobile-sheet-toggle .sheet-grip {
+    width: 28px;
+    height: 4px;
+    margin: 0 3px 0 0;
+    background: #a9bfb1;
+  }
+
+  .mobile-sheet .mobile-sheet-help {
+    flex-shrink: 0;
+  }
+
+  .mobile-sheet .mobile-sheet-toggle:hover,
+  .mobile-sheet .mobile-sheet-help:hover {
+    background: #f0f5f2;
+  }
+
+  .mobile-sheet .mobile-tabs button {
+    min-height: 44px;
+  }
+
+  .mobile-sheet .mobile-sheet-content {
+    min-height: 0;
+    overscroll-behavior-y: contain;
+  }
+
+  .mobile-sheet.mobile-sheet--collapsed {
+    min-height: 0;
+    max-height: none;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-sheet.mobile-sheet--collapsed .mobile-sheet-content,
+  .mobile-sheet .mobile-sheet-content[hidden] {
+    display: none;
+  }
+
+  .mobile-sheet.mobile-sheet--collapsed .mobile-tabs {
+    border-bottom: 0;
+  }
+}

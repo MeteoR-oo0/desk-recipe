@@ -1,5 +1,47 @@
 import type { Language } from "../types/project";
 const ja = {
+  sheetCollapse: "パネルをしまう",
+  sheetExpand: "パネルを開く",
+  tutorial: "チュートリアル",
+  guidePhotoTitle: "1. 写真を選ぶ",
+  guidePhoto:
+    "「写真をアップロード」からデスク写真を選びます。JPEG・PNG・WebPに対応しています。サンプル写真でも練習できます。",
+  guideAddTitle: "2. ラベルを追加",
+  guideAdd:
+    "「ラベルを追加」を押し、写真の好きな場所をタップします。下の練習画面で、ボタンを押してから写真をタップしてみましょう。",
+  guideMoveTitle: "3. ラベルを動かす",
+  guideMove:
+    "文字の上をドラッグするとラベルだけを動かせます。矢印をタップしても選択できます。下の練習画面で文字を動かしてみましょう。",
+  guideArrowTitle: "4. 矢印の両端を調整",
+  guideArrow:
+    "枠上の四角いハンドルは文字側の接続点、丸いハンドルは製品側の先端です。それぞれをドラッグして、文字と製品をつなぎます。",
+  guideResizeTitle: "5. 文字枠の大きさを変える",
+  guideResize:
+    "枠の右下にある斜線入りハンドルをドラッグします。幅を変えると文字が折り返されます。文字サイズは「文字」の設定で個別に変えられます。",
+  guideStyleTitle: "6. フォントと価格表示",
+  guideStyle:
+    "フォント一覧で実際の文字の見本を比較できます。価格はラベルごとに表示・非表示を切り替えられます。下の設定で試してみましょう。",
+  guideLoopTitle: "7. くるくる矢印を動かす",
+  guideLoop:
+    "「くるくる」を選ぶと青いひし形が表示されます。ひし形でループ位置を動かし、「円の大きさ」で直径を変えます。",
+  guideExportTitle: "8. 保存してシェア",
+  guideExport:
+    "「画像を書き出す」でPNG・JPEGを保存できます。操作用の枠やハンドルは画像に入りません。編集内容はブラウザに自動保存されます。",
+  guideSave:
+    "別の端末やブラウザへ引き継ぐときは「プロジェクト保存」でJSONを保存し、「プロジェクトを開く」から読み込みます。",
+  guidePractice: "練習画面",
+  guidePracticeNote: "ここでの練習は、編集中の写真・ラベルに影響しません。",
+  guideReset: "練習をリセット",
+  guideStartHandle: "四角：文字側",
+  guideTargetHandle: "丸：製品側",
+  guideResizeHandle: "右下の斜線：枠のサイズ",
+  guideMobile:
+    "スマホは2本指で拡大・移動。下部パネルは「パネルをしまう」で格納でき、タブを押すと再び開きます。",
+  guidePrevious: "前へ",
+  guideNext: "次へ",
+  guideSkip: "スキップ",
+  guideFinish: "編集をはじめる",
+
   loading: "読み込み中…",
   app: "デスクレシピ",
   editor: "フォトエディター",
@@ -71,7 +113,7 @@ const ja = {
   saving: "保存中…",
   saveError: "自動保存できません。JSONで保存してください。",
   localNote: "写真はこの端末内で処理されます",
-  help: "使い方",
+  help: "チュートリアル",
   helpTitle: "写真に、あなたのこだわりを。",
   help1: "デスク写真をアップロードします。",
   help2:
@@ -128,6 +170,49 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  sheetCollapse: "Hide panel",
+  sheetExpand: "Show panel",
+  tutorial: "Tutorial",
+  guidePhotoTitle: "1. Choose a photo",
+  guidePhoto:
+    "Use “Upload a photo” to choose your desk image. JPEG, PNG and WebP are supported. You can also practice with the sample photo.",
+  guideAddTitle: "2. Add a label",
+  guideAdd:
+    "Choose “Add label”, then tap anywhere on the photo. Try the button and the photo in the practice canvas below.",
+  guideMoveTitle: "3. Move the label",
+  guideMove:
+    "Drag the text to move the label independently. Clicking its arrow also selects the label. Try dragging the text below.",
+  guideArrowTitle: "4. Aim both ends of the arrow",
+  guideArrow:
+    "The square handle sets the connection on the label border. The round handle points at your product. Drag them independently to connect the label and product.",
+  guideResizeTitle: "5. Resize the text box",
+  guideResize:
+    "Drag the diagonal handle at the bottom-right corner. Text wraps to fit the width. Font size is a separate setting under Typography.",
+  guideStyleTitle: "6. Fonts and price visibility",
+  guideStyle:
+    "Compare live font samples in the picker. Prices can be shown or hidden for each label. Try the settings below.",
+  guideLoopTitle: "7. Move a loop arrow",
+  guideLoop:
+    "Choose “Loop” to show the blue diamond. Drag it to move the loop, and use “Loop diameter” to change its size.",
+  guideExportTitle: "8. Save and share",
+  guideExport:
+    "Use “Export image” to save a PNG or JPEG. Editing outlines and handles are excluded. Your project is saved automatically in this browser.",
+  guideSave:
+    "To move between devices or browsers, save a JSON file with “Save project”, then load it with “Open project”.",
+  guidePractice: "Practice canvas",
+  guidePracticeNote:
+    "Practice here does not change your current photo or labels.",
+  guideReset: "Reset practice",
+  guideStartHandle: "Square: label connection",
+  guideTargetHandle: "Round: product target",
+  guideResizeHandle: "Diagonal corner: box size",
+  guideMobile:
+    "On mobile, use two fingers to zoom and pan. “Hide panel” makes more room for the photo; tapping a tab opens the panel again.",
+  guidePrevious: "Previous",
+  guideNext: "Next",
+  guideSkip: "Skip",
+  guideFinish: "Start editing",
+
   loading: "Loading…",
   app: "Desk Recipe",
   editor: "PHOTO EDITOR",
@@ -199,7 +284,7 @@ const en: typeof ja = {
   saving: "Saving…",
   saveError: "Auto-save unavailable. Save your project as JSON.",
   localNote: "Photos are processed on your device",
-  help: "How to use",
+  help: "Tutorial",
   helpTitle: "Your desk. Your details.",
   help1: "Upload a photo of your desk.",
   help2:
