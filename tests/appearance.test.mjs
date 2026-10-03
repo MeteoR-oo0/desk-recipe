@@ -42,8 +42,9 @@ test("arrow attachments follow rounded corners rather than floating outside them
   assert.deepEqual(anchorPoint(box,{edge:"top",t:0.5}),{x:200,y:86});
   assert.deepEqual(anchorPoint(box,{edge:"right",t:0}),{x:289,y:86});
 });
-test("arrow effects retain compatibility and survive save and copying",()=>{
-  const p=initialProject();assert.equal(arrowEffects(p.labels[0]).shadowEnabled,false);
+test("arrow shadows default to on, preserve an explicit off setting and survive save and copying",()=>{
+  const p=initialProject();assert.equal(arrowEffects(p.labels[0]).shadowEnabled,true);
+  assert.equal(arrowEffects({...p.labels[0],arrowEffects:{shadowEnabled:false}}).shadowEnabled,false);
   p.labels[0].arrowEffects={shadowEnabled:true,shadowBlur:12,shadowOffsetY:3,outlineEnabled:true,outlineWidth:2,outlineColor:"#102030"};
   assert.deepEqual(parseProject(JSON.stringify({project:p,image:"data:image/png;base64,AA=="})).project,p);
   assert.deepEqual(parseClipboardLabel(serializeLabel(p.labels[0])).arrowEffects,p.labels[0].arrowEffects);

@@ -14,7 +14,7 @@ export const DEFAULT_TEXT_EFFECTS: Required<TextEffects> = {
   outlineEnabled: false, outlineColor: "#202a25", outlineWidth: 1,
 };
 export function textEffects(label: ProductLabel) { return { ...DEFAULT_TEXT_EFFECTS, ...label.textEffects }; }
-export function arrowEffects(label: ProductLabel) { return {...DEFAULT_TEXT_EFFECTS,shadowEnabled:false,...label.arrowEffects}; }
+export function arrowEffects(label: ProductLabel) { return {...DEFAULT_TEXT_EFFECTS,...label.arrowEffects}; }
 export function applyFrameToAll(labels: ProductLabel[], source: ProductLabel) {
   const frame=frameSettings(source);
   return labels.map(label=>({...label,frame:{...frame},boxWidth:source.boxWidth??330,boxExtraHeight:source.boxExtraHeight??0}));
