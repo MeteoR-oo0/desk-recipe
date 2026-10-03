@@ -6,6 +6,18 @@
 .label-order-row .label-list-item > span:nth-child(2) { min-width: 0; }
 .label-order-row select { width: 48px; flex-shrink: 0; font-size: 12px; padding: 6px 4px; min-height: 44px; }
 .label-grip { display:grid; place-items:center; width:32px; min-width:32px; min-height:44px; padding:4px; flex-shrink:0; color:#99ada0; cursor:grab; background:transparent; border:0; touch-action:none; }
+.label-order-row { position: relative; transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease; }
+.label-grip { border-radius: 7px; transition: transform 160ms ease, color 160ms ease, background-color 160ms ease; }
+.reorder-grabbed { position: relative; z-index: 2; transform: scale(1.025); box-shadow: 0 5px 16px #244a3433; background: #e1f0e6 !important; cursor: grabbing; }
+.reorder-grabbed .label-grip { color: #ffffff; background: #377460; transform: scale(1.08); cursor: grabbing; }
+.label-order-row.reorder-insert-before::before, .label-order-row.reorder-insert-after::after { content: ""; position: absolute; left: 0; right: 0; height: 3px; border-radius: 3px; background: #27845b; box-shadow: 0 0 0 2px #ffffff; z-index: 3; pointer-events: none; }
+.label-order-row.reorder-insert-before::before { top: -3px; }
+.label-order-row.reorder-insert-after::after { bottom: -3px; }
+.product-table-scroll .reorder-grabbed > td { background: #e1f0e6; }
+.product-table-scroll .reorder-insert-before > td { box-shadow: inset 0 3px #27845b; }
+.product-table-scroll .reorder-insert-after > td { box-shadow: inset 0 -3px #27845b; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media(prefers-reduced-motion:reduce) { .label-order-row, .label-grip { transition: none; } .reorder-grabbed, .reorder-grabbed .label-grip { transform: none; } }
 .label-move-buttons { display:flex; flex-shrink:0; gap:2px; }
 .label-move-buttons button { min-height:40px; min-width:30px; padding:4px; background:transparent; border:0; color:#5f8c73; }
 .table-open { width: 100%; margin: 8px 0; min-height: 44px; color: #377460; }

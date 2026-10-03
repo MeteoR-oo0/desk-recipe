@@ -5,6 +5,10 @@ export function moveLabel<T extends {id:string}>(labels: readonly T[], id: strin
   if(from===to) return labels;
   const next=[...labels], [item]=next.splice(from,1);next.splice(to,0,item);return next;
 }
+export function reorderDestination(from: number, target: number, after: boolean) {
+  const slot = target + (after ? 1 : 0);
+  return slot > from ? slot - 1 : slot;
+}
 export function numberedBrand(label: {brand:string;labelNumber?:string}) {
   return label.labelNumber ? `${label.labelNumber}${label.brand ? " "+label.brand : ""}` : label.brand;
 }

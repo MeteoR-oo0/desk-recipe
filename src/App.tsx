@@ -487,7 +487,7 @@ export default function App() {
       {guideOpen && !dialog && <ScreenTutorial t={t} step={guideStep} onStep={setGuideStep} onClose={closeGuide}/>}
       {dialog === "apply-frame" && selected && <FrameApplyDialog label={selected} count={p.labels.length} t={t} onClose={() => setDialog(null)} onConfirm={() => {history.update(v=>({...v,labels:applyFrameToAll(v.labels,selected)}));setDialog(null);}}/>}
       {dialog === "table" && <ProductTableDialog p={p} t={t} onClose={() => setDialog(null)} onPatch={patch} onMove={reorder} onNumberStyle={numberStyleChange} onPrices={tableShowPrices=>history.update(v=>({...v,tableShowPrices}))} onEnd={history.endGroup}/>}
-      {dialog === "about" && <AboutDialog t={t} onClose={() => setDialog(null)} onHelp={() => {setDialog(null);openGuide();}}/>}
+      {dialog === "about" && <AboutDialog t={t} language={lang} onClose={() => setDialog(null)} onHelp={() => {setDialog(null);openGuide();}}/>}
       {toast && (
         <div className={"toast " + (toast.error ? "error" : "")} role="status">
           {toast.text}

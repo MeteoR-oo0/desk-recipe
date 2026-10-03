@@ -1,5 +1,6 @@
 import type { Language } from "../types/project";
 const ja = {
+  reorderGrabbed: "並び替え中。線の位置で離すと移動します。Escキーでキャンセルできます。",
   arrowEndSize: "先端の大きさ",
   arrowEnd: "先端の形", tipArrow: "矢印", tipOpen: "○", tipFilled: "●",
   moveUp: "上へ移動", moveDown: "下へ移動",
@@ -221,6 +222,7 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  reorderGrabbed: "Reordering. Release at the line to move the label. Press Escape to cancel.",
   arrowEndSize: "End marker size",
   arrowEnd: "End marker", tipArrow: "Arrowhead", tipOpen: "○", tipFilled: "●",
   moveUp: "Move up", moveDown: "Move down",

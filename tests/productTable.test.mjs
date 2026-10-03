@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {moveLabel,numberedBrand,formatLabelNumber} from "../src/lib/labelOrder.ts";
+import {moveLabel,numberedBrand,formatLabelNumber,reorderDestination} from "../src/lib/labelOrder.ts";
 import {tableRows,wrapTableText} from "../src/lib/productTable.ts";
 import {initialProject} from "../src/types/project.ts";
 import {parseProject} from "../src/lib/project.ts";
@@ -12,6 +12,13 @@ test("moving a label changes order without changing IDs, custom numbers or input
   assert.equal(moved[2],labels[0]);assert.equal(labels[0].id,"a");
   assert.equal(moveLabel(labels,"missing",0),labels);
   assert.equal(moveLabel(labels,"b",1),labels);
+});
+test("insertion lines place labels before or after a row in either drag direction",()=>{
+  const labels=[{id:"a"},{id:"b"},{id:"c"},{id:"d"}];
+  for (const [from,target,after,expected] of [
+    [0,2,false,"bacd"],[0,2,true,"bcad"],[3,1,false,"adbc"],[3,1,true,"abdc"],
+    [1,1,false,"abcd"],[1,1,true,"abcd"],[3,0,false,"dabc"],[0,3,true,"bcda"],
+  ]) assert.equal(moveLabel(labels,labels[from].id,reorderDestination(from,target,after)).map(l=>l.id).join(""),expected);
 });
 test("custom numbers and hidden total setting survive JSON and label copying",()=>{
   const p=initialProject();p.showTotalPrice=false;p.labels[0].labelNumber="0042";
