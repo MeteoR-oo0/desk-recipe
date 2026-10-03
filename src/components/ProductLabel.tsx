@@ -369,7 +369,7 @@ export function ProductLabel({
           name="editor-decoration"
           x={display.arrowTargetX}
           y={display.arrowTargetY}
-          radius={label.arrowEnd === "open-circle" || label.arrowEnd === "filled-circle" ? 6 + (label.arrowEffects?.outlineEnabled ? label.arrowEffects.outlineWidth ?? 1 : 0) + 4 / scale : 4 / scale}
+          radius={label.arrowEnd === "open-circle" || label.arrowEnd === "filled-circle" ? (label.arrowEndSize??12)/2 + (label.arrowEffects?.outlineEnabled ? label.arrowEffects.outlineWidth ?? 1 : 0) + 4 / scale : 4 / scale}
           fill={label.arrowEnd === "open-circle" || label.arrowEnd === "filled-circle" ? "rgba(255,255,255,0)" : "#fff"}
           stroke="#377460"
           strokeWidth={2 / scale}

@@ -58,7 +58,7 @@ export function ArrowConnector({
   const effects=arrowEffects(label);
   const shadow={shadowEnabled:effects.shadowEnabled,shadowColor:effects.shadowColor,shadowBlur:effects.shadowBlur,shadowOpacity:effects.shadowOpacity,shadowOffsetX:effects.shadowOffsetX,shadowOffsetY:effects.shadowOffsetY};
   const outlined=effects.outlineEnabled && effects.outlineWidth>0;
-  const end=label.arrowEnd??"arrow", circular=end==="open-circle"||end==="filled-circle", radius=6;
+  const end=label.arrowEnd??"arrow", circular=end==="open-circle"||end==="filled-circle", size=label.arrowEndSize??(circular?12:9), radius=size/2;
   const connector=(lineProps:typeof props & typeof shadow)=>(<>
     <Group clipFunc={circular?ctx=>{ctx.beginPath();ctx.rect(-100000,-100000,200000,200000);ctx.moveTo(target.x+radius,target.y);ctx.arc(target.x,target.y,radius,0,Math.PI*2,true);ctx.closePath();}:undefined}>
       {label.arrowType === "swirl" ? (
@@ -96,8 +96,8 @@ export function ArrowConnector({
             ctx.rotate(loop.angle);
             ctx.beginPath();
             ctx.moveTo(0, 0);
-            ctx.lineTo(-10, -4);
-            ctx.lineTo(-10, 4);
+            ctx.lineTo(-10*size/9, -4*size/9);
+            ctx.lineTo(-10*size/9, 4*size/9);
             ctx.closePath();
             ctx.fillStrokeShape(shape);
             ctx.restore();
@@ -135,8 +135,8 @@ export function ArrowConnector({
             ctx.rotate(angle);
             ctx.beginPath();
             ctx.moveTo(0, 0);
-            ctx.lineTo(-10, -4);
-            ctx.lineTo(-10, 4);
+            ctx.lineTo(-10*size/9, -4*size/9);
+            ctx.lineTo(-10*size/9, 4*size/9);
             ctx.closePath();
             ctx.fillStrokeShape(shape);
             ctx.restore();
@@ -147,8 +147,8 @@ export function ArrowConnector({
           {...lineProps}
           points={geometry.points}
           tension={geometry.tension}
-          pointerLength={9}
-          pointerWidth={8}
+          pointerLength={size}
+          pointerWidth={size*8/9}
           pointerAtEnding={end==="arrow"}
         />
       )}

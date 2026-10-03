@@ -60,7 +60,7 @@ export function useWebMCP(
       () => ({
         canvas: current.current.project.canvas,
         priceMode: current.current.project.priceMode,
-        numberStyle: current.current.project.numberStyle ?? "dot",
+        numberStyle: current.current.project.numberStyle ?? "none",
         labels: current.current.project.labels.map((label,index)=>({...label,automaticNumber:index+1,displayNumber:formatLabelNumber(index+1,current.current.project.numberStyle)})),
       }),
       true,

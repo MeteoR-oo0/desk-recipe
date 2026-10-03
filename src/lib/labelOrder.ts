@@ -10,7 +10,7 @@ export function numberedBrand(label: {brand:string;labelNumber?:string}) {
 }
 export const validLabelNumber = (value:unknown) => value===undefined || (typeof value==="string" && /^\d{0,4}$/.test(value));
 import type {NumberStyle} from "../types/project";
-export function formatLabelNumber(position:number,style:NumberStyle="dot") {
+export function formatLabelNumber(position:number,style:NumberStyle="none") {
   if(style==="none") return "";
   if(style==="dot") return `${position}.`;
   if(style==="paren") return `${position})`;

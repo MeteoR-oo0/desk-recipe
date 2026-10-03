@@ -223,6 +223,7 @@ export function LabelPanel({
         </div>
         <label>{t.arrowEnd}</label>
         <div className="segmented">{(["arrow","open-circle","filled-circle","none"] as const).map(end=><button key={end} aria-label={`${t.arrowEnd}: ${t[end==="arrow"?"tipArrow":end==="open-circle"?"tipOpen":end==="filled-circle"?"tipFilled":"frameNone"]}`} aria-pressed={(label.arrowEnd??"arrow")===end} className={(label.arrowEnd??"arrow")===end?"active":""} onClick={()=>onChange({arrowEnd:end})}>{t[end==="arrow"?"tipArrow":end==="open-circle"?"tipOpen":end==="filled-circle"?"tipFilled":"frameNone"]}</button>)}</div>
+        {label.arrowEnd!=="none"&&<label className="range-label">{t.arrowEndSize}<output>{label.arrowEndSize??((label.arrowEnd??"arrow")==="arrow"?9:12)}px</output><input aria-label={t.arrowEndSize} type="range" min={6} max={48} value={label.arrowEndSize??((label.arrowEnd??"arrow")==="arrow"?9:12)} onChange={e=>onChange({arrowEndSize:+e.target.value},"arrowEndSize")} onPointerUp={onEnd} onPointerCancel={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
         {label.arrowType === "swirl" && (
           <>
             <p className="field-note">{t.loopHint}</p>

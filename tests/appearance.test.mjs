@@ -61,9 +61,11 @@ test("bulk frame application changes frame settings and size while preserving la
 });
 test("end markers round trip through project files and clipboard while legacy labels keep arrows",()=>{
   for(const end of ["arrow","open-circle","filled-circle","none"]) {
-    const p=initialProject();p.labels[0].arrowEnd=end;
+    const p=initialProject();p.labels[0].arrowEnd=end;p.labels[0].arrowEndSize=36;
     assert.equal(parseProject(JSON.stringify({project:p,image:"data:image/png;base64,AA=="})).project.labels[0].arrowEnd,end);
     assert.equal(parseClipboardLabel(serializeLabel(p.labels[0])).arrowEnd,end);
+    assert.equal(parseClipboardLabel(serializeLabel(p.labels[0])).arrowEndSize,36);
   }
   assert.equal(parseClipboardLabel(serializeLabel({...initialProject().labels[0],arrowEnd:"invalid"})),null);
+  assert.equal(parseClipboardLabel(serializeLabel({...initialProject().labels[0],arrowEndSize:1000})),null);
 });

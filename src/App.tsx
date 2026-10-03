@@ -448,8 +448,8 @@ export default function App() {
             </div>
             <button className="table-open" onClick={() => setDialog("table")}>{t.tableTitle}</button>
             <p className="field-note">{t.reorderHint}</p>
-            <NumberStylePicker t={t} value={p.numberStyle??"dot"} onChange={numberStyleChange}/>
-            <LabelOrderList numberStyle={p.numberStyle??"dot"} labels={p.labels} selectedId={selectedId} t={t} onMove={reorder} onSelect={(id)=>setSelectedId(id)}/>
+            <NumberStylePicker t={t} value={p.numberStyle??"none"} onChange={numberStyleChange}/>
+            <LabelOrderList numberStyle={p.numberStyle??"none"} labels={p.labels} selectedId={selectedId} t={t} onMove={reorder} onSelect={(id)=>setSelectedId(id)}/>
             <button className="subtle add-list" onClick={startAdd}>
               <Plus size={15} />
               {t.addLabel}

@@ -5,7 +5,7 @@
 .label-order-row .label-list-item { flex: 1; width: auto; min-width: 0; padding: 8px 2px; margin: 0; }
 .label-order-row .label-list-item > span:nth-child(2) { min-width: 0; }
 .label-order-row select { width: 48px; flex-shrink: 0; font-size: 12px; padding: 6px 4px; min-height: 44px; }
-.label-grip { display: grid; place-items: center; width: 18px; flex-shrink: 0; color: #99ada0; cursor: grab; }
+.label-grip { display:grid; place-items:center; width:32px; min-width:32px; min-height:44px; padding:4px; flex-shrink:0; color:#99ada0; cursor:grab; background:transparent; border:0; touch-action:none; }
 .label-move-buttons { display:flex; flex-shrink:0; gap:2px; }
 .label-move-buttons button { min-height:40px; min-width:30px; padding:4px; background:transparent; border:0; color:#5f8c73; }
 .table-open { width: 100%; margin: 8px 0; min-height: 44px; color: #377460; }

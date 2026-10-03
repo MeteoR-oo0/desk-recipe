@@ -48,8 +48,8 @@ export function MobileControls({ p, t, lang, selected, panel, onPanel, section, 
           <p className="field-note">{t.listHint}</p>
           <button className="table-open" onClick={onTable}>{t.tableTitle}</button>
           <p className="field-note">{t.reorderHint}</p>
-          <NumberStylePicker t={t} value={p.numberStyle??"dot"} onChange={onNumberStyle}/>
-          <LabelOrderList numberStyle={p.numberStyle??"dot"} labels={p.labels} selectedId={selected?.id ?? null} t={t} onMove={onMove} onSelect={id=>{onSelect(id);onPanel(null);onMode("select");}}/>
+          <NumberStylePicker t={t} value={p.numberStyle??"none"} onChange={onNumberStyle}/>
+          <LabelOrderList numberStyle={p.numberStyle??"none"} labels={p.labels} selectedId={selected?.id ?? null} t={t} onMove={onMove} onSelect={id=>{onSelect(id);onPanel(null);onMode("select");}}/>
           <button className="primary" onClick={onAdd}><Plus size={18}/>{t.addLabel}</button>
         </div>}
         {panel === "more" && <div className="mobile-more">

@@ -1,5 +1,6 @@
 import type { Language } from "../types/project";
 const ja = {
+  arrowEndSize: "先端の大きさ",
   arrowEnd: "先端の形", tipArrow: "矢印", tipOpen: "○", tipFilled: "●",
   moveUp: "上へ移動", moveDown: "下へ移動",
   numberStyle: "番号のスタイル", numberAutoHint: "番号は一覧の順番から自動で付けます。番号のスタイルは一覧表・製品一覧で変更できます。",
@@ -12,7 +13,7 @@ const ja = {
   exportTable: "一覧表を画像で保存", tablePreview: "一覧表の画像プレビュー", tableExportError: "表を書き出せませんでした。項目数や文字数を減らしてお試しください。",
   tablePriceNote: "表の価格と合計には、写真上で非表示の価格も含みます。",
   tableExcluded: "金額が未入力・不明な{count}件は合計から除外しています。",
-  labelNumber: "番号", numberHint: "例：01（空欄で非表示）", order: "順番", reorderHint: "ドラッグ、または上下ボタンで並び替え", assignNumbers: "順番に連番を割り当てる",
+  labelNumber: "番号", numberHint: "例：01（空欄で非表示）", order: "順番", reorderHint: "つまみをドラッグして並び替え", assignNumbers: "順番に連番を割り当てる",
   about: "このアプリについて",
   aboutCreator: "制作者",
   aboutDescription: "デスク写真に、製品名・ブランド・価格と矢印を添えて、あなたのこだわりを伝える画像を作るエディターです。",
@@ -220,6 +221,7 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  arrowEndSize: "End marker size",
   arrowEnd: "End marker", tipArrow: "Arrowhead", tipOpen: "○", tipFilled: "●",
   moveUp: "Move up", moveDown: "Move down",
   numberStyle: "Number style", numberAutoHint: "Numbers follow the label order automatically. Choose a number style in the product list or table.",
@@ -232,7 +234,7 @@ const en: typeof ja = {
   exportTable: "Save table as image", tablePreview: "Product table image preview", tableExportError: "Could not export the table. Please reduce the number of items or the text length.",
   tablePriceNote: "Table prices and totals include prices hidden in the photo.",
   tableExcluded: "{count} empty or unrecognized prices are excluded from the total.",
-  labelNumber: "No.", numberHint: "e.g. 01 (leave blank to hide)", order: "Order", reorderHint: "Drag or use the up and down buttons", assignNumbers: "Assign sequential numbers",
+  labelNumber: "No.", numberHint: "e.g. 01 (leave blank to hide)", order: "Order", reorderHint: "Drag the handle to reorder", assignNumbers: "Assign sequential numbers",
   about: "About this app",
   aboutCreator: "Creator",
   aboutDescription: "An editor for adding product names, brands, prices and arrows to your desk photos, so you can share the details of your setup.",

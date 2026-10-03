@@ -21,7 +21,7 @@ test("custom numbers and hidden total setting survive JSON and label copying",()
   assert.throws(()=>parseProject(JSON.stringify({project:{...p,labels:[{...p.labels[0],labelNumber:"bad"}]},image:"data:image/png;base64,AA=="})));
 });
 test("table rows derive numbering from current order and preserve prices hidden on the photo",()=>{
-  const p=initialProject();p.labels[0].labelNumber="99";p.labels[0].price="￥１９，８００";
+  const p=initialProject();p.numberStyle="dot";p.labels[0].labelNumber="99";p.labels[0].price="￥１９，８００";
   const rows=tableRows(p);assert.equal(rows[0].number,"1.");assert.equal(rows[0].price,"¥19,800");assert.equal(rows[0].name,p.labels[0].productName);
   assert.equal(rows[1].number,"2.");
 });
@@ -32,6 +32,8 @@ test("long table text wraps without losing characters or explicit line breaks",(
 });
 
 test("number styles automatically follow the current order",()=>{
+  assert.equal(formatLabelNumber(1),"");
+  assert.equal(initialProject().numberStyle,"none");
   assert.equal(formatLabelNumber(1,"plain"),"1");
   assert.equal(formatLabelNumber(2,"dot"),"2.");
   assert.equal(formatLabelNumber(3,"paren"),"3)");

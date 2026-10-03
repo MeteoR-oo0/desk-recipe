@@ -96,7 +96,7 @@ export function CanvasEditor({
   }, [
     project.labels
       .map((l) => l.fontFamily + l.brand + l.productName + l.price)
-      .join(",") + (project.numberStyle??"dot"),
+      .join(",") + (project.numberStyle??"none"),
   ]);
   useEffect(() => {
     handle.current = {

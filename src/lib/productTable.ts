@@ -15,7 +15,7 @@ export function wrapTableText(text:string,maxWidth:number,measure:(s:string)=>nu
   return lines;
 }
 export async function drawProductTable(p:ProjectData,t:Translation,showPrices=p.tableShowPrices!==false) {
-  const table=tableRows(p), showTotal=p.showTotalPrice!==false, numbered=p.numberStyle!=="none";
+  const table=tableRows(p), showTotal=p.showTotalPrice!==false, numbered=(p.numberStyle??"none")!=="none";
   await Promise.all([document.fonts.load('400 28px "Noto Sans JP"',t.app+table.map(r=>r.number+r.brand+r.name+r.price).join("")),document.fonts.load('700 48px "Noto Sans JP"',t.tableTitle+t.labelNumber+t.brand+t.productName+t.price+t.totalPrice+table.map(r=>r.name).join("")),document.fonts.ready]).catch(()=>{});
   const canvas=document.createElement("canvas");canvas.width=1600;
   let ctx=canvas.getContext("2d")!;

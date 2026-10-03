@@ -48,6 +48,7 @@ export type ProductLabel = {
   arrowWidth: number;
   arrowType: "curve" | "line" | "polyline" | "swirl";
   arrowEnd?: "arrow" | "open-circle" | "filled-circle" | "none";
+  arrowEndSize?: number;
   loopRadius?: number;
   loopPosition?: { x: number; y: number };
   boxWidth?: number;
@@ -110,6 +111,7 @@ export const initialProject = (): ProjectData => ({
   },
   canvas: { width: 1200, height: 799, aspectRatio: "Original" },
   priceMode: "individual",
+  numberStyle: "none",
   priceFormat: "yen",
   adjustment: { brightness: 0, contrast: 0, overlay: 0 },
   labels: [

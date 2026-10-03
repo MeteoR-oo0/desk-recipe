@@ -28,8 +28,9 @@ export function rgba(color: string, opacity: number) {
 }
 const finite = (n: unknown, lo: number, hi: number) => typeof n === "number" && Number.isFinite(n) && n >= lo && n <= hi;
 const color = (v: unknown) => typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v);
-export function validAppearance(label: { textEffects?: unknown; arrowEffects?: unknown; frame?: unknown; arrowEnd?: unknown }) {
+export function validAppearance(label: { textEffects?: unknown; arrowEffects?: unknown; frame?: unknown; arrowEnd?: unknown; arrowEndSize?: unknown }) {
   if(label.arrowEnd!==undefined && !["arrow","open-circle","filled-circle","none"].includes(label.arrowEnd as string)) return false;
+  if(label.arrowEndSize!==undefined && !finite(label.arrowEndSize,6,48)) return false;
   const f = label.frame as Record<string, unknown> | undefined;
   for(const value of [label.textEffects,label.arrowEffects]) {
     const e=value as Record<string,unknown>|undefined;
