@@ -12,6 +12,11 @@ import { exportImage } from "./lib/exportImage";
 import { ExportDialog } from "./components/ExportDialog";
 import { ScreenTutorial } from "./components/ScreenTutorial";
 import { AboutDialog } from "./components/AboutDialog";
+import { ProductTableDialog } from "./components/ProductTableDialog";
+import { FrameApplyDialog } from "./components/FrameApplyDialog";
+import { applyFrameToAll } from "./lib/labelAppearance";
+import { LabelOrderList } from "./components/LabelOrderList";
+import { moveLabel } from "./lib/labelOrder";
 import { MobileControls, type MobilePanel, type LabelSection } from "./components/MobileControls";
 import { parseClipboardLabel, serializeLabel } from "./lib/clipboard";
 import { type CanvasHandle } from "./components/CanvasEditor";
@@ -97,7 +102,7 @@ export default function App() {
   };
   const photoInput = useRef<HTMLInputElement>(null),
     projectInput = useRef<HTMLInputElement>(null),
-    [dialog, setDialog] = useState<"export" | "about" | null>(null),
+    [dialog, setDialog] = useState<"export" | "about" | "table" | "apply-frame" | null>(null),
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState<{ text: string; error?: boolean } | null>(
       null,
@@ -353,6 +358,8 @@ export default function App() {
       setLabelSection(guideStep === 5 ? "type" : "arrow"); setMobilePanel("edit");
     } else setMobilePanel(null);
   }, [guideOpen, guideStep]);
+  const reorder = (id: string, to: number) => history.update(v => { const labels = moveLabel(v.labels,id,to); return labels === v.labels ? v : {...v,labels:[...labels]}; });
+  const assignNumbers = () => history.update(v=>({...v,labels:v.labels.map((l,i)=>({...l,labelNumber:String(i+1)}))}));
   const projectActions = (
     <div className="project-actions">
       <button disabled={busy} onClick={saveJSON}>
@@ -378,6 +385,7 @@ export default function App() {
   const editing = (section?: LabelSection) => (
     <LabelPanel
       section={section}
+      onApplyFrameAll={() => setDialog("apply-frame")}
       label={selected}
       t={t}
       priceMode={p.priceMode}
@@ -429,7 +437,7 @@ export default function App() {
         onMore={() => setMobilePanel(mobilePanel === "more" ? null : "more")}
         onAbout={() => setDialog("about")}
       />
-      <main className="editor-grid" inert={!history.ready || busy}>
+      <main className="editor-grid" inert={!history.ready || busy || !!dialog}>
         <aside className="left-sidebar">
           {settings}
           <section className="label-list">
@@ -437,26 +445,9 @@ export default function App() {
               <h3>{t.labels}</h3>
               <span className="count">{p.labels.length}</span>
             </div>
-            {p.labels.map((l, i) => (
-              <button
-                className={
-                  "label-list-item " + (selectedId === l.id ? "selected" : "")
-                }
-                key={l.id}
-                onClick={() => {
-                  setSelectedId(l.id);
-                }}
-              >
-                <span className="label-index">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span>
-                  <small>{l.brand}</small>
-                  <strong>{l.productName || "Product Name"}</strong>
-                </span>
-                <ChevronRight size={14} />
-              </button>
-            ))}
+            <button className="table-open" onClick={() => setDialog("table")}>{t.tableTitle}</button>
+            <p className="field-note">{t.reorderHint}</p>
+            <LabelOrderList labels={p.labels} selectedId={selectedId} t={t} onMove={reorder} onSelect={(id)=>setSelectedId(id)}/>
             <button className="subtle add-list" onClick={startAdd}>
               <Plus size={15} />
               {t.addLabel}
@@ -481,7 +472,7 @@ export default function App() {
           onHelp={openGuide}
         />
         <aside className="right-sidebar">{editing()}</aside>
-        <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} onAbout={() => setDialog("about")} canUndo={history.canUndo} canRedo={history.canRedo} onUndo={history.undo} onRedo={history.redo} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
+        <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} onAbout={() => setDialog("about")} onTable={() => setDialog("table")} onMove={reorder} canUndo={history.canUndo} canRedo={history.canRedo} onUndo={history.undo} onRedo={history.redo} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
       </main>
       {dialog === "export" && (
         <ExportDialog
@@ -492,6 +483,8 @@ export default function App() {
         />
       )}{" "}
       {guideOpen && !dialog && <ScreenTutorial t={t} step={guideStep} onStep={setGuideStep} onClose={closeGuide}/>}
+      {dialog === "apply-frame" && selected && <FrameApplyDialog label={selected} count={p.labels.length} t={t} onClose={() => setDialog(null)} onConfirm={() => {history.update(v=>({...v,labels:applyFrameToAll(v.labels,selected)}));setDialog(null);}}/>}
+      {dialog === "table" && <ProductTableDialog p={p} t={t} onClose={() => setDialog(null)} onPatch={patch} onMove={reorder} onNumber={assignNumbers} onEnd={history.endGroup}/>}
       {dialog === "about" && <AboutDialog t={t} onClose={() => setDialog(null)} onHelp={() => {setDialog(null);openGuide();}}/>}
       {toast && (
         <div className={"toast " + (toast.error ? "error" : "")} role="status">

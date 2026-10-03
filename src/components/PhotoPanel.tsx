@@ -73,6 +73,7 @@ export function PhotoPanel({
       </section>
       <section className="form-section">
         <h3>{t.globalPrice}</h3>
+        <label className="switch-row"><span>{t.showTotalPrice}</span><input type="checkbox" className="switch" checked={p.showTotalPrice !== false} onChange={e=>onUpdate(v=>({...v,showTotalPrice:e.target.checked}))}/></label>
         <PriceSummary p={p} t={t}/>
         <div className="segmented prices">
           {(["individual", "show", "hide"] as const).map((v, i) => (

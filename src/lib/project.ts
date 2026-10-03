@@ -1,5 +1,6 @@
 import type { ProjectData, Photo, ProductLabel } from "../types/project";
 import { validAppearance } from "./labelAppearance.ts";
+import { validLabelNumber } from "./labelOrder.ts";
 export const MAX_PREVIEW = 1600;
 export async function decodeImage(src: string) {
   const image = new Image();
@@ -132,6 +133,7 @@ export function parseProject(text: string): {
     !Array.isArray(p.labels) ||
     p.labels.length > 200 ||
     !["individual", "show", "hide"].includes(p.priceMode) ||
+    (p.showTotalPrice !== undefined && typeof p.showTotalPrice !== "boolean") ||
     !["yen", "suffix", "number"].includes(p.priceFormat) ||
     !p.adjustment ||
     !finite(p.adjustment.brightness, -50, 50) ||
@@ -212,6 +214,7 @@ export function parseProject(text: string): {
       throw Error("Invalid anchor");
     ids.add(l.id);
     if (!validAppearance(l)) throw Error("Invalid label appearance");
+    if (!validLabelNumber(l.labelNumber)) throw Error("Invalid label number");
   }
   return { project: p, image };
 }

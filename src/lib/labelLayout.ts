@@ -1,5 +1,6 @@
 import Konva from "konva";
 import type { ProductLabel } from "../types/project";
+import { numberedBrand } from "./labelOrder";
 export const fontStack = (font: string) =>
   `${font}, Zen Maru Gothic, sans-serif`;
 export function labelLayout(l: ProductLabel, show: boolean) {
@@ -19,7 +20,7 @@ export function labelLayout(l: ProductLabel, show: boolean) {
     node.destroy();
     return height;
   };
-  const brandHeight = measure(l.brand, l.fontSizeBrand),
+  const brandHeight = measure(numberedBrand(l), l.fontSizeBrand),
     productY = brandHeight + 5,
     productHeight = measure(l.productName, l.fontSizeProduct, "bold"),
     priceY = productY + productHeight + 5;

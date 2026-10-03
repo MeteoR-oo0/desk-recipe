@@ -11,4 +11,5 @@
 @media (max-width: 800px) {
   .mobile-canvas-tools .mobile-cost-status { display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1; }
   .mobile-cost-status .status-dot { flex-shrink: 0; }
+  .mobile-save-text { font-size: 11px; color: #6c8174; }
 }

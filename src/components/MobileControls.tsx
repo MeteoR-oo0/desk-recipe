@@ -4,10 +4,11 @@ import type { ProductLabel, ProjectData, Language } from "../types/project";
 import type { Translation } from "../lib/i18n";
 import "../mobile-editor.css";
 import { PriceSummary } from "./PriceSummary";
+import { LabelOrderList } from "./LabelOrderList";
 
 export type MobilePanel = "photo" | "labels" | "edit" | "more" | null;
 export type LabelSection = "content" | "type" | "arrow" | "box";
-export function MobileControls({ p, t, lang, selected, panel, onPanel, section, onSection, mode, onMode, onSelect, onAdd, onDuplicate, onCopy, onPaste, onDelete, onLanguage, onHelp, onAbout, canUndo, canRedo, onUndo, onRedo, editing, settings, projectActions }: {
+export function MobileControls({ p, t, lang, selected, panel, onPanel, section, onSection, mode, onMode, onSelect, onAdd, onDuplicate, onCopy, onPaste, onDelete, onLanguage, onHelp, onAbout, onTable, onMove, canUndo, canRedo, onUndo, onRedo, editing, settings, projectActions }: {
   p: ProjectData; t: Translation; lang: Language; selected?: ProductLabel;
   panel: MobilePanel; onPanel: (p: MobilePanel) => void;
   section: LabelSection; onSection: (s: LabelSection) => void;
@@ -16,6 +17,7 @@ export function MobileControls({ p, t, lang, selected, panel, onPanel, section, 
   onDuplicate: () => void; onCopy: () => void; onPaste: () => void; onDelete: () => void;
   onLanguage: () => void; onHelp: () => void;
   onAbout: () => void;
+  onTable: () => void; onMove: (id:string,to:number) => void;
   canUndo: boolean; canRedo: boolean; onUndo: () => void; onRedo: () => void;
   editing: ReactNode; settings: ReactNode; projectActions: ReactNode;
 }) {
@@ -42,10 +44,9 @@ export function MobileControls({ p, t, lang, selected, panel, onPanel, section, 
         {panel === "labels" && <div className="mobile-label-list">
           <PriceSummary p={p} t={t}/>
           <p className="field-note">{t.listHint}</p>
-          {p.labels.map((l, i) => <button className={"label-list-item " + (l.id === selected?.id ? "selected" : "")} key={l.id} onClick={() => { onSelect(l.id); onPanel(null); onMode("select"); }}>
-            <span className="label-index">{String(i + 1).padStart(2, "0")}</span>
-            <span><small>{l.brand}</small><strong>{l.productName || t.productName}</strong></span><ChevronRight size={18}/>
-          </button>)}
+          <button className="table-open" onClick={onTable}>{t.tableTitle}</button>
+          <p className="field-note">{t.reorderHint}</p>
+          <LabelOrderList labels={p.labels} selectedId={selected?.id ?? null} t={t} onMove={onMove} onSelect={id=>{onSelect(id);onPanel(null);onMode("select");}}/>
           <button className="primary" onClick={onAdd}><Plus size={18}/>{t.addLabel}</button>
         </div>}
         {panel === "more" && <div className="mobile-more">

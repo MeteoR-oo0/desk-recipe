@@ -1,18 +1,18 @@
 import type { ProductLabel, TextEffects, LabelFrame } from "../types/project";
 import type { Translation } from "../lib/i18n";
-import { textEffects, frameSettings } from "../lib/labelAppearance";
+import { textEffects, frameSettings, arrowEffects } from "../lib/labelAppearance";
 import "../appearance.css";
 
 type Props = { label: ProductLabel; t: Translation; onChange: (p: Partial<ProductLabel>, key?: string) => void; onEnd: () => void };
 function Slider({ name, value, min = 0, max, step = 1, unit = "px", onChange, onEnd }: {name:string; value:number;min?:number;max:number;step?:number;unit?:string;onChange:(v:number)=>void;onEnd:()=>void}) {
   return <label className="range-label">{name}<output>{value}{unit}</output><input aria-label={name} type="range" min={min} max={max} step={step} value={value} onChange={e=>onChange(+e.target.value)} onPointerUp={onEnd} onPointerCancel={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>;
 }
-export function TextAppearanceControls({label,t,onChange,onEnd}: Props) {
-  const e = textEffects(label);
-  const change = (p: Partial<TextEffects>, key?: string) => onChange({textEffects:{...e,...p}},key);
+export function TextAppearanceControls({label,t,onChange,onEnd,arrow=false}: Props & {arrow?:boolean}) {
+  const e = arrow?arrowEffects(label):textEffects(label), shadowTitle=arrow?t.arrowShadow:t.textShadow,outlineTitle=arrow?t.arrowOutline:t.textOutline;
+  const change = (p: Partial<TextEffects>, key?: string) => onChange(arrow?{arrowEffects:{...e,...p}}:{textEffects:{...e,...p}},key?(arrow?"arrowEffects:":"textEffects:")+key:undefined);
   return <div className="appearance-controls">
-    <details><summary>{t.textShadow}</summary><div className="appearance-fields">
-      <label className="switch-row"><span>{t.textShadow}</span><input type="checkbox" className="switch" checked={e.shadowEnabled} onChange={v=>change({shadowEnabled:v.target.checked})}/></label>
+    <details><summary>{shadowTitle}</summary><div className="appearance-fields">
+      <label className="switch-row"><span>{shadowTitle}</span><input type="checkbox" className="switch" checked={e.shadowEnabled} onChange={v=>change({shadowEnabled:v.target.checked})}/></label>
       {e.shadowEnabled && <>
         <label className="field-row">{t.shadowColor}<input type="color" value={e.shadowColor} onChange={v=>change({shadowColor:v.target.value},"shadowColor")} onBlur={onEnd}/></label>
         <Slider name={t.shadowBlur} value={e.shadowBlur} max={30} onChange={v=>change({shadowBlur:v},"shadowBlur")} onEnd={onEnd}/>
@@ -21,8 +21,8 @@ export function TextAppearanceControls({label,t,onChange,onEnd}: Props) {
         <Slider name={t.shadowY} value={e.shadowOffsetY} min={-20} max={20} onChange={v=>change({shadowOffsetY:v},"shadowY")} onEnd={onEnd}/>
       </>}
     </div></details>
-    <details><summary>{t.textOutline}</summary><div className="appearance-fields">
-      <label className="switch-row"><span>{t.textOutline}</span><input type="checkbox" className="switch" checked={e.outlineEnabled} onChange={v=>change({outlineEnabled:v.target.checked})}/></label>
+    <details><summary>{outlineTitle}</summary><div className="appearance-fields">
+      <label className="switch-row"><span>{outlineTitle}</span><input type="checkbox" className="switch" checked={e.outlineEnabled} onChange={v=>change({outlineEnabled:v.target.checked})}/></label>
       {e.outlineEnabled && <>
         <label className="field-row">{t.outlineColor}<input type="color" value={e.outlineColor} onChange={v=>change({outlineColor:v.target.value},"outlineColor")} onBlur={onEnd}/></label>
         <Slider name={t.outlineWidth} value={e.outlineWidth} min={0.5} max={8} step={0.5} onChange={v=>change({outlineWidth:v},"outlineWidth")} onEnd={onEnd}/>

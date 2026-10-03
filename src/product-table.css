@@ -1,0 +1,27 @@
+.label-order-row { display: flex; align-items: center; gap: 3px; border-radius: 8px; }
+.label-order-row.selected { background: #edf5ef; }
+.label-order-row .label-list-item { flex: 1; width: auto; min-width: 0; padding: 8px 2px; margin: 0; }
+.label-order-row .label-list-item > span:nth-child(2) { min-width: 0; }
+.label-order-row select { width: 48px; flex-shrink: 0; font-size: 12px; padding: 6px 4px; min-height: 44px; }
+.label-grip { display: grid; place-items: center; width: 18px; flex-shrink: 0; color: #99ada0; cursor: grab; }
+.table-open { width: 100%; margin: 8px 0; min-height: 44px; color: #377460; }
+.product-table-dialog { display: flex; flex-direction: column; gap: 16px; padding-top: 8px; }
+.modal:has(.product-table-dialog) { width: min(920px,96vw); }
+.table-tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.table-tools button { min-height: 44px; font-size: 12px; }
+.table-tools label { font-size: 13px; gap: 10px; }
+.product-table-scroll { overflow: auto; overscroll-behavior: contain; }
+.product-table-scroll table { width: 100%; min-width: 650px; border-collapse: collapse; font-size: 13px; }
+.product-table-scroll th { background: #edf5ef; text-align: left; font-size: 12px; color: #456e57; }
+.product-table-scroll th,.product-table-scroll td { padding: 8px 6px; border-bottom: 1px solid #e2ebe5; }
+.product-table-scroll input { font-size: 14px !important; min-height: 40px; }
+.product-table-scroll td:first-child { width: 70px; }
+.product-table-scroll td:last-child { width: 80px; }
+.product-table-scroll select { min-width:60px; min-height:44px; padding:6px 8px; }
+.product-table-scroll td:nth-child(2) { width: 20%; }
+.product-table-scroll td:nth-child(4) { width: 130px; }
+.product-table-scroll tfoot { font-weight: 700; color: #285f46; }
+.product-table-scroll tfoot td { text-align: right; }
+.product-table-preview { width: 100%; max-height: 350px; object-fit: contain; background: #f4f7f5; border: 1px solid #e2ebe5; border-radius: 8px; }
+.table-error { color: #a05843 !important; }
+@media(max-width:800px) { .label-order-row { border: 1px solid #e7ece9; padding: 6px; margin-bottom: 8px; } .label-order-row .label-list-item { border: 0; } .label-order-row select { width: 52px; } .product-table-scroll input { font-size: 16px !important; } }

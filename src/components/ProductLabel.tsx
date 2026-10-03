@@ -12,6 +12,7 @@ import {
 import { labelLayout, fontStack, formatPrice } from "../lib/labelLayout";
 import { textEffects, frameSettings, rgba, frameObstacles, type AppearanceObstacle } from "../lib/labelAppearance";
 import { glassBackdrop, roundedClip } from "../lib/glassBackdrop";
+import { numberedBrand } from "../lib/labelOrder";
 export function ProductLabel({
   label,
   selected,
@@ -209,7 +210,7 @@ export function ProductLabel({
         )}
         <Text
           key={`brand-${fontRevision}`}
-          text={label.brand}
+          text={numberedBrand(label)}
           width={layout.width}
           lineHeight={1.2}
           fontSize={label.fontSizeBrand}

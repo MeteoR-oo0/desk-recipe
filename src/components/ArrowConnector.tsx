@@ -8,7 +8,7 @@ import {
   drawRoundedRoute,
 } from "../lib/connectorRouting";
 import { loopGeometry } from "../lib/loopGeometry";
-import { frameObstacles, type AppearanceObstacle } from "../lib/labelAppearance";
+import { frameObstacles, arrowEffects, type AppearanceObstacle } from "../lib/labelAppearance";
 export function ArrowConnector({
   label,
   height,
@@ -55,11 +55,13 @@ export function ArrowConnector({
     label.loopRadius,
     obstacles,
   );
-  return (
-    <Group>
+  const effects=arrowEffects(label);
+  const shadow={shadowEnabled:effects.shadowEnabled,shadowColor:effects.shadowColor,shadowBlur:effects.shadowBlur,shadowOpacity:effects.shadowOpacity,shadowOffsetX:effects.shadowOffsetX,shadowOffsetY:effects.shadowOffsetY};
+  const outlined=effects.outlineEnabled && effects.outlineWidth>0;
+  const connector=(lineProps:typeof props & typeof shadow)=>(<>
       {label.arrowType === "swirl" ? (
         <Shape
-          {...props}
+          {...lineProps}
           sceneFunc={(ctx, shape) => {
             ctx.beginPath();
             ctx.moveTo(loop.start.x, loop.start.y);
@@ -114,7 +116,7 @@ export function ArrowConnector({
           ),
         ) ? (
         <Shape
-          {...props}
+          {...lineProps}
           sceneFunc={(ctx, shape) => {
             const start = { x: geometry.points[0], y: geometry.points[1] },
               path = routeConnector(start, target, obstacles),
@@ -138,13 +140,13 @@ export function ArrowConnector({
         />
       ) : (
         <Arrow
-          {...props}
+          {...lineProps}
           points={geometry.points}
           tension={geometry.tension}
           pointerLength={9}
           pointerWidth={8}
         />
       )}
-    </Group>
-  );
+  </>);
+  return <Group>{outlined && connector({...props,...shadow,stroke:effects.outlineColor,fill:effects.outlineColor,strokeWidth:label.arrowWidth+effects.outlineWidth*2})}{connector({...props,...shadow,shadowEnabled:effects.shadowEnabled&&!outlined})}</Group>;
 }

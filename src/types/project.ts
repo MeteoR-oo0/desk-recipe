@@ -17,6 +17,7 @@ export type ProductLabel = {
   id: string;
   brand: string;
   productName: string;
+  labelNumber?: string;
   price: string;
   showPrice: boolean;
   x: number;
@@ -42,6 +43,7 @@ export type ProductLabel = {
   textEffects?: TextEffects;
   frame?: LabelFrame;
   arrowColor: string;
+  arrowEffects?: TextEffects;
   arrowWidth: number;
   arrowType: "curve" | "line" | "polyline" | "swirl";
   loopRadius?: number;
@@ -67,6 +69,7 @@ export type ProjectData = {
   canvas: { width: number; height: number; aspectRatio: AspectRatio };
   labels: ProductLabel[];
   priceMode: PriceMode;
+  showTotalPrice?: boolean;
   priceFormat: "yen" | "suffix" | "number";
   adjustment: { brightness: number; contrast: number; overlay: number; blur?: number };
 };

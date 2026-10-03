@@ -14,6 +14,11 @@ export const DEFAULT_TEXT_EFFECTS: Required<TextEffects> = {
   outlineEnabled: false, outlineColor: "#202a25", outlineWidth: 1,
 };
 export function textEffects(label: ProductLabel) { return { ...DEFAULT_TEXT_EFFECTS, ...label.textEffects }; }
+export function arrowEffects(label: ProductLabel) { return {...DEFAULT_TEXT_EFFECTS,shadowEnabled:false,...label.arrowEffects}; }
+export function applyFrameToAll(labels: ProductLabel[], source: ProductLabel) {
+  const frame=frameSettings(source);
+  return labels.map(label=>({...label,frame:{...frame},boxWidth:source.boxWidth??330,boxExtraHeight:source.boxExtraHeight??0}));
+}
 export function frameSettings(label: ProductLabel): Required<LabelFrame> {
   const style = label.frame?.style ?? "none";
   return { style, fillColor: style === "glass" ? "#ffffff" : "#202a25", opacity: style === "glass" ? 0.22 : 0.65, borderColor: "#ffffff", borderWidth: style === "fill" ? 0 : 1, radius: 12, blur: 10, ...label.frame };
@@ -23,10 +28,11 @@ export function rgba(color: string, opacity: number) {
 }
 const finite = (n: unknown, lo: number, hi: number) => typeof n === "number" && Number.isFinite(n) && n >= lo && n <= hi;
 const color = (v: unknown) => typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v);
-export function validAppearance(label: { textEffects?: unknown; frame?: unknown }) {
-  const e = label.textEffects as Record<string, unknown> | undefined;
+export function validAppearance(label: { textEffects?: unknown; arrowEffects?: unknown; frame?: unknown }) {
   const f = label.frame as Record<string, unknown> | undefined;
-  if (e !== undefined) {
+  for(const value of [label.textEffects,label.arrowEffects]) {
+    const e=value as Record<string,unknown>|undefined;
+    if(e===undefined) continue;
     if (!e || typeof e !== "object" || Array.isArray(e)) return false;
     for (const k of ["shadowEnabled", "outlineEnabled"]) if (e[k] !== undefined && typeof e[k] !== "boolean") return false;
     for (const k of ["shadowColor", "outlineColor"]) if (e[k] !== undefined && !color(e[k])) return false;

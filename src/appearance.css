@@ -2,6 +2,11 @@
 .appearance-controls details { border: 1px solid #dfe8e2; border-radius: 8px; background: #fbfdfb; }
 .appearance-controls summary { padding: 12px; cursor: pointer; font-size: 13px; font-weight: 700; color: #4b715e; min-height: 44px; }
 .appearance-fields { padding: 0 12px 14px; }
+.apply-frame-all { width:100%; margin-bottom:22px; min-height:44px; color:#377460; }
+.frame-confirm-source { font-weight:700; color:#315c43 !important; margin:14px 0 8px; }
+.frame-confirm-settings { display:grid; grid-template-columns:1fr auto; gap:8px 14px; margin:18px 0; padding:14px; background:#f1f7f3; border-radius:8px; font-size:13px; }
+.frame-confirm-settings dt { color:#617c6a; }
+.frame-confirm-settings dd { margin:0; color:#294f3d; }
 .frame-presets { display: grid; grid-template-columns: repeat(2,1fr); gap: 6px; }
 .frame-presets button { flex-direction: column; min-height: 73px; gap: 6px; font-size: 12px; padding: 8px 4px; }
 .frame-presets button.active { background: #edf5ef; border-color: #71a38a; color: #2b674d; }

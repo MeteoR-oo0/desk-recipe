@@ -25,6 +25,7 @@ export function LabelPanel({
   onCopy,
   onPaste,
   section,
+  onApplyFrameAll,
 }: {
   label: ProductLabel | undefined;
   t: Translation;
@@ -37,6 +38,7 @@ export function LabelPanel({
   onCopy: () => void;
   onPaste: () => void;
   section?: "content" | "type" | "arrow" | "box";
+  onApplyFrameAll?: () => void;
 }) {
   if (!label)
     return (
@@ -82,6 +84,7 @@ export function LabelPanel({
             />
           </label>
         ))}
+        <label>{t.labelNumber}<input inputMode="numeric" maxLength={4} placeholder={t.numberHint} value={label.labelNumber??""} onChange={e=>onChange({labelNumber:e.target.value.normalize("NFKC").replace(/[^0-9]/g,"")},"number")} onBlur={onEnd}/></label>
         <label className="switch-row">
           <span>{t.showPrice}</span>
           <input
@@ -132,6 +135,7 @@ export function LabelPanel({
           />
         </label>
       </section>
+      {onApplyFrameAll && (!section || section === "box") && <button className="apply-frame-all" onClick={onApplyFrameAll}>{t.applyFrameAll}</button>}
       <section className="form-section" data-guide="typography" hidden={!!section && section !== "type"}>
         <h3>{t.typography}</h3>
         <FontPicker
@@ -282,6 +286,7 @@ export function LabelPanel({
             onBlur={onEnd}
           />
         </label>
+        <TextAppearanceControls label={label} t={t} onChange={onChange} onEnd={onEnd} arrow/>
         <label className="range-label">
           {t.opacity}
           <output>{Math.round(label.opacity * 100)}%</output>

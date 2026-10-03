@@ -4,6 +4,7 @@ import { priceTotal } from "../lib/priceTotal";
 import "../price-summary.css";
 
 export function PriceSummary({ p, t, compact = false }: { p: ProjectData; t: Translation; compact?: boolean }) {
+  if (p.showTotalPrice === false) return null;
   const { total, included, excluded } = priceTotal(p.labels);
   const formatted = "¥" + total.toLocaleString("ja-JP", { maximumFractionDigits: 2 });
   return <div className={"price-summary" + (compact ? " price-summary--compact" : "")}>
