@@ -6,6 +6,7 @@ import {
   Globe,
   ChevronRight,
   Ellipsis,
+  Info,
 } from "lucide-react";
 import type { Language, ProjectData } from "../types/project";
 import type { Translation } from "../lib/i18n";
@@ -22,6 +23,7 @@ export function EditorHeader({
   onLanguageChange,
   onExport,
   onMore,
+  onAbout,
 }: {
   p: ProjectData;
   t: Translation;
@@ -35,6 +37,7 @@ export function EditorHeader({
   onLanguageChange: () => void;
   onExport: () => void;
   onMore: () => void;
+  onAbout: () => void;
 }) {
   return (
     <header className="app-header">
@@ -79,6 +82,7 @@ export function EditorHeader({
           {lang === "ja" ? "EN" : "日本語"}
         </button>
         <button className="mobile-more-button" aria-label={t.more} onClick={onMore}><Ellipsis size={21}/></button>
+        <button className="desktop-about-button" aria-label={t.about} title={t.about} onClick={onAbout}><Info size={19}/></button>
         <button
           className="primary header-export"
           disabled={busy || !ready}

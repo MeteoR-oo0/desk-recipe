@@ -11,6 +11,7 @@ import { blobToDataURL, downloadBlob, parseProject } from "./lib/project";
 import { exportImage } from "./lib/exportImage";
 import { ExportDialog } from "./components/ExportDialog";
 import { ScreenTutorial } from "./components/ScreenTutorial";
+import { AboutDialog } from "./components/AboutDialog";
 import { MobileControls, type MobilePanel, type LabelSection } from "./components/MobileControls";
 import { parseClipboardLabel, serializeLabel } from "./lib/clipboard";
 import { type CanvasHandle } from "./components/CanvasEditor";
@@ -96,7 +97,7 @@ export default function App() {
   };
   const photoInput = useRef<HTMLInputElement>(null),
     projectInput = useRef<HTMLInputElement>(null),
-    [dialog, setDialog] = useState<"export" | null>(null),
+    [dialog, setDialog] = useState<"export" | "about" | null>(null),
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState<{ text: string; error?: boolean } | null>(
       null,
@@ -426,6 +427,7 @@ export default function App() {
         onLanguageChange={() => setLang(lang === "ja" ? "en" : "ja")}
         onExport={() => setDialog("export")}
         onMore={() => setMobilePanel(mobilePanel === "more" ? null : "more")}
+        onAbout={() => setDialog("about")}
       />
       <main className="editor-grid" inert={!history.ready || busy}>
         <aside className="left-sidebar">
@@ -479,7 +481,7 @@ export default function App() {
           onHelp={openGuide}
         />
         <aside className="right-sidebar">{editing()}</aside>
-        <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
+        <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} onAbout={() => setDialog("about")} canUndo={history.canUndo} canRedo={history.canRedo} onUndo={history.undo} onRedo={history.redo} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
       </main>
       {dialog === "export" && (
         <ExportDialog
@@ -490,6 +492,7 @@ export default function App() {
         />
       )}{" "}
       {guideOpen && !dialog && <ScreenTutorial t={t} step={guideStep} onStep={setGuideStep} onClose={closeGuide}/>}
+      {dialog === "about" && <AboutDialog t={t} onClose={() => setDialog(null)} onHelp={() => {setDialog(null);openGuide();}}/>}
       {toast && (
         <div className={"toast " + (toast.error ? "error" : "")} role="status">
           {toast.text}

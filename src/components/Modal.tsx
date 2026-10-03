@@ -22,7 +22,7 @@ export function Modal({
       if (e.key === "Tab") {
         const all = Array.from(
           ref.current!.querySelectorAll<HTMLElement>(
-            'button:not(:disabled),input,select,[tabindex="0"]',
+            'button:not(:disabled),a[href],input,select,[tabindex="0"]',
           ),
         );
         const first = all[0],

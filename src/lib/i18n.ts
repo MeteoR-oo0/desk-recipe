@@ -1,5 +1,14 @@
 import type { Language } from "../types/project";
 const ja = {
+  about: "このアプリについて",
+  aboutDescription: "デスク写真に、製品名・ブランド・価格と矢印を添えて、あなたのこだわりを伝える画像を作るエディターです。",
+  aboutFeaturesTitle: "できること",
+  aboutFeatures: "ラベルと矢印の配置、フォント・文字装飾・枠デザインの変更、価格の合計表示に対応。完成した画像はPNG・JPEGで保存できます。日本語・英語で使えます。",
+  aboutStorageTitle: "写真と編集内容の保存",
+  aboutStorage: "写真はこの端末内で処理し、編集内容は使用中のブラウザに自動保存します。写真をサーバーへ送信する処理はありません。",
+  aboutTransfer: "別の端末やブラウザへ引き継ぐときは、「プロジェクト保存」でJSONファイルを保存し、「プロジェクトを開く」から読み込んでください。",
+  aboutCredit: "このアプリは、OpenAIのCodexを使用して制作しました。",
+  aboutSource: "ソースコードを見る",
   blur: "写真のぼかし",
   textShadow: "文字の影", shadowColor: "影の色", shadowBlur: "影のぼかし", shadowStrength: "影の濃さ", shadowX: "影の横位置", shadowY: "影の縦位置",
   textOutline: "文字の縁取り", outlineColor: "縁取りの色", outlineWidth: "縁取りの太さ",
@@ -196,6 +205,15 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  about: "About this app",
+  aboutDescription: "An editor for adding product names, brands, prices and arrows to your desk photos, so you can share the details of your setup.",
+  aboutFeaturesTitle: "What you can do",
+  aboutFeatures: "Place labels and arrows, customize fonts, text effects and frames, and see the total cost. Save your finished image as PNG or JPEG. Available in Japanese and English.",
+  aboutStorageTitle: "Your photos and saved edits",
+  aboutStorage: "Photos are processed on your device, and edits are saved automatically in your current browser. The app does not upload your photos to a server.",
+  aboutTransfer: "To continue on another device or browser, use Save project to download a JSON file, then load it with Open project.",
+  aboutCredit: "This app was created using OpenAI Codex.",
+  aboutSource: "View source code",
   blur: "Photo blur",
   textShadow: "Text shadow", shadowColor: "Shadow color", shadowBlur: "Shadow blur", shadowStrength: "Shadow opacity", shadowX: "Shadow offset X", shadowY: "Shadow offset Y",
   textOutline: "Text outline", outlineColor: "Outline color", outlineWidth: "Outline width",

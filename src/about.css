@@ -1,0 +1,25 @@
+.desktop-about-button { border: 0; min-width: 40px; min-height: 44px; color: #608373; }
+.about-content { display: flex; flex-direction: column; gap: 18px; padding-top: 12px; }
+.about-brand { display: flex; align-items: center; gap: 12px; }
+.about-brand > span { display: grid; place-items: center; background: #377460; color: white; width: 52px; height: 52px; border-radius: 14px; }
+.about-brand > div { display: flex; flex-direction: column; gap: 4px; }
+.about-brand strong { font-size: 20px; color: #294f3d; }
+.about-brand small { font-size: 10px; letter-spacing: 1.4px; color: #708d7b; }
+.about-content .about-intro { color: #4b6958; }
+.about-section h3 { display: flex; align-items: center; gap: 7px; color: #3f7158; margin-bottom: 7px; }
+.about-section p + p { margin-top: 6px; }
+.about-credit { padding: 15px; border: 1px solid #dce8e0; background: #f1f7f3; border-radius: 10px; }
+.about-credit > span { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; color: #2b6048; margin-bottom: 7px; }
+.about-content .about-credit p { font-size: 13px; color: #536e5e; }
+.about-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.about-actions button { font-size: 12px; min-height: 44px; }
+.about-actions a { display: inline-flex; align-items: center; gap: 5px; padding: 10px 0; color: #377460; font-size: 12px; text-underline-offset: 3px; }
+.about-actions a:focus-visible { outline: 3px solid #93cbb4; outline-offset: 3px; }
+.about-close { width: 100%; min-height: 44px; }
+@media(max-width:800px) {
+  .history-buttons button:nth-child(2) { display: none; }
+  .desktop-about-button { padding: 6px; }
+  .about-content { gap: 16px; }
+  .mobile-more-history { display: flex; gap: 8px; }
+  .mobile-more-history button { flex: 1; }
+}

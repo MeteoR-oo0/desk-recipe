@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { Image, Plus, Layers, Hand, MousePointer2, X, Type, MoveUpRight, Square, ChevronRight, Copy, ClipboardPaste, Trash2, Globe, CircleHelp } from "lucide-react";
+import { Image, Plus, Layers, Hand, MousePointer2, X, Type, MoveUpRight, Square, ChevronRight, Copy, ClipboardPaste, Trash2, Globe, CircleHelp, Info, Undo2, Redo2 } from "lucide-react";
 import type { ProductLabel, ProjectData, Language } from "../types/project";
 import type { Translation } from "../lib/i18n";
 import "../mobile-editor.css";
@@ -7,7 +7,7 @@ import { PriceSummary } from "./PriceSummary";
 
 export type MobilePanel = "photo" | "labels" | "edit" | "more" | null;
 export type LabelSection = "content" | "type" | "arrow" | "box";
-export function MobileControls({ p, t, lang, selected, panel, onPanel, section, onSection, mode, onMode, onSelect, onAdd, onDuplicate, onCopy, onPaste, onDelete, onLanguage, onHelp, editing, settings, projectActions }: {
+export function MobileControls({ p, t, lang, selected, panel, onPanel, section, onSection, mode, onMode, onSelect, onAdd, onDuplicate, onCopy, onPaste, onDelete, onLanguage, onHelp, onAbout, canUndo, canRedo, onUndo, onRedo, editing, settings, projectActions }: {
   p: ProjectData; t: Translation; lang: Language; selected?: ProductLabel;
   panel: MobilePanel; onPanel: (p: MobilePanel) => void;
   section: LabelSection; onSection: (s: LabelSection) => void;
@@ -15,6 +15,8 @@ export function MobileControls({ p, t, lang, selected, panel, onPanel, section, 
   onSelect: (id: string | null) => void; onAdd: () => void;
   onDuplicate: () => void; onCopy: () => void; onPaste: () => void; onDelete: () => void;
   onLanguage: () => void; onHelp: () => void;
+  onAbout: () => void;
+  canUndo: boolean; canRedo: boolean; onUndo: () => void; onRedo: () => void;
   editing: ReactNode; settings: ReactNode; projectActions: ReactNode;
 }) {
   const scroll = useRef<HTMLDivElement>(null);
@@ -47,6 +49,8 @@ export function MobileControls({ p, t, lang, selected, panel, onPanel, section, 
           <button className="primary" onClick={onAdd}><Plus size={18}/>{t.addLabel}</button>
         </div>}
         {panel === "more" && <div className="mobile-more">
+          <button onClick={() => { onPanel(null); onAbout(); }}><Info size={18}/>{t.about}</button>
+          <div className="mobile-more-history"><button disabled={!canUndo} onClick={onUndo}><Undo2 size={18}/>{t.undo}</button><button disabled={!canRedo} onClick={onRedo}><Redo2 size={18}/>{t.redo}</button></div>
           {selected && <section className="mobile-label-actions" aria-label={t.labelSettings}>
             <strong>{selected.productName}</strong>
             <div>
