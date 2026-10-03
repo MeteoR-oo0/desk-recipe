@@ -1,5 +1,9 @@
 import type { Language } from "../types/project";
 const ja = {
+  totalPrice: "合計金額",
+  totalCount: "{count}件を集計",
+  totalIncludesHidden: "非表示の価格も含む",
+  totalExcluded: "未入力・金額として読み取れない{count}件は集計外です。円の金額を入力してください。",
   editContent: "内容",
   more: "その他",
   done: "完了",
@@ -187,6 +191,10 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  totalPrice: "Total cost",
+  totalCount: "{count} prices included",
+  totalIncludesHidden: "Includes hidden prices",
+  totalExcluded: "{count} empty or unrecognized prices are excluded. Enter an amount in yen.",
   editContent: "Content",
   more: "More",
   done: "Done",

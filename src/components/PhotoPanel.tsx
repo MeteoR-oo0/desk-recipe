@@ -1,6 +1,7 @@
 import { Camera, Check, ImagePlus } from "lucide-react";
 import type { ProjectData, AspectRatio } from "../types/project";
 import type { Translation } from "../lib/i18n";
+import { PriceSummary } from "./PriceSummary";
 export function PhotoPanel({
   p,
   t,
@@ -72,6 +73,7 @@ export function PhotoPanel({
       </section>
       <section className="form-section">
         <h3>{t.globalPrice}</h3>
+        <PriceSummary p={p} t={t}/>
         <div className="segmented prices">
           {(["individual", "show", "hide"] as const).map((v, i) => (
             <button

@@ -3,6 +3,7 @@ import { Image, Plus, Layers, Hand, MousePointer2, X, Type, MoveUpRight, Square,
 import type { ProductLabel, ProjectData, Language } from "../types/project";
 import type { Translation } from "../lib/i18n";
 import "../mobile-editor.css";
+import { PriceSummary } from "./PriceSummary";
 
 export type MobilePanel = "photo" | "labels" | "edit" | "more" | null;
 export type LabelSection = "content" | "type" | "arrow" | "box";
@@ -37,6 +38,7 @@ export function MobileControls({ p, t, lang, selected, panel, onPanel, section, 
         {panel === "photo" && settings}
         {panel === "edit" && editing}
         {panel === "labels" && <div className="mobile-label-list">
+          <PriceSummary p={p} t={t}/>
           <p className="field-note">{t.listHint}</p>
           {p.labels.map((l, i) => <button className={"label-list-item " + (l.id === selected?.id ? "selected" : "")} key={l.id} onClick={() => { onSelect(l.id); onPanel(null); onMode("select"); }}>
             <span className="label-index">{String(i + 1).padStart(2, "0")}</span>
