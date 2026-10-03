@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Download, Plus, ChevronRight } from "lucide-react";
+import { Plus, ChevronRight } from "lucide-react";
 import { EditorHeader } from "./components/EditorHeader";
 import { EditorWorkspace } from "./components/EditorWorkspace";
 import { makeLabel, type Language, type ProductLabel } from "./types/project";
@@ -10,8 +10,8 @@ import { useInstall } from "./hooks/useInstall";
 import { blobToDataURL, downloadBlob, parseProject } from "./lib/project";
 import { exportImage } from "./lib/exportImage";
 import { ExportDialog } from "./components/ExportDialog";
-import { Tutorial } from "./components/Tutorial";
-import { MobileBottomSheet } from "./components/MobileBottomSheet";
+import { ScreenTutorial } from "./components/ScreenTutorial";
+import { MobileControls, type MobilePanel, type LabelSection } from "./components/MobileControls";
 import { parseClipboardLabel, serializeLabel } from "./lib/clipboard";
 import { type CanvasHandle } from "./components/CanvasEditor";
 import { LabelPanel } from "./components/LabelPanel";
@@ -26,15 +26,23 @@ export default function App() {
         return "ja";
       }
     }),
-    [selectedId, setSelectedId] = useState<string | null>("keyboard"),
+    [selectedId, setSelectedId] = useState<string | null>(() => window.matchMedia("(max-width: 800px)").matches ? null : "keyboard"),
     [mode, setMode] = useState<"select" | "add" | "pan">("select"),
     [zoom, setZoom] = useState(1),
-    [tab, setTab] = useState<"photo" | "label" | "export">("label"),
-    [sheetCollapsed, setSheetCollapsed] = useState(false);
+    [mobilePanel, setMobilePanel] = useState<MobilePanel>(null),
+    [labelSection, setLabelSection] = useState<LabelSection>("content"),
+    [guideOpen, setGuideOpen] = useState(false),
+    [guideStep, setGuideStep] = useState(0);
   const history = useProjectState(),
     p = history.value,
     t = getText(lang),
     handle = useRef<CanvasHandle>({ stage: null, image: null });
+  useEffect(() => {
+    const view = window.visualViewport;
+    const update = () => document.documentElement.style.setProperty("--editor-height", `${view?.height ?? window.innerHeight}px`);
+    update(); view?.addEventListener("resize", update); window.addEventListener("resize", update);
+    return () => { view?.removeEventListener("resize", update); window.removeEventListener("resize", update); document.documentElement.style.removeProperty("--editor-height"); };
+  }, []);
   const selected = p.labels.find((l) => l.id === selectedId),
     patch = (id: string, patch: Partial<ProductLabel>, key?: string) =>
       history.update(
@@ -58,8 +66,8 @@ export default function App() {
     history.update((v) => ({ ...v, labels: [...v.labels, l] }));
     setSelectedId(l.id);
     setMode("select");
-    setTab("label");
-    setSheetCollapsed(false);
+    setLabelSection("content");
+    setMobilePanel("edit");
     return l.id;
   };
   const duplicate = () => {
@@ -88,7 +96,7 @@ export default function App() {
   };
   const photoInput = useRef<HTMLInputElement>(null),
     projectInput = useRef<HTMLInputElement>(null),
-    [dialog, setDialog] = useState<"export" | "help" | null>(null),
+    [dialog, setDialog] = useState<"export" | null>(null),
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState<{ text: string; error?: boolean } | null>(
       null,
@@ -163,8 +171,7 @@ export default function App() {
       setSelectedId(null);
       setZoom(1);
       setMode("add");
-      setTab("photo");
-      setSheetCollapsed(false);
+      setMobilePanel(null);
     } catch {
       setToast({ text: t.photoError, error: true });
     } finally {
@@ -262,8 +269,8 @@ export default function App() {
       };
     history.update((v) => ({ ...v, labels: [...v.labels, l] }));
     setSelectedId(l.id);
-    setTab("label");
-    setSheetCollapsed(false);
+    setLabelSection("content");
+    setMobilePanel("edit");
     setToast({ text: t.pasted });
   };
   const copyLabel = async () => {
@@ -324,9 +331,27 @@ export default function App() {
     if (import.meta.env.DEV && new URLSearchParams(location.search).has("qa"))
       return;
     try {
-      if (!localStorage.getItem("desk-recipe-tutorial-v1")) setDialog("help");
+      if (!localStorage.getItem("desk-recipe-tutorial-v2")) setGuideOpen(true);
     } catch {}
   }, [history.ready]);
+  const openGuide = () => { setGuideStep(0); setGuideOpen(true); };
+  const closeGuide = () => {
+    setGuideOpen(false);
+    setMode("select");
+    setMobilePanel(null);
+    try { localStorage.setItem("desk-recipe-tutorial-v2", "seen"); } catch {}
+  };
+  const startAdd = () => { setMobilePanel(null); setMode("add"); };
+  useEffect(() => {
+    if (!guideOpen) return;
+    setMode("select");
+    if (guideStep >= 2 && guideStep <= 6 && !selectedId)
+      setSelectedId(p.labels[p.labels.length - 1]?.id ?? null);
+    if (guideStep === 0) setMobilePanel("photo");
+    else if (guideStep === 5 || guideStep === 6) {
+      setLabelSection(guideStep === 5 ? "type" : "arrow"); setMobilePanel("edit");
+    } else setMobilePanel(null);
+  }, [guideOpen, guideStep]);
   const projectActions = (
     <div className="project-actions">
       <button disabled={busy} onClick={saveJSON}>
@@ -349,8 +374,9 @@ export default function App() {
       onUpload={() => photoInput.current?.click()}
     />
   );
-  const editing = (
+  const editing = (section?: LabelSection) => (
     <LabelPanel
+      section={section}
       label={selected}
       t={t}
       priceMode={p.priceMode}
@@ -399,6 +425,7 @@ export default function App() {
         onRedo={history.redo}
         onLanguageChange={() => setLang(lang === "ja" ? "en" : "ja")}
         onExport={() => setDialog("export")}
+        onMore={() => setMobilePanel(mobilePanel === "more" ? null : "more")}
       />
       <main className="editor-grid" inert={!history.ready || busy}>
         <aside className="left-sidebar">
@@ -416,8 +443,6 @@ export default function App() {
                 key={l.id}
                 onClick={() => {
                   setSelectedId(l.id);
-                  setTab("label");
-                  setSheetCollapsed(false);
                 }}
               >
                 <span className="label-index">
@@ -430,7 +455,7 @@ export default function App() {
                 <ChevronRight size={14} />
               </button>
             ))}
-            <button className="subtle add-list" onClick={() => setMode("add")}>
+            <button className="subtle add-list" onClick={startAdd}>
               <Plus size={15} />
               {t.addLabel}
             </button>
@@ -451,32 +476,10 @@ export default function App() {
           patch={patch}
           add={add}
           status={history.status}
-          onHelp={() => setDialog("help")}
+          onHelp={openGuide}
         />
-        <aside className="right-sidebar">{editing}</aside>
-        <MobileBottomSheet
-          collapsed={sheetCollapsed}
-          onCollapsedChange={setSheetCollapsed}
-          tab={tab}
-          onTabChange={setTab}
-          t={t}
-          onHelp={() => setDialog("help")}
-        >
-          {tab === "photo" ? (
-            settings
-          ) : tab === "label" ? (
-            editing
-          ) : (
-            <div className="mobile-export">
-              <button className="primary" onClick={() => setDialog("export")}>
-                <Download size={17} />
-                {t.export}
-              </button>
-              {projectActions}
-              <p className="local-note">{t.localNote}</p>
-            </div>
-          )}
-        </MobileBottomSheet>
+        <aside className="right-sidebar">{editing()}</aside>
+        <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
       </main>
       {dialog === "export" && (
         <ExportDialog
@@ -486,7 +489,7 @@ export default function App() {
           onExport={doExport}
         />
       )}{" "}
-      {dialog === "help" && <Tutorial t={t} onClose={() => setDialog(null)} />}
+      {guideOpen && !dialog && <ScreenTutorial t={t} step={guideStep} onStep={setGuideStep} onClose={closeGuide}/>}
       {toast && (
         <div className={"toast " + (toast.error ? "error" : "")} role="status">
           {toast.text}

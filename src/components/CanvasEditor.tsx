@@ -10,6 +10,7 @@ export type CanvasHandle = {
   stage: Konva.Stage | null;
   image: HTMLImageElement | null;
   resetView?: () => void;
+  focusLabel?: (id: string) => void;
 };
 export function CanvasEditor({
   project,
@@ -102,8 +103,21 @@ export function CanvasEditor({
         setPan({ x: 0, y: 0 });
         onZoom(1);
       },
+      focusLabel: (id) => {
+        const l = project.labels.find((item) => item.id === id);
+        if (!l) return;
+        const h = labelLayout(l, project.priceMode === "show" || (project.priceMode === "individual" && l.showPrice)).height;
+        const left = Math.min(l.x - 20, l.arrowTargetX - 20), right = Math.max(l.x + (l.boxWidth ?? 330) + 20, l.arrowTargetX + 20);
+        const top = Math.min(l.y - 20, l.arrowTargetY - 20), bottom = Math.max(l.y + h + 20, l.arrowTargetY + 20);
+        const padding = size.width <= 800 ? 20 : 48;
+        const base = Math.max(0.01, Math.min((size.width - padding) / project.canvas.width, (size.height - padding) / project.canvas.height));
+        const nextZoom = Math.min(6, Math.max(1, Math.min((size.width - 50) / (right - left), (size.height - 50) / (bottom - top), 1) / base));
+        const s = base * nextZoom;
+        onZoom(nextZoom);
+        setPan({ x: (project.canvas.width / 2 - (left + right) / 2) * s, y: (project.canvas.height / 2 - (top + bottom) / 2) * s });
+      },
     };
-  }, [image, handle, onZoom]);
+  }, [image, handle, onZoom, size, project.labels, project.canvas, project.priceMode]);
   useEffect(() => {
     setPan({ x: 0, y: 0 });
     onZoom(1);
@@ -111,8 +125,8 @@ export function CanvasEditor({
   const scale = Math.max(
       0.01,
       Math.min(
-        (size.width - 48) / project.canvas.width,
-        (size.height - 48) / project.canvas.height,
+        (size.width - (size.width <= 800 ? 20 : 48)) / project.canvas.width,
+        (size.height - (size.width <= 800 ? 20 : 48)) / project.canvas.height,
       ) * zoom,
     ),
     ox = (size.width - project.canvas.width * scale) / 2 + pan.x,
@@ -169,7 +183,7 @@ export function CanvasEditor({
     else onSelect(null);
   };
   return (
-    <div className={"canvas-holder mode-" + mode} ref={holder} {...touch}>
+    <div className={"canvas-holder mode-" + mode} data-guide="canvas" ref={holder} {...touch}>
       <Stage
         ref={stageRef}
         width={size.width}

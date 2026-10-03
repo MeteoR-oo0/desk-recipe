@@ -22,7 +22,7 @@ export function PhotoPanel({
       </div>
       <section className="form-section">
         <label>{t.photo}</label>
-        <button className="upload-card" onClick={onUpload}>
+        <button className="upload-card" data-guide="upload" onClick={onUpload}>
           <div className="upload-icon">
             <ImagePlus size={23} />
           </div>

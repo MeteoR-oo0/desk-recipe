@@ -5,6 +5,7 @@ import {
   Download,
   Globe,
   ChevronRight,
+  Ellipsis,
 } from "lucide-react";
 import type { Language, ProjectData } from "../types/project";
 import type { Translation } from "../lib/i18n";
@@ -20,6 +21,7 @@ export function EditorHeader({
   onRedo,
   onLanguageChange,
   onExport,
+  onMore,
 }: {
   p: ProjectData;
   t: Translation;
@@ -32,6 +34,7 @@ export function EditorHeader({
   onRedo: () => void;
   onLanguageChange: () => void;
   onExport: () => void;
+  onMore: () => void;
 }) {
   return (
     <header className="app-header">
@@ -75,13 +78,16 @@ export function EditorHeader({
           <Globe size={16} />
           {lang === "ja" ? "EN" : "日本語"}
         </button>
+        <button className="mobile-more-button" aria-label={t.more} onClick={onMore}><Ellipsis size={21}/></button>
         <button
           className="primary header-export"
           disabled={busy || !ready}
           onClick={() => onExport()}
+          aria-label={t.export}
+          data-guide="export"
         >
           <Download size={17} />
-          {t.export}
+          <span className="export-full">{t.export}</span><span className="export-short">{t.exportTab}</span>
         </button>
       </div>
     </header>

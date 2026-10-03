@@ -23,6 +23,7 @@ export function LabelPanel({
   onEnd,
   onCopy,
   onPaste,
+  section,
 }: {
   label: ProductLabel | undefined;
   t: Translation;
@@ -34,6 +35,7 @@ export function LabelPanel({
   onEnd: () => void;
   onCopy: () => void;
   onPaste: () => void;
+  section?: "content" | "type" | "arrow" | "box";
 }) {
   if (!label)
     return (
@@ -62,12 +64,12 @@ export function LabelPanel({
   );
   const radius = loop.radius;
   return (
-    <div className="label-panel">
+    <div className="label-panel" data-section={section}>
       <div className="section-heading">
         <h2>{t.labelSettings}</h2>
         <span className="tiny-tag">#{label.id.slice(0, 4).toUpperCase()}</span>
       </div>
-      <section className="form-section">
+      <section className="form-section" hidden={!!section && section !== "content"}>
         {(["brand", "productName", "price"] as const).map((key) => (
           <label key={key}>
             {t[key]}
@@ -92,7 +94,7 @@ export function LabelPanel({
           <p className="field-note">{t.allOverride}</p>
         )}
       </section>
-      <section className="form-section">
+      <section className="form-section" data-guide="box" hidden={!!section && section !== "box"}>
         <h3>{t.boxSize}</h3>
         <p className="field-note">{t.resizeHint}</p>
         <label className="range-label">
@@ -128,7 +130,7 @@ export function LabelPanel({
           />
         </label>
       </section>
-      <section className="form-section">
+      <section className="form-section" data-guide="typography" hidden={!!section && section !== "type"}>
         <h3>{t.typography}</h3>
         <FontPicker
           value={label.fontFamily}
@@ -191,7 +193,7 @@ export function LabelPanel({
           />
         </label>
       </section>
-      <section className="form-section">
+      <section className="form-section" data-guide="arrow" hidden={!!section && section !== "arrow"}>
         <h3>{t.arrow}</h3>
         <p className="field-note">{t.anchorHint}</p>
         <button
@@ -295,7 +297,7 @@ export function LabelPanel({
           />
         </label>
       </section>
-      <div className="label-actions clipboard-actions">
+      <div className="label-actions clipboard-actions" hidden={!!section}>
         <button onClick={onCopy}>
           <Copy size={16} />
           {t.copy}
@@ -305,7 +307,7 @@ export function LabelPanel({
           {t.paste}
         </button>
       </div>
-      <div className="label-actions">
+      <div className="label-actions" hidden={!!section}>
         <button onClick={onDuplicate}>
           <Copy size={16} />
           {t.duplicate}
