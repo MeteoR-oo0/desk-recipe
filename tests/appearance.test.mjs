@@ -59,3 +59,11 @@ test("bulk frame application changes frame settings and size while preserving la
   });
   assert.deepEqual(p.labels,before);assert.notEqual(after[0].frame,after[1].frame);
 });
+test("end markers round trip through project files and clipboard while legacy labels keep arrows",()=>{
+  for(const end of ["arrow","open-circle","filled-circle","none"]) {
+    const p=initialProject();p.labels[0].arrowEnd=end;
+    assert.equal(parseProject(JSON.stringify({project:p,image:"data:image/png;base64,AA=="})).project.labels[0].arrowEnd,end);
+    assert.equal(parseClipboardLabel(serializeLabel(p.labels[0])).arrowEnd,end);
+  }
+  assert.equal(parseClipboardLabel(serializeLabel({...initialProject().labels[0],arrowEnd:"invalid"})),null);
+});

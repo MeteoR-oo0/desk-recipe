@@ -1,4 +1,4 @@
-import { Arrow, Group, Shape } from "react-konva";
+import { Arrow, Group, Shape, Circle } from "react-konva";
 import type { ProductLabel } from "../types/project";
 import { arrowGeometry, type Box } from "../lib/arrowGeometry";
 import {
@@ -58,7 +58,9 @@ export function ArrowConnector({
   const effects=arrowEffects(label);
   const shadow={shadowEnabled:effects.shadowEnabled,shadowColor:effects.shadowColor,shadowBlur:effects.shadowBlur,shadowOpacity:effects.shadowOpacity,shadowOffsetX:effects.shadowOffsetX,shadowOffsetY:effects.shadowOffsetY};
   const outlined=effects.outlineEnabled && effects.outlineWidth>0;
+  const end=label.arrowEnd??"arrow", circular=end==="open-circle"||end==="filled-circle", radius=6;
   const connector=(lineProps:typeof props & typeof shadow)=>(<>
+    <Group clipFunc={circular?ctx=>{ctx.beginPath();ctx.rect(-100000,-100000,200000,200000);ctx.moveTo(target.x+radius,target.y);ctx.arc(target.x,target.y,radius,0,Math.PI*2,true);ctx.closePath();}:undefined}>
       {label.arrowType === "swirl" ? (
         <Shape
           {...lineProps}
@@ -88,6 +90,7 @@ export function ArrowConnector({
               );
             }
             ctx.strokeShape(shape);
+            if(end!=="arrow") return;
             ctx.save();
             ctx.translate(target.x, target.y);
             ctx.rotate(loop.angle);
@@ -126,6 +129,7 @@ export function ArrowConnector({
             ctx.moveTo(start.x, start.y);
             drawRoundedRoute(ctx, path, label.arrowType !== "line");
             ctx.strokeShape(shape);
+            if(end!=="arrow") return;
             ctx.save();
             ctx.translate(target.x, target.y);
             ctx.rotate(angle);
@@ -145,8 +149,14 @@ export function ArrowConnector({
           tension={geometry.tension}
           pointerLength={9}
           pointerWidth={8}
+          pointerAtEnding={end==="arrow"}
         />
       )}
+    </Group>
+    {circular&&<Circle {...lineProps} name="arrow-end-marker" x={target.x} y={target.y}
+      radius={end==="open-circle"?radius+(lineProps.strokeWidth-label.arrowWidth)/4:radius}
+      strokeWidth={end==="open-circle"?label.arrowWidth+(lineProps.strokeWidth-label.arrowWidth)/2:lineProps.strokeWidth}
+      fillEnabled={end==="filled-circle"}/>}
   </>);
   return <Group>{outlined && connector({...props,...shadow,stroke:effects.outlineColor,fill:effects.outlineColor,strokeWidth:label.arrowWidth+effects.outlineWidth*2})}{connector({...props,...shadow,shadowEnabled:effects.shadowEnabled&&!outlined})}</Group>;
 }

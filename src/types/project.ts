@@ -47,6 +47,7 @@ export type ProductLabel = {
   arrowEffects?: TextEffects;
   arrowWidth: number;
   arrowType: "curve" | "line" | "polyline" | "swirl";
+  arrowEnd?: "arrow" | "open-circle" | "filled-circle" | "none";
   loopRadius?: number;
   loopPosition?: { x: number; y: number };
   boxWidth?: number;

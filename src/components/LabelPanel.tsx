@@ -221,6 +221,8 @@ export function LabelPanel({
             </button>
           ))}
         </div>
+        <label>{t.arrowEnd}</label>
+        <div className="segmented">{(["arrow","open-circle","filled-circle","none"] as const).map(end=><button key={end} aria-label={`${t.arrowEnd}: ${t[end==="arrow"?"tipArrow":end==="open-circle"?"tipOpen":end==="filled-circle"?"tipFilled":"frameNone"]}`} aria-pressed={(label.arrowEnd??"arrow")===end} className={(label.arrowEnd??"arrow")===end?"active":""} onClick={()=>onChange({arrowEnd:end})}>{t[end==="arrow"?"tipArrow":end==="open-circle"?"tipOpen":end==="filled-circle"?"tipFilled":"frameNone"]}</button>)}</div>
         {label.arrowType === "swirl" && (
           <>
             <p className="field-note">{t.loopHint}</p>

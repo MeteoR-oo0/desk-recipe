@@ -1,5 +1,6 @@
 import type { Language } from "../types/project";
 const ja = {
+  arrowEnd: "先端の形", tipArrow: "矢印", tipOpen: "○", tipFilled: "●",
   moveUp: "上へ移動", moveDown: "下へ移動",
   numberStyle: "番号のスタイル", numberAutoHint: "番号は一覧の順番から自動で付けます。番号のスタイルは一覧表・製品一覧で変更できます。",
   arrowShadow: "線の影", arrowOutline: "線の縁取り",
@@ -219,6 +220,7 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  arrowEnd: "End marker", tipArrow: "Arrowhead", tipOpen: "○", tipFilled: "●",
   moveUp: "Move up", moveDown: "Move down",
   numberStyle: "Number style", numberAutoHint: "Numbers follow the label order automatically. Choose a number style in the product list or table.",
   arrowShadow: "Arrow shadow", arrowOutline: "Arrow outline",
