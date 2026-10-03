@@ -11,6 +11,7 @@ import {NumberStylePicker} from "./NumberStylePicker";
 import {formatLabelNumber} from "../lib/labelOrder";
 import {ReorderGrip} from "./ReorderGrip";
 import {useLabelReorder} from "../hooks/useLabelReorder";
+import {ReorderOverlay} from "./ReorderOverlay";
 export function ProductTableDialog({p,t,onClose,onPatch,onMove,onNumberStyle,onPrices,onEnd}:{p:ProjectData;t:Translation;onClose:()=>void;onPatch:(id:string,changes:Partial<ProductLabel>,key?:string)=>void;onMove:(id:string,to:number)=>void;onNumberStyle:(s:NonNullable<ProjectData["numberStyle"]>)=>void;onPrices:(show:boolean)=>void;onEnd:()=>void}) {
   const [format,setFormat]=useState<"png"|"jpeg">("png"),[preview,setPreview]=useState<string|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(false),[file,setFile]=useState<{url:string;name:string}|null>(null);
   const showPrices=p.tableShowPrices!==false,showTotal=p.showTotalPrice!==false,numbered=(p.numberStyle??"none")!=="none";
@@ -24,6 +25,7 @@ export function ProductTableDialog({p,t,onClose,onPatch,onMove,onNumberStyle,onP
     <div className="product-table-dialog"><p>{t.tableDescription}</p>
       <div className="table-tools"><NumberStylePicker t={t} value={p.numberStyle??"none"} disabled={busy} onChange={onNumberStyle}/><label className="switch-row"><span>{t.showPrice}</span><input className="switch" type="checkbox" disabled={busy} checked={showPrices} onChange={e=>onPrices(e.target.checked)}/></label></div>
       <span className="sr-only" role="status">{reorder.drag?t.reorderGrabbed:""}</span>
+      <ReorderOverlay reorder={reorder} label={p.labels.find(l=>l.id===reorder.drag?.id)} number={formatLabelNumber(p.labels.findIndex(l=>l.id===reorder.drag?.id)+1,p.numberStyle)} table showPrices={showPrices}/>
       <div className="product-table-scroll" data-reorder-list="table"><table><thead><tr>{[...(numbered?[t.labelNumber]:[]),t.brand,t.productName,...(showPrices?[t.price]:[]),t.order].map(v=><th key={v}>{v}</th>)}</tr></thead><tbody>{p.labels.map((l,i)=><tr key={l.id} data-label-id={l.id} className={reorder.rowClass(l.id)}>
         {numbered&&<td className="table-col-number">{formatLabelNumber(i+1,p.numberStyle)}</td>}
         {(["brand","productName",...(showPrices?["price" as const]:[])] as const).map(k=><td key={k} className={"table-col-"+k}><input aria-label={`${t[k]}: ${l.productName}`} disabled={busy} value={l[k]} maxLength={k==="productName"?120:80} onChange={e=>onPatch(l.id,{[k]:e.target.value},k)} onBlur={onEnd}/></td>)}

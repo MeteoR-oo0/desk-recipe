@@ -10,6 +10,12 @@
 .label-grip { border-radius: 7px; transition: transform 160ms ease, color 160ms ease, background-color 160ms ease; }
 .reorder-grabbed { position: relative; z-index: 2; transform: scale(1.025); box-shadow: 0 5px 16px #244a3433; background: #e1f0e6 !important; cursor: grabbing; }
 .reorder-grabbed .label-grip { color: #ffffff; background: #377460; transform: scale(1.08); cursor: grabbing; }
+.reorder-source { opacity: 0.28; }
+.reorder-overlay { position: fixed !important; z-index: 1000; pointer-events: none; user-select: none; margin: 0 !important; transition: none !important; will-change: transform; border: 1px solid #b3d7c0; border-radius: 8px; box-shadow: 0 8px 24px #244a3440; }
+.reorder-overlay .label-list-item { display: flex; align-items: center; }
+.reorder-table-ghost { display: grid; align-items: stretch; font-size: 14px; }
+.reorder-table-ghost > span { display: flex; align-items: center; min-width: 0; overflow: hidden; white-space: nowrap; padding: 8px 6px; }
+.reorder-table-ghost > span:not(:last-child) { text-overflow: ellipsis; }
 .label-order-row.reorder-insert-before::before, .label-order-row.reorder-insert-after::after { content: ""; position: absolute; left: 0; right: 0; height: 3px; border-radius: 3px; background: #27845b; box-shadow: 0 0 0 2px #ffffff; z-index: 3; pointer-events: none; }
 .label-order-row.reorder-insert-before::before { top: -3px; }
 .label-order-row.reorder-insert-after::after { bottom: -3px; }
