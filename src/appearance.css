@@ -1,0 +1,12 @@
+.appearance-controls, .appearance-fields { display: flex; flex-direction: column; gap: 14px; }
+.appearance-controls details { border: 1px solid #dfe8e2; border-radius: 8px; background: #fbfdfb; }
+.appearance-controls summary { padding: 12px; cursor: pointer; font-size: 13px; font-weight: 700; color: #4b715e; min-height: 44px; }
+.appearance-fields { padding: 0 12px 14px; }
+.frame-presets { display: grid; grid-template-columns: repeat(2,1fr); gap: 6px; }
+.frame-presets button { flex-direction: column; min-height: 73px; gap: 6px; font-size: 12px; padding: 8px 4px; }
+.frame-presets button.active { background: #edf5ef; border-color: #71a38a; color: #2b674d; }
+.frame-swatch { width: 62px; height: 28px; display: grid; place-items: center; border-radius: 6px; font-size: 16px; font-weight: 700; }
+.frame-swatch--fill { background: #344c40; color: white; }
+.frame-swatch--outline { border: 1px solid #5b806d; }
+.frame-swatch--glass { background: linear-gradient(135deg,#d0e2d8aa,#f5fffbbb); border: 1px solid #b1ccbf; box-shadow: inset 0 1px 4px white; }
+@media (max-width:800px) { .frame-presets { grid-template-columns: repeat(4,1fr); } .frame-swatch { width: 48px; } }

@@ -104,18 +104,19 @@ export function PhotoPanel({
       </section>
       <section className="form-section">
         <h3>{t.background}</h3>
-        {(["brightness", "contrast", "overlay"] as const).map((key) => (
+        {(["brightness", "contrast", "overlay", "blur"] as const).map((key) => (
           <label className="range-label" key={key}>
             {t[key]}
             <output>
-              {p.adjustment[key]}
-              {key === "overlay" ? "%" : ""}
+              {p.adjustment[key] ?? 0}
+              {key === "overlay" ? "%" : key === "blur" ? "px" : ""}
             </output>
             <input
               type="range"
-              min={key === "overlay" ? 0 : -50}
-              max={key === "overlay" ? 70 : 50}
-              value={p.adjustment[key]}
+              aria-label={t[key]}
+              min={key === "overlay" || key === "blur" ? 0 : -50}
+              max={key === "overlay" ? 70 : key === "blur" ? 30 : 50}
+              value={p.adjustment[key] ?? 0}
               onChange={(e) =>
                 onUpdate(
                   (v) => ({

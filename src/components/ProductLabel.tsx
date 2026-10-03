@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Circle, Group, Rect, Text, Line } from "react-konva";
+import { useState, useMemo } from "react";
+import { Circle, Group, Rect, Text, Line, Image as CanvasImage } from "react-konva";
 import { ArrowConnector } from "./ArrowConnector";
 import type { PriceMode, ProductLabel as Label } from "../types/project";
 import { loopGeometry } from "../lib/loopGeometry";
@@ -10,6 +10,8 @@ import {
   type Box,
 } from "../lib/arrowGeometry";
 import { labelLayout, fontStack, formatPrice } from "../lib/labelLayout";
+import { textEffects, frameSettings, rgba, frameObstacles, type AppearanceObstacle } from "../lib/labelAppearance";
+import { glassBackdrop, roundedClip } from "../lib/glassBackdrop";
 export function ProductLabel({
   label,
   selected,
@@ -22,6 +24,8 @@ export function ProductLabel({
   obstacles,
   panMode,
   fontRevision,
+  photoPixels,
+  overlay = 0,
 }: {
   label: Label;
   selected: boolean;
@@ -31,9 +35,11 @@ export function ProductLabel({
   onChange: (patch: Partial<Label>) => void;
   scale: number;
   bounds: { width: number; height: number };
-  obstacles: (Box & { id: string })[];
+  obstacles: AppearanceObstacle[];
   panMode: boolean;
   fontRevision: number;
+  photoPixels?: HTMLImageElement | HTMLCanvasElement | null;
+  overlay?: number;
 }) {
   const [draft, setDraft] = useState<Partial<Label>>({}),
     display = { ...label, ...draft },
@@ -54,6 +60,7 @@ export function ProductLabel({
       y: display.y,
       width: layout.width,
       height: layout.height,
+      cornerRadius: label.frame && label.frame.style !== "none" ? label.frame.radius ?? 12 : 0,
     },
     start = anchorPoint(
       box,
@@ -69,7 +76,7 @@ export function ProductLabel({
     display.arrowAnchor,
     display.loopPosition,
     display.loopRadius,
-    obstacles.map((b) =>
+    frameObstacles(obstacles.map((b) =>
       b.id === label.id
         ? {
             ...b,
@@ -79,7 +86,7 @@ export function ProductLabel({
             height: layout.height,
           }
         : b,
-    ),
+    ),label.id),
   );
   const resize = (point: { x: number; y: number }) => {
     const boxWidth = Math.round(
@@ -107,6 +114,19 @@ export function ProductLabel({
         Math.max(0, Math.min(300, point.y - display.y - 14 - natural)),
       ),
     };
+  };
+  const effects = textEffects(label), frame = frameSettings(label);
+  const frameWidth = layout.width + 28, frameHeight = layout.height + 28;
+  const glass = useMemo(() => frame.style === "glass" && photoPixels
+    ? glassBackdrop(photoPixels, bounds, overlay, display, layout.height) : null,
+    [frame.style, frame.blur, photoPixels, bounds.width, bounds.height, overlay, display.x, display.y, layout.width, layout.height]);
+  const textProps = {
+    shadowEnabled: effects.shadowEnabled, shadowColor: effects.shadowColor,
+    shadowBlur: effects.shadowBlur, shadowOpacity: effects.shadowOpacity,
+    shadowOffsetX: effects.shadowOffsetX, shadowOffsetY: effects.shadowOffsetY,
+    stroke: effects.outlineColor, strokeWidth: effects.outlineWidth,
+    strokeEnabled: effects.outlineEnabled, fillAfterStrokeEnabled: true,
+    shadowForStrokeEnabled: false, lineJoin: "round" as const,
   };
   const font = fontStack(label.fontFamily),
     bound = (x: number, y: number, target = false) => ({
@@ -167,6 +187,12 @@ export function ProductLabel({
           height={layout.height + 20}
           fill="rgba(0,0,0,0.001)"
         />
+        {frame.style === "glass" && glass && <Group clipFunc={ctx=>roundedClip(ctx,frameWidth,frameHeight,frame.radius)}>
+          <CanvasImage name="glass-backdrop" glassLabelId={label.id} image={glass} x={-14} y={-14} width={frameWidth} height={frameHeight}/>
+        </Group>}
+        {frame.style !== "none" && <Rect name="label-frame" x={-14} y={-14} width={frameWidth} height={frameHeight}
+          cornerRadius={frame.radius} fill={frame.style === "outline" ? undefined : rgba(frame.fillColor,frame.opacity)}
+          stroke={frame.borderColor} strokeWidth={frame.borderWidth} strokeEnabled={frame.borderWidth > 0}/ >}
         {selected && (
           <Rect
             name="editor-decoration"
@@ -177,7 +203,7 @@ export function ProductLabel({
             stroke="#b1f0d3"
             strokeWidth={1 / scale}
             dash={[5 / scale, 4 / scale]}
-            cornerRadius={6}
+            cornerRadius={frame.style === "none" ? 6 : frame.radius}
             listening={false}
           />
         )}
@@ -190,9 +216,8 @@ export function ProductLabel({
           fontFamily={font}
           fill={label.textColor}
           align={label.align}
-          shadowColor="#000"
-          shadowBlur={5}
-          shadowOpacity={0.35}
+          {...textProps}
+          shadowOpacity={label.textEffects?.shadowOpacity ?? 0.35}
         />
         <Text
           key={`product-${fontRevision}`}
@@ -205,9 +230,7 @@ export function ProductLabel({
           fontFamily={font}
           fill={label.textColor}
           align={label.align}
-          shadowColor="#000"
-          shadowBlur={5}
-          shadowOpacity={0.4}
+          {...textProps}
         />
         {show && (
           <Text
@@ -220,9 +243,7 @@ export function ProductLabel({
             fontFamily={font}
             fill={label.textColor}
             align={label.align}
-            shadowColor="#000"
-            shadowBlur={5}
-            shadowOpacity={0.4}
+            {...textProps}
           />
         )}
       </Group>

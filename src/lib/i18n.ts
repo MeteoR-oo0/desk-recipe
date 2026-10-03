@@ -1,5 +1,10 @@
 import type { Language } from "../types/project";
 const ja = {
+  blur: "写真のぼかし",
+  textShadow: "文字の影", shadowColor: "影の色", shadowBlur: "影のぼかし", shadowStrength: "影の濃さ", shadowX: "影の横位置", shadowY: "影の縦位置",
+  textOutline: "文字の縁取り", outlineColor: "縁取りの色", outlineWidth: "縁取りの太さ",
+  frameDesign: "枠のデザイン", frameNone: "なし", frameFill: "塗りつぶし", frameOutline: "線", frameGlass: "ガラス",
+  cornerRadius: "角丸の大きさ", glassBlur: "背景のぼかし", frameDetails: "枠の色・透明度・線", frameColor: "背景色", frameOpacity: "背景色の濃さ", frameBorderColor: "枠線の色", frameBorderWidth: "枠線の太さ",
   totalPrice: "合計金額",
   totalCount: "{count}件を集計",
   totalIncludesHidden: "非表示の価格も含む",
@@ -191,6 +196,11 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  blur: "Photo blur",
+  textShadow: "Text shadow", shadowColor: "Shadow color", shadowBlur: "Shadow blur", shadowStrength: "Shadow opacity", shadowX: "Shadow offset X", shadowY: "Shadow offset Y",
+  textOutline: "Text outline", outlineColor: "Outline color", outlineWidth: "Outline width",
+  frameDesign: "Frame design", frameNone: "None", frameFill: "Fill", frameOutline: "Border", frameGlass: "Glass",
+  cornerRadius: "Corner radius", glassBlur: "Background blur", frameDetails: "Frame colors, opacity & border", frameColor: "Background color", frameOpacity: "Tint opacity", frameBorderColor: "Border color", frameBorderWidth: "Border width",
   totalPrice: "Total cost",
   totalCount: "{count} prices included",
   totalIncludesHidden: "Includes hidden prices",

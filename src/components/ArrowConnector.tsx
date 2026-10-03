@@ -8,20 +8,22 @@ import {
   drawRoundedRoute,
 } from "../lib/connectorRouting";
 import { loopGeometry } from "../lib/loopGeometry";
+import { frameObstacles, type AppearanceObstacle } from "../lib/labelAppearance";
 export function ArrowConnector({
   label,
   height,
-  obstacles,
+  obstacles: rawObstacles,
   onSelect,
   scale,
 }: {
   label: ProductLabel;
   height: number;
-  obstacles: Box[];
+  obstacles: AppearanceObstacle[];
   onSelect: () => void;
   scale: number;
 }) {
-  const box = { x: label.x, y: label.y, width: label.boxWidth ?? 330, height },
+  const obstacles = frameObstacles(rawObstacles,label.id);
+  const box = { x: label.x, y: label.y, width: label.boxWidth ?? 330, height, cornerRadius: label.frame && label.frame.style !== "none" ? label.frame.radius ?? 12 : 0 },
     target = { x: label.arrowTargetX, y: label.arrowTargetY };
   const geometry = arrowGeometry(
     box,

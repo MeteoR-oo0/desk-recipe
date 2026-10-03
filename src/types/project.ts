@@ -1,4 +1,14 @@
 export type Language = "ja" | "en";
+export type TextEffects = {
+  shadowEnabled?: boolean; shadowColor?: string; shadowBlur?: number;
+  shadowOpacity?: number; shadowOffsetX?: number; shadowOffsetY?: number;
+  outlineEnabled?: boolean; outlineColor?: string; outlineWidth?: number;
+};
+export type LabelFrame = {
+  style: "none" | "fill" | "outline" | "glass";
+  fillColor?: string; opacity?: number; borderColor?: string;
+  borderWidth?: number; radius?: number; blur?: number;
+};
 export type ArrowAnchor = {
   edge: "top" | "right" | "bottom" | "left";
   t: number;
@@ -29,6 +39,8 @@ export type ProductLabel = {
     | "Zen Old Mincho"
     | "Kiwi Maru";
   textColor: string;
+  textEffects?: TextEffects;
+  frame?: LabelFrame;
   arrowColor: string;
   arrowWidth: number;
   arrowType: "curve" | "line" | "polyline" | "swirl";
@@ -56,7 +68,7 @@ export type ProjectData = {
   labels: ProductLabel[];
   priceMode: PriceMode;
   priceFormat: "yen" | "suffix" | "number";
-  adjustment: { brightness: number; contrast: number; overlay: number };
+  adjustment: { brightness: number; contrast: number; overlay: number; blur?: number };
 };
 export const makeLabel = (x: number, y: number): ProductLabel => ({
   id: crypto.randomUUID(),

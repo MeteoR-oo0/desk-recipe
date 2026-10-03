@@ -1,4 +1,5 @@
 import type { ProductLabel } from "../types/project";
+import { validAppearance } from "./labelAppearance.ts";
 const PREFIX = "DESK_RECIPE_LABEL\n";
 export const serializeLabel = (label: ProductLabel) =>
   PREFIX + JSON.stringify(label);
@@ -88,7 +89,7 @@ export function parseClipboardLabel(text: string): ProductLabel | null {
         l.arrowAnchor.t > 1)
     )
       return null;
-    return l;
+    return validAppearance(l) ? l : null;
   } catch {
     return null;
   }

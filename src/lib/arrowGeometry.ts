@@ -1,5 +1,5 @@
 import type { ArrowAnchor } from "../types/project";
-export type Box = { x: number; y: number; width: number; height: number };
+export type Box = { x: number; y: number; width: number; height: number; cornerRadius?: number };
 const GAP = 14;
 export function perimeterAnchor(
   box: Box,
@@ -39,13 +39,29 @@ export function anchorPoint(box: Box, anchor: ArrowAnchor) {
     right = box.x + box.width + GAP,
     top = box.y - GAP,
     bottom = box.y + box.height + GAP;
-  return anchor.edge === "left"
+  const point = anchor.edge === "left"
     ? { x: left, y: top + (bottom - top) * anchor.t }
     : anchor.edge === "right"
       ? { x: right, y: top + (bottom - top) * anchor.t }
       : anchor.edge === "top"
         ? { x: left + (right - left) * anchor.t, y: top }
         : { x: left + (right - left) * anchor.t, y: bottom };
+  const r = Math.min(Math.max(0,box.cornerRadius ?? 0),(right-left)/2,(bottom-top)/2);
+  if (!r) return point;
+  if (anchor.edge === "top" || anchor.edge === "bottom") {
+    const cx = point.x < left+r ? left+r : point.x > right-r ? right-r : undefined;
+    if (cx !== undefined) {
+      const sign = anchor.edge === "top" ? -1 : 1, cy = anchor.edge === "top" ? top+r : bottom-r;
+      point.y = cy + sign*Math.sqrt(Math.max(0,r*r-(point.x-cx)**2));
+    }
+  } else {
+    const cy = point.y < top+r ? top+r : point.y > bottom-r ? bottom-r : undefined;
+    if (cy !== undefined) {
+      const sign = anchor.edge === "left" ? -1 : 1, cx = anchor.edge === "left" ? left+r : right-r;
+      point.x = cx + sign*Math.sqrt(Math.max(0,r*r-(point.y-cy)**2));
+    }
+  }
+  return point;
 }
 export function automaticAnchor(
   box: Box,

@@ -1,4 +1,5 @@
 import type { ProjectData, Photo, ProductLabel } from "../types/project";
+import { validAppearance } from "./labelAppearance.ts";
 export const MAX_PREVIEW = 1600;
 export async function decodeImage(src: string) {
   const image = new Image();
@@ -61,13 +62,29 @@ export function adjustedImage(
   image: HTMLImageElement,
   brightness: number,
   contrast: number,
+  blur = 0,
+  canvas?: {width:number;height:number},
 ) {
   const c = document.createElement("canvas");
   c.width = image.width;
   c.height = image.height;
   const ctx = c.getContext("2d")!;
-  ctx.filter = `brightness(${1 + brightness / 100}) contrast(${1 + contrast / 100})`;
-  ctx.drawImage(image, 0, 0);
+  const cover = canvas ? Math.max(canvas.width/image.width,canvas.height/image.height) : 1;
+  const sourceBlur = blur/cover;
+  ctx.filter = `brightness(${1 + brightness / 100}) contrast(${1 + contrast / 100}) blur(${sourceBlur}px)`;
+  if (blur > 0) {
+    const pad = Math.ceil(sourceBlur*3+2), raw = document.createElement("canvas");
+    raw.width = image.width+pad*2; raw.height = image.height+pad*2;
+    const r = raw.getContext("2d")!;
+    r.drawImage(image,pad,pad);
+    r.drawImage(image,0,0,1,image.height,0,pad,pad,image.height);
+    r.drawImage(image,image.width-1,0,1,image.height,pad+image.width,pad,pad,image.height);
+    r.drawImage(image,0,0,image.width,1,pad,0,image.width,pad);
+    r.drawImage(image,0,image.height-1,image.width,1,pad,pad+image.height,image.width,pad);
+    for (const [sx,sy,dx,dy] of [[0,0,0,0],[image.width-1,0,pad+image.width,0],[0,image.height-1,0,pad+image.height],[image.width-1,image.height-1,pad+image.width,pad+image.height]])
+      r.drawImage(image,sx,sy,1,1,dx,dy,pad,pad);
+    ctx.drawImage(raw,-pad,-pad);
+  } else ctx.drawImage(image, 0, 0);
   return c;
 }
 export function exportDimensions(
@@ -120,6 +137,7 @@ export function parseProject(text: string): {
     !finite(p.adjustment.brightness, -50, 50) ||
     !finite(p.adjustment.contrast, -50, 50) ||
     !finite(p.adjustment.overlay, 0, 70)
+    || (p.adjustment.blur !== undefined && !finite(p.adjustment.blur,0,30))
   )
     throw Error("Invalid project");
   const ids = new Set();
@@ -193,6 +211,7 @@ export function parseProject(text: string): {
     )
       throw Error("Invalid anchor");
     ids.add(l.id);
+    if (!validAppearance(l)) throw Error("Invalid label appearance");
   }
   return { project: p, image };
 }

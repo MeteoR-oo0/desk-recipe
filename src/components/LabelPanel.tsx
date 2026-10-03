@@ -12,6 +12,7 @@ import { loopGeometry } from "../lib/loopGeometry";
 import { labelLayout, formatPrice } from "../lib/labelLayout";
 import { FontPicker } from "./FontPicker";
 import type { Translation } from "../lib/i18n";
+import { TextAppearanceControls, FrameAppearanceControls } from "./AppearanceControls";
 export function LabelPanel({
   label,
   t,
@@ -56,7 +57,7 @@ export function LabelPanel({
       visiblePrice,
     ).height;
   const loop = loopGeometry(
-    { x: label.x, y: label.y, width: label.boxWidth ?? 330, height },
+    { x: label.x, y: label.y, width: label.boxWidth ?? 330, height, cornerRadius: label.frame && label.frame.style !== "none" ? label.frame.radius ?? 12 : 0 },
     { x: label.arrowTargetX, y: label.arrowTargetY },
     label.arrowAnchor,
     label.loopPosition,
@@ -96,6 +97,7 @@ export function LabelPanel({
       </section>
       <section className="form-section" data-guide="box" hidden={!!section && section !== "box"}>
         <h3>{t.boxSize}</h3>
+        <FrameAppearanceControls label={label} t={t} onChange={onChange} onEnd={onEnd}/>
         <p className="field-note">{t.resizeHint}</p>
         <label className="range-label">
           {t.boxWidth}
@@ -192,6 +194,7 @@ export function LabelPanel({
             onBlur={onEnd}
           />
         </label>
+        <TextAppearanceControls label={label} t={t} onChange={onChange} onEnd={onEnd}/>
       </section>
       <section className="form-section" data-guide="arrow" hidden={!!section && section !== "arrow"}>
         <h3>{t.arrow}</h3>

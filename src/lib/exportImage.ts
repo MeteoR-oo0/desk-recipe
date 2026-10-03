@@ -1,6 +1,8 @@
 import Konva from "konva";
 import type { ProjectData } from "../types/project";
 import { decodeImage, adjustedImage, exportDimensions } from "./project";
+import { glassBackdrop } from "./glassBackdrop";
+import { labelLayout, formatPrice } from "./labelLayout";
 export async function exportImage(
   stage: Konva.Stage,
   project: ProjectData,
@@ -31,11 +33,13 @@ export async function exportImage(
       project.canvas.height / image.height,
     );
     const pixels =
-      project.adjustment.brightness || project.adjustment.contrast
+      project.adjustment.brightness || project.adjustment.contrast || project.adjustment.blur
         ? adjustedImage(
             image,
             project.adjustment.brightness,
             project.adjustment.contrast,
+            project.adjustment.blur ?? 0,
+            project.canvas,
           )
         : image;
     photo.setAttrs({
@@ -44,6 +48,12 @@ export async function exportImage(
       y: (project.canvas.height - image.height * cover) / 2,
       width: image.width * cover,
       height: image.height * cover,
+    });
+    clone.find(".glass-backdrop").forEach((node) => {
+      const label = project.labels.find((l) => l.id === node.getAttr("glassLabelId"));
+      if (!label) return;
+      const height = labelLayout({...label,price:formatPrice(label.price,project.priceFormat)},project.priceMode === "show" || (project.priceMode === "individual" && label.showPrice)).height;
+      (node as Konva.Image).image(glassBackdrop(pixels, project.canvas, project.adjustment.overlay, label, height, scale));
     });
     clone.draw();
     const blob = await clone.toBlob({

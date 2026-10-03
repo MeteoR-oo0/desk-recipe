@@ -72,9 +72,11 @@ export function CanvasEditor({
           image,
           project.adjustment.brightness,
           project.adjustment.contrast,
+          project.adjustment.blur ?? 0,
+          project.canvas,
         ),
       );
-  }, [image, project.adjustment.brightness, project.adjustment.contrast]);
+  }, [image, project.adjustment.brightness, project.adjustment.contrast, project.adjustment.blur, project.canvas.width, project.canvas.height]);
   useEffect(() => {
     let active = true;
     Promise.all(
@@ -159,6 +161,7 @@ export function CanvasEditor({
   });
   const obstacles = project.labels.map((l) => ({
     id: l.id,
+    framePadding: l.frame && l.frame.style !== "none" ? 14 + (l.frame.borderWidth ?? 1)/2 : 0,
     x: l.x,
     y: l.y,
     width: l.boxWidth ?? 330,
@@ -263,6 +266,8 @@ export function CanvasEditor({
               obstacles={obstacles}
               scale={scale}
               bounds={project.canvas}
+              photoPixels={pixels ?? image}
+              overlay={project.adjustment.overlay}
               selected={selectedId === label.id}
               priceMode={project.priceMode}
               priceFormat={project.priceFormat}
