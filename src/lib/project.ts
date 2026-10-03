@@ -134,6 +134,8 @@ export function parseProject(text: string): {
     p.labels.length > 200 ||
     !["individual", "show", "hide"].includes(p.priceMode) ||
     (p.showTotalPrice !== undefined && typeof p.showTotalPrice !== "boolean") ||
+    (p.numberStyle !== undefined && !["none","plain","dot","paren","circle"].includes(p.numberStyle)) ||
+    (p.tableShowPrices !== undefined && typeof p.tableShowPrices !== "boolean") ||
     !["yen", "suffix", "number"].includes(p.priceFormat) ||
     !p.adjustment ||
     !finite(p.adjustment.brightness, -50, 50) ||

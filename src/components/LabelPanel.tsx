@@ -84,7 +84,7 @@ export function LabelPanel({
             />
           </label>
         ))}
-        <label>{t.labelNumber}<input inputMode="numeric" maxLength={4} placeholder={t.numberHint} value={label.labelNumber??""} onChange={e=>onChange({labelNumber:e.target.value.normalize("NFKC").replace(/[^0-9]/g,"")},"number")} onBlur={onEnd}/></label>
+        <p className="field-note">{t.numberAutoHint}</p>
         <label className="switch-row">
           <span>{t.showPrice}</span>
           <input

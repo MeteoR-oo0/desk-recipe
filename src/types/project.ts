@@ -1,4 +1,5 @@
 export type Language = "ja" | "en";
+export type NumberStyle = "none" | "plain" | "dot" | "paren" | "circle";
 export type TextEffects = {
   shadowEnabled?: boolean; shadowColor?: string; shadowBlur?: number;
   shadowOpacity?: number; shadowOffsetX?: number; shadowOffsetY?: number;
@@ -70,6 +71,8 @@ export type ProjectData = {
   labels: ProductLabel[];
   priceMode: PriceMode;
   showTotalPrice?: boolean;
+  numberStyle?: NumberStyle;
+  tableShowPrices?: boolean;
   priceFormat: "yen" | "suffix" | "number";
   adjustment: { brightness: number; contrast: number; overlay: number; blur?: number };
 };

@@ -5,10 +5,11 @@ import type { Translation } from "../lib/i18n";
 import "../mobile-editor.css";
 import { PriceSummary } from "./PriceSummary";
 import { LabelOrderList } from "./LabelOrderList";
+import { NumberStylePicker } from "./NumberStylePicker";
 
 export type MobilePanel = "photo" | "labels" | "edit" | "more" | null;
 export type LabelSection = "content" | "type" | "arrow" | "box";
-export function MobileControls({ p, t, lang, selected, panel, onPanel, section, onSection, mode, onMode, onSelect, onAdd, onDuplicate, onCopy, onPaste, onDelete, onLanguage, onHelp, onAbout, onTable, onMove, canUndo, canRedo, onUndo, onRedo, editing, settings, projectActions }: {
+export function MobileControls({ p, t, lang, selected, panel, onPanel, section, onSection, mode, onMode, onSelect, onAdd, onDuplicate, onCopy, onPaste, onDelete, onLanguage, onHelp, onAbout, onTable, onMove, onNumberStyle, canUndo, canRedo, onUndo, onRedo, editing, settings, projectActions }: {
   p: ProjectData; t: Translation; lang: Language; selected?: ProductLabel;
   panel: MobilePanel; onPanel: (p: MobilePanel) => void;
   section: LabelSection; onSection: (s: LabelSection) => void;
@@ -17,6 +18,7 @@ export function MobileControls({ p, t, lang, selected, panel, onPanel, section, 
   onDuplicate: () => void; onCopy: () => void; onPaste: () => void; onDelete: () => void;
   onLanguage: () => void; onHelp: () => void;
   onAbout: () => void;
+  onNumberStyle: (s: NonNullable<ProjectData["numberStyle"]>) => void;
   onTable: () => void; onMove: (id:string,to:number) => void;
   canUndo: boolean; canRedo: boolean; onUndo: () => void; onRedo: () => void;
   editing: ReactNode; settings: ReactNode; projectActions: ReactNode;
@@ -46,7 +48,8 @@ export function MobileControls({ p, t, lang, selected, panel, onPanel, section, 
           <p className="field-note">{t.listHint}</p>
           <button className="table-open" onClick={onTable}>{t.tableTitle}</button>
           <p className="field-note">{t.reorderHint}</p>
-          <LabelOrderList labels={p.labels} selectedId={selected?.id ?? null} t={t} onMove={onMove} onSelect={id=>{onSelect(id);onPanel(null);onMode("select");}}/>
+          <NumberStylePicker t={t} value={p.numberStyle??"dot"} onChange={onNumberStyle}/>
+          <LabelOrderList numberStyle={p.numberStyle??"dot"} labels={p.labels} selectedId={selected?.id ?? null} t={t} onMove={onMove} onSelect={id=>{onSelect(id);onPanel(null);onMode("select");}}/>
           <button className="primary" onClick={onAdd}><Plus size={18}/>{t.addLabel}</button>
         </div>}
         {panel === "more" && <div className="mobile-more">

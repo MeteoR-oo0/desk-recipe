@@ -2,6 +2,7 @@ import Konva from "konva";
 import type { ProjectData } from "../types/project";
 import { decodeImage, adjustedImage, exportDimensions } from "./project";
 import { glassBackdrop } from "./glassBackdrop";
+import {formatLabelNumber} from "./labelOrder";
 import { labelLayout, formatPrice } from "./labelLayout";
 export async function exportImage(
   stage: Konva.Stage,
@@ -52,7 +53,7 @@ export async function exportImage(
     clone.find(".glass-backdrop").forEach((node) => {
       const label = project.labels.find((l) => l.id === node.getAttr("glassLabelId"));
       if (!label) return;
-      const height = labelLayout({...label,price:formatPrice(label.price,project.priceFormat)},project.priceMode === "show" || (project.priceMode === "individual" && label.showPrice)).height;
+      const height = labelLayout({...label,labelNumber:formatLabelNumber(project.labels.findIndex(l=>l.id===label.id)+1,project.numberStyle),price:formatPrice(label.price,project.priceFormat)},project.priceMode === "show" || (project.priceMode === "individual" && label.showPrice)).height;
       (node as Konva.Image).image(glassBackdrop(pixels, project.canvas, project.adjustment.overlay, label, height, scale));
     });
     clone.draw();

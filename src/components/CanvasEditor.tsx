@@ -5,6 +5,7 @@ import { ProductLabel } from "./ProductLabel";
 import { useCanvasZoom } from "../hooks/useCanvasZoom";
 import { labelLayout, formatPrice } from "../lib/labelLayout";
 import { adjustedImage } from "../lib/project";
+import {formatLabelNumber,numberedBrand} from "../lib/labelOrder";
 import type { ProjectData, ProductLabel as Label } from "../types/project";
 export type CanvasHandle = {
   stage: Konva.Stage | null;
@@ -80,10 +81,10 @@ export function CanvasEditor({
   useEffect(() => {
     let active = true;
     Promise.all(
-      project.labels.flatMap((l) => [
-        document.fonts.load(`400 17px "${l.fontFamily}"`, l.brand + l.price),
+      project.labels.flatMap((l,i) => [
+        document.fonts.load(`400 17px "${l.fontFamily}"`, numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price),
         document.fonts.load(`700 28px "${l.fontFamily}"`, l.productName),
-        document.fonts.load('400 17px "Zen Maru Gothic"', l.brand + l.price),
+        document.fonts.load('400 17px "Zen Maru Gothic"', numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price),
         document.fonts.load('700 28px "Zen Maru Gothic"', l.productName),
       ]),
     ).then(() => {
@@ -95,7 +96,7 @@ export function CanvasEditor({
   }, [
     project.labels
       .map((l) => l.fontFamily + l.brand + l.productName + l.price)
-      .join(","),
+      .join(",") + (project.numberStyle??"dot"),
   ]);
   useEffect(() => {
     handle.current = {
@@ -108,7 +109,7 @@ export function CanvasEditor({
       focusLabel: (id) => {
         const l = project.labels.find((item) => item.id === id);
         if (!l) return;
-        const h = labelLayout(l, project.priceMode === "show" || (project.priceMode === "individual" && l.showPrice)).height;
+        const h = labelLayout({...l,labelNumber:formatLabelNumber(project.labels.findIndex(item=>item.id===id)+1,project.numberStyle)}, project.priceMode === "show" || (project.priceMode === "individual" && l.showPrice)).height;
         const left = Math.min(l.x - 20, l.arrowTargetX - 20), right = Math.max(l.x + (l.boxWidth ?? 330) + 20, l.arrowTargetX + 20);
         const top = Math.min(l.y - 20, l.arrowTargetY - 20), bottom = Math.max(l.y + h + 20, l.arrowTargetY + 20);
         const padding = size.width <= 800 ? 20 : 48;
@@ -119,7 +120,7 @@ export function CanvasEditor({
         setPan({ x: (project.canvas.width / 2 - (left + right) / 2) * s, y: (project.canvas.height / 2 - (top + bottom) / 2) * s });
       },
     };
-  }, [image, handle, onZoom, size, project.labels, project.canvas, project.priceMode]);
+  }, [image, handle, onZoom, size, project.labels, project.canvas, project.priceMode, project.numberStyle]);
   useEffect(() => {
     setPan({ x: 0, y: 0 });
     onZoom(1);
@@ -159,14 +160,14 @@ export function CanvasEditor({
         .forEach((n) => n.stopDrag());
     },
   });
-  const obstacles = project.labels.map((l) => ({
+  const obstacles = project.labels.map((l,i) => ({
     id: l.id,
     framePadding: l.frame && l.frame.style !== "none" ? 14 + (l.frame.borderWidth ?? 1)/2 : 0,
     x: l.x,
     y: l.y,
     width: l.boxWidth ?? 330,
     height: labelLayout(
-      { ...l, price: formatPrice(l.price, project.priceFormat) },
+      { ...l, labelNumber:formatLabelNumber(i+1,project.numberStyle), price: formatPrice(l.price, project.priceFormat) },
       project.priceMode === "show" ||
         (project.priceMode === "individual" && l.showPrice),
     ).height,
@@ -257,10 +258,10 @@ export function CanvasEditor({
             fill="black"
             opacity={project.adjustment.overlay / 100}
           />
-          {project.labels.map((label) => (
+          {project.labels.map((label,index) => (
             <ProductLabel
               key={label.id}
-              label={label}
+              label={{...label,labelNumber:formatLabelNumber(index+1,project.numberStyle)}}
               panMode={mode === "pan"}
               fontRevision={fontRevision}
               obstacles={obstacles}

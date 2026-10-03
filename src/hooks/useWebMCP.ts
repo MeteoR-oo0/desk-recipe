@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { ProjectData, ProductLabel } from "../types/project";
+import {formatLabelNumber} from "../lib/labelOrder";
 type Context = {
   registerTool: (
     tool: Record<string, unknown>,
@@ -59,7 +60,8 @@ export function useWebMCP(
       () => ({
         canvas: current.current.project.canvas,
         priceMode: current.current.project.priceMode,
-        labels: current.current.project.labels,
+        numberStyle: current.current.project.numberStyle ?? "dot",
+        labels: current.current.project.labels.map((label,index)=>({...label,automaticNumber:index+1,displayNumber:formatLabelNumber(index+1,current.current.project.numberStyle)})),
       }),
       true,
     );
