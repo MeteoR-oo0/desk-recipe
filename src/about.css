@@ -6,6 +6,8 @@
 .about-brand strong { font-size: 20px; color: #294f3d; }
 .about-brand small { font-size: 10px; letter-spacing: 1.4px; color: #708d7b; }
 .about-content .about-intro { color: #4b6958; }
+.about-content .about-creator { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; font-size: 13px; color: #708677; }
+.about-creator strong { color: #365d46; }
 .about-section h3 { display: flex; align-items: center; gap: 7px; color: #3f7158; margin-bottom: 7px; }
 .about-section p + p { margin-top: 6px; }
 .about-credit { padding: 15px; border: 1px solid #dce8e0; background: #f1f7f3; border-radius: 10px; }

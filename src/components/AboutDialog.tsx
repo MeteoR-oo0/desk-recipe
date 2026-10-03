@@ -7,6 +7,7 @@ export function AboutDialog({ t, onClose, onHelp }: { t: Translation; onClose: (
   return <Modal title={t.about} closeText={t.close} onClose={onClose}>
     <div className="about-content">
       <div className="about-brand"><span><Camera size={26}/></span><div><strong>{t.app}</strong><small>DESK RECIPE STUDIO</small></div></div>
+      <p className="about-creator"><span>{t.aboutCreator}</span><strong>めてお</strong><span>@Meteor_oo0</span></p>
       <p className="about-intro">{t.aboutDescription}</p>
       <section className="about-credit"><span><Code2 size={18}/>Made with Codex</span><p>{t.aboutCredit}</p></section>
       <section className="about-section"><h3><Sparkles size={17}/>{t.aboutFeaturesTitle}</h3><p>{t.aboutFeatures}</p></section>

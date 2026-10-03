@@ -1,6 +1,7 @@
 import type { Language } from "../types/project";
 const ja = {
   about: "このアプリについて",
+  aboutCreator: "制作者",
   aboutDescription: "デスク写真に、製品名・ブランド・価格と矢印を添えて、あなたのこだわりを伝える画像を作るエディターです。",
   aboutFeaturesTitle: "できること",
   aboutFeatures: "ラベルと矢印の配置、フォント・文字装飾・枠デザインの変更、価格の合計表示に対応。完成した画像はPNG・JPEGで保存できます。日本語・英語で使えます。",
@@ -206,6 +207,7 @@ const ja = {
 };
 const en: typeof ja = {
   about: "About this app",
+  aboutCreator: "Creator",
   aboutDescription: "An editor for adding product names, brands, prices and arrows to your desk photos, so you can share the details of your setup.",
   aboutFeaturesTitle: "What you can do",
   aboutFeatures: "Place labels and arrows, customize fonts, text effects and frames, and see the total cost. Save your finished image as PNG or JPEG. Available in Japanese and English.",
