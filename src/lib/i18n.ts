@@ -1,5 +1,11 @@
 import type { Language } from "../types/project";
 const ja = {
+  cropTitle:"切り抜き・余白を追加",cropHint:"枠の内側をドラッグして移動、丸いハンドルでサイズ変更。写真の外まで枠を広げると余白を追加できます。",
+  cropOriginal:"現在の範囲",cropInside:"内側を切り抜く",cropExpand:"外側へ広げる",cropPreview:"切り抜き範囲のプレビュー",cropX:"左位置",cropY:"上位置",cropWidth:"幅",cropHeight:"高さ",cropFree:"自由サイズ",
+  cropBackground:"余白の背景",cropColor:"背景色",cropBlur:"写真のぼかし",cropTransparent:"透明",cropBlurStrength:"背景のぼかしの強さ",cropApply:"この範囲で適用",
+  cropCutNote:"範囲外のラベルは画像に表示されません。位置と編集内容は保持し、「元に戻す」で取り消せます。",
+  cropExpandNote:"写真の外側に余白を追加します。背景を色・ぼかした写真・透明から選べます。",
+  cropError:"切り抜きを準備できませんでした。範囲の大きさを調整してお試しください。",
   labelVisibility: "ラベルの表示", hideLabel: "ラベルを非表示にする", showLabel: "ラベルを表示する", hiddenLabelNote: "このラベルは非表示です。一覧の目のボタンで表示できます。",
   description: "説明文", descriptionSize: "説明文の文字サイズ", fontWeight: "文字の太さ",
   labelImage: "ラベル画像", addImage: "画像を追加", replaceImage: "画像を差し替え", removeImage: "画像を削除",
@@ -233,6 +239,11 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  cropTitle:"Crop & extend canvas",cropHint:"Drag inside the frame to move it, or use the round handles to resize. Extend the frame beyond the photo to add space.",
+  cropOriginal:"Current bounds",cropInside:"Crop inside",cropExpand:"Extend outside",cropPreview:"Crop selection preview",cropX:"Left",cropY:"Top",cropWidth:"Width",cropHeight:"Height",cropFree:"Custom size",
+  cropBackground:"Added space background",cropColor:"Background color",cropBlur:"Blurred photo",cropTransparent:"Transparent",cropBlurStrength:"Background blur strength",cropApply:"Apply this frame",
+  cropCutNote:"Labels outside the frame will not appear in the image. Their positions and edits are retained, and you can undo the crop.",
+  cropExpandNote:"Add space outside the photo, with a color, blurred photo or transparent background.",cropError:"Could not prepare the crop. Try adjusting the frame size.",
   labelVisibility: "Label visibility", hideLabel: "Hide label", showLabel: "Show label", hiddenLabelNote: "This label is hidden. Use the eye button in the list to show it.",
   description: "Description", descriptionSize: "Description text size", fontWeight: "Font weight",
   labelImage: "Label image", addImage: "Add image", replaceImage: "Replace image", removeImage: "Remove image",

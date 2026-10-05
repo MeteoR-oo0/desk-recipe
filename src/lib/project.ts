@@ -2,6 +2,7 @@ import type { ProjectData, Photo, ProductLabel } from "../types/project";
 import { validAppearance } from "./labelAppearance.ts";
 import { validLabelNumber } from "./labelOrder.ts";
 import { validLabelMedia } from "./labelMedia.ts";
+import {validCanvasBackground} from "./canvasBackground.ts";
 export const MAX_PREVIEW = 1600;
 export async function decodeImage(src: string) {
   const image = new Image();
@@ -9,15 +10,14 @@ export async function decodeImage(src: string) {
   await image.decode();
   return image;
 }
-export async function photoFromBlob(blob: Blob, name: string): Promise<Photo> {
+export async function photoFromBlob(blob: Blob, name: string, extended=false): Promise<Photo> {
   const url = URL.createObjectURL(blob);
   try {
     const image = await decodeImage(url);
     if (
       !image.width ||
       !image.height ||
-      image.width / image.height > 12 ||
-      image.height / image.width > 10
+      (!extended && (image.width / image.height > 12 || image.height / image.width > 10))
     )
       throw Error("Invalid image");
     const scale = Math.min(
@@ -126,9 +126,9 @@ export function parseProject(text: string): {
     !finite(p.photo.width, 1, 50000) ||
     !finite(p.photo.height, 1, 50000) ||
     !p.canvas ||
-    p.canvas.width !== 1200 ||
+    !finite(p.canvas.width,100,12000) ||
     !finite(p.canvas.height, 100, 12000) ||
-    !["Original", "16:9", "4:3", "1:1", "4:5", "9:16"].includes(
+    !["Original", "Custom", "16:9", "4:3", "1:1", "4:5", "9:16"].includes(
       p.canvas.aspectRatio,
     ) ||
     !Array.isArray(p.labels) ||
@@ -138,7 +138,7 @@ export function parseProject(text: string): {
     (p.numberStyle !== undefined && !["none","plain","dot","paren","circle"].includes(p.numberStyle)) ||
     (p.tableShowPrices !== undefined && typeof p.tableShowPrices !== "boolean") ||
     !["yen", "suffix", "number"].includes(p.priceFormat) ||
-    !p.adjustment ||
+    !validCanvasBackground(p.background) || !p.adjustment ||
     !finite(p.adjustment.brightness, -50, 50) ||
     !finite(p.adjustment.contrast, -50, 50) ||
     !finite(p.adjustment.overlay, 0, 70)
@@ -174,7 +174,7 @@ export function parseProject(text: string): {
       ) ||
       typeof l.showPrice !== "boolean" ||
       !["x", "y", "arrowTargetX", "arrowTargetY"].every((k) =>
-        finite((l as any)[k], -1000, 20000),
+        finite((l as any)[k], -1000000, 1000000),
       ) ||
       !["fontSizeBrand", "fontSizeProduct", "fontSizePrice"].every((k) =>
         finite((l as any)[k], 8, 120),
@@ -203,10 +203,10 @@ export function parseProject(text: string): {
       l.loopPosition &&
       (!Number.isFinite(l.loopPosition.x) ||
         !Number.isFinite(l.loopPosition.y) ||
-        l.loopPosition.x < -1000 ||
-        l.loopPosition.x > 20000 ||
-        l.loopPosition.y < -1000 ||
-        l.loopPosition.y > 20000)
+        l.loopPosition.x < -1000000 ||
+        l.loopPosition.x > 1000000 ||
+        l.loopPosition.y < -1000000 ||
+        l.loopPosition.y > 1000000)
     )
       throw Error("Invalid loop");
     if (
@@ -232,6 +232,7 @@ export function createPhotoProject(
   return {
     ...current,
     photo,
+    background:undefined,
     labels: [],
     adjustment: { brightness: 0, contrast: 0, overlay: 0 },
     canvas: {

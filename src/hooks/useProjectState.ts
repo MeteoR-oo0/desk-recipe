@@ -127,7 +127,7 @@ export function useProjectState() {
   }, [history.value, ready, getOriginal]);
   const setPhoto = useCallback(
     async (blob: Blob, name: string, project?: ProjectData) => {
-      const photo = await photoFromBlob(blob, name);
+      const photo = await photoFromBlob(blob, name,!!project);
       assets.current.set(photo.id, blob);
       history.update((current) => createPhotoProject(current, photo, project));
       return photo;

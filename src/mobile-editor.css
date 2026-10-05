@@ -44,7 +44,7 @@
   .mobile-inspector .section-heading { display: none; }
   .mobile-inspector .form-section { margin-bottom: 0; padding-bottom: 12px; gap: 12px; border-bottom: 0; }
   .mobile-inspector .form-section + .form-section { padding-top: 16px; border-top: 1px solid var(--border); }
-  .mobile-inspector input:not([type="range"]):not([type="color"]):not([type="checkbox"]), .mobile-inspector select { height: 44px; font-size: 16px; }
+  .mobile-inspector input:not([type="range"]):not([type="color"]):not([type="checkbox"]):not([type="radio"]), .mobile-inspector select { height: 44px; font-size: 16px; }
   .mobile-inspector button { min-height: 44px; }
   .mobile-inspector input[type="range"] { height: 28px; margin: 0; }
   .mobile-inspector input[type="color"] { width: 44px; height: 44px; }

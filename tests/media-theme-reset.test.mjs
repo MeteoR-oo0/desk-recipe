@@ -31,7 +31,7 @@ test("Inter and Montserrat explicitly use Noto Sans JP for Japanese",()=>{
 test("appearance settings validate stored values and retain both mode and main color",()=>{
   assert.deepEqual(parseTheme('{"mode":"dark","color":"purple"}'),{mode:"dark",color:"purple"});
   assert.deepEqual(parseTheme('{"mode":"system","color":"blue"}'),{mode:"system",color:"blue"});
-  for(const value of [null,"broken",'{"mode":"invalid","color":"blue"}', '{"mode":"dark","color":"invalid"}']) assert.deepEqual(parseTheme(value),{mode:"light",color:"green"});
+  for(const value of [null,"broken",'{"mode":"invalid","color":"blue"}', '{"mode":"dark","color":"invalid"}']) assert.deepEqual(parseTheme(value),{mode:"system",color:"green"});
 });
 test("reset retains the chosen photo when requested and restores sample data otherwise",()=>{
   const current=initialProject();current.photo={...current.photo,id:"custom",name:"photo.png",width:1200,height:1600};current.adjustment.overlay=35;current.labels[0].image=picture;

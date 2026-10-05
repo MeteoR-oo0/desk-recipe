@@ -211,7 +211,7 @@ svg {
   font-weight: 600;
   color: var(--muted);
 }
-input:not([type="range"]):not([type="color"]):not([type="checkbox"]),
+input:not([type="range"]):not([type="color"]):not([type="checkbox"]):not([type="radio"]),
 select {
   width: 100%;
   border: 1px solid var(--border);
@@ -963,7 +963,7 @@ input[type="color"] {
     min-height: 34px;
   }
   .mobile-sheet
-    input:not([type="range"]):not([type="color"]):not([type="checkbox"]),
+    input:not([type="range"]):not([type="color"]):not([type="checkbox"]):not([type="radio"]),
   .mobile-sheet select {
     font-size: 16px;
   }

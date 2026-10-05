@@ -14,6 +14,11 @@ import { ScreenTutorial } from "./components/ScreenTutorial";
 import { AboutDialog } from "./components/AboutDialog";
 import { ThemeDialog } from "./components/ThemeDialog";
 import { ResetDialog } from "./components/ResetDialog";
+import {CropDialog} from "./components/CropDialog";
+import {cropPhoto,croppedProject,type CropRect} from "./lib/crop";
+import type {CanvasBackground} from "./types/project";
+import {PanelSection} from "./components/PanelSection";
+import "./crop.css";
 import { resetProject } from "./lib/resetProject";
 import { useTheme } from "./hooks/useTheme";
 import { ProductTableDialog } from "./components/ProductTableDialog";
@@ -110,12 +115,16 @@ export default function App() {
   };
   const photoInput = useRef<HTMLInputElement>(null),
     projectInput = useRef<HTMLInputElement>(null),
-    [dialog, setDialog] = useState<"export" | "about" | "table" | "apply-frame" | "theme" | "reset" | null>(null),
+    [dialog, setDialog] = useState<"export" | "about" | "table" | "apply-frame" | "theme" | "reset" | "crop" | null>(null),
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState<{ text: string; error?: boolean } | null>(
       null,
     ),
     install = useInstall();
+  const [cropPreview,setCropPreview]=useState<string|null>(null);
+  useEffect(()=>()=>{if(cropPreview)URL.revokeObjectURL(cropPreview);},[cropPreview]);
+  const openCrop=async()=>{setBusy(true);try{if(!handle.current.stage)throw Error("Not ready");const original=await history.getOriginal(p.photo.id,p.photo.previewSrc);const preview=await exportImage(handle.current.stage,{...p,background:{mode:"transparent",color:"#ffffff",blur:20}},original,"png","standard");setCropPreview(URL.createObjectURL(preview));setDialog("crop");}catch{setToast({text:t.cropError,error:true});}finally{setBusy(false);}};
+  const applyCrop=async(rect:CropRect,background:CanvasBackground)=>{setBusy(true);try{const original=await history.getOriginal(p.photo.id,p.photo.previewSrc);const result=await cropPhoto(original,p,rect);const project=croppedProject(p,rect,{...background,image:result.backgroundImage});await history.setPhoto(result.blob,p.photo.name.replace(/(?:-crop)*\.[^.]+$/,"")+"-crop.png",project);setSelectedId(null);setMobilePanel(null);setDialog(null);setCropPreview(null);handle.current.resetView?.();}finally{setBusy(false);}};
   useEffect(() => {
     try {
       localStorage.setItem("desk-recipe-language", lang);
@@ -388,6 +397,7 @@ export default function App() {
       onUpdate={history.update}
       onEnd={history.endGroup}
       onUpload={() => photoInput.current?.click()}
+      onCrop={()=>void openCrop()}
     />
   );
   const editing = (section?: LabelSection) => (
@@ -449,11 +459,8 @@ export default function App() {
       <main className="editor-grid" inert={!history.ready || busy || !!dialog}>
         <aside className="left-sidebar">
           {settings}
-          <section className="label-list">
-            <div className="section-heading">
-              <h3>{t.labels}</h3>
-              <span className="count">{p.labels.length}</span>
-            </div>
+          <PanelSection title={`${t.labels} (${p.labels.length})`} defaultOpen><section className="label-list">
+
             <button className="table-open" onClick={() => setDialog("table")}>{t.tableTitle}</button>
             <p className="field-note">{t.reorderHint}</p>
             <NumberStylePicker t={t} value={p.numberStyle??"none"} onChange={numberStyleChange}/>
@@ -462,7 +469,7 @@ export default function App() {
               <Plus size={15} />
               {t.addLabel}
             </button>
-          </section>
+          </section></PanelSection>
           {projectActions}
           <p className="local-note">{t.localNote}</p>
         </aside>
@@ -497,6 +504,7 @@ export default function App() {
       {dialog === "table" && <ProductTableDialog p={p} t={t} colors={theme.tableColors} onClose={() => setDialog(null)} onPatch={patch} onMove={reorder} onNumberStyle={numberStyleChange} onPrices={tableShowPrices=>history.update(v=>({...v,tableShowPrices}))} onEnd={history.endGroup}/>}
       {dialog === "about" && <AboutDialog t={t} language={lang} onClose={() => setDialog(null)} onHelp={() => {setDialog(null);openGuide();}}/>}
       {dialog === "theme" && <ThemeDialog t={t} language={lang} value={theme.preference} onChange={theme.setPreference} onClose={()=>setDialog(null)}/>}
+      {dialog === "crop" && cropPreview && <CropDialog p={p} t={t} preview={cropPreview} onClose={()=>{setDialog(null);setCropPreview(null);}} onApply={applyCrop}/>}
       {dialog === "reset" && <ResetDialog t={t} onClose={()=>setDialog(null)} onReset={sample=>{history.update(current=>resetProject(current,sample));setSelectedId(null);setMode("select");setMobilePanel(null);setDialog(null);handle.current.resetView?.();}}/>}
       {toast && (
         <div className={"toast " + (toast.error ? "error" : "")} role="status">

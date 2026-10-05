@@ -66,7 +66,8 @@ export type LabelImage = {
   src: string; name: string; naturalWidth: number; naturalHeight: number;
   x: number; y: number; width: number; opacity: number; shadow?: TextEffects;
 };
-export type AspectRatio = "Original" | "16:9" | "4:3" | "1:1" | "4:5" | "9:16";
+export type AspectRatio = "Original" | "Custom" | "16:9" | "4:3" | "1:1" | "4:5" | "9:16";
+export type CanvasBackground = { mode:"color"|"blur"|"transparent"; color:string; blur:number; image?:string };
 export type PriceMode = "individual" | "show" | "hide";
 export type Photo = {
   id: string;
@@ -79,6 +80,7 @@ export type ProjectData = {
   version: 1;
   photo: Photo;
   canvas: { width: number; height: number; aspectRatio: AspectRatio };
+  background?: CanvasBackground;
   labels: ProductLabel[];
   priceMode: PriceMode;
   showTotalPrice?: boolean;

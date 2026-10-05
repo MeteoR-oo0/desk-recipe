@@ -1,3 +1,4 @@
+import {PanelSection} from "./PanelSection";
 import {
   AlignLeft,
   AlignCenter,
@@ -73,8 +74,8 @@ export function LabelPanel({
         <h2>{t.labelSettings}</h2>
       </div>
       {label.hidden&&<p className="field-note hidden-label-note">{t.hiddenLabelNote}</p>}
-      <section className="form-section" hidden={!!section && section !== "content"}>
-        {(["brand", "productName", "price"] as const).map((key) => (
+      <PanelSection title={t.editContent} defaultOpen collapsible={!section} hidden={!!section && section !== "content"}>
+        {(["brand", "productName"] as const).map((key) => (
           <label key={key}>
             {t[key]}
             <input
@@ -85,9 +86,7 @@ export function LabelPanel({
             />
           </label>
         ))}
-        <label>{t.description}<textarea value={label.description??""} rows={3} maxLength={1500} onChange={e=>onChange({description:e.target.value},"description")} onBlur={onEnd}/></label>
-        <LabelMediaControls key={label.id} label={label} visiblePrice={visiblePrice} t={t} onChange={onChange} onEnd={onEnd}/>
-        <p className="field-note">{t.numberAutoHint}</p>
+        <label>{t.price}<input value={label.price} maxLength={80} onChange={event=>onChange({price:event.target.value},"price")} onBlur={onEnd}/></label>
         <label className="switch-row">
           <span>{t.showPrice}</span>
           <input
@@ -100,9 +99,12 @@ export function LabelPanel({
         {priceMode !== "individual" && (
           <p className="field-note">{t.allOverride}</p>
         )}
-      </section>
-      <section className="form-section" data-guide="box" hidden={!!section && section !== "box"}>
-        <h3>{t.boxSize}</h3>
+        <label>{t.description}<textarea value={label.description??""} rows={3} maxLength={1500} onChange={e=>onChange({description:e.target.value},"description")} onBlur={onEnd}/></label>
+        <PanelSection title={t.labelImage}><LabelMediaControls key={label.id} label={label} visiblePrice={visiblePrice} t={t} onChange={onChange} onEnd={onEnd}/></PanelSection>
+        <p className="field-note">{t.numberAutoHint}</p>
+      </PanelSection>
+      <PanelSection title={t.boxSize} guide="box" collapsible={!section} hidden={!!section && section !== "box"}>
+
         <FrameAppearanceControls label={label} t={t} onChange={onChange} onEnd={onEnd}/>
         <p className="field-note">{t.resizeHint}</p>
         <label className="range-label">
@@ -137,10 +139,10 @@ export function LabelPanel({
             onKeyUp={onEnd}
           />
         </label>
-      </section>
-      {onApplyFrameAll && (!section || section === "box") && <button className="apply-frame-all" onClick={onApplyFrameAll}>{t.applyFrameAll}</button>}
-      <section className="form-section" data-guide="typography" hidden={!!section && section !== "type"}>
-        <h3>{t.typography}</h3>
+        {onApplyFrameAll && (!section || section === "box") && <button className="apply-frame-all" onClick={onApplyFrameAll}>{t.applyFrameAll}</button>}
+      </PanelSection>
+      <PanelSection title={t.typography} guide="typography" collapsible={!section} hidden={!!section && section !== "type"}>
+
         {label.description?.trim()&&<label className="range-label">{t.descriptionSize}<output>{label.fontSizeDescription??label.fontSizePrice}px</output><input aria-label={t.descriptionSize} type="range" min={8} max={48} value={label.fontSizeDescription??label.fontSizePrice} onChange={e=>onChange({fontSizeDescription:+e.target.value},"descriptionSize")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
         <FontPicker
           value={label.fontFamily}
@@ -204,9 +206,9 @@ export function LabelPanel({
           />
         </label>
         <TextAppearanceControls label={label} t={t} onChange={onChange} onEnd={onEnd}/>
-      </section>
-      <section className="form-section" data-guide="arrow" hidden={!!section && section !== "arrow"}>
-        <h3>{t.arrow}</h3>
+      </PanelSection>
+      <PanelSection title={t.arrow} guide="arrow" collapsible={!section} hidden={!!section && section !== "arrow"}>
+
         <p className="field-note">{t.anchorHint}</p>
         <button
           className="anchor-reset"
@@ -312,7 +314,7 @@ export function LabelPanel({
             onKeyUp={onEnd}
           />
         </label>
-      </section>
+      </PanelSection>
       <div className="label-actions clipboard-actions" hidden={!!section}>
         <button onClick={onCopy}>
           <Copy size={16} />

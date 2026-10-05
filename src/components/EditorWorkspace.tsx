@@ -97,7 +97,7 @@ export function EditorWorkspace({
         <div className="mobile-canvas-tools"><div className="mobile-cost-status"><span className="status-dot" role="img" aria-label={status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError} title={status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError}/>{p.showTotalPrice === false ? <span className="mobile-save-text">{status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError}</span> : <PriceSummary p={p} t={t} compact/>}</div><div className="zoom-tools"><button aria-label={t.zoomOut} onClick={() => setZoom(Math.max(0.5, zoom - 0.25))}><Minus size={16}/></button><span>{Math.round(zoom * 100)}%</span><button aria-label={t.zoomIn} onClick={() => setZoom(Math.min(6, zoom + 0.25))}><Plus size={16}/></button><button aria-label={t.fit} onClick={() => handle.current.resetView?.()}><Maximize size={16}/></button></div></div>
         <div className="canvas-caption">
           <span>
-            {p.canvas.aspectRatio}
+            {p.canvas.aspectRatio==="Custom"?t.cropFree:p.canvas.aspectRatio}
             <span className="dot-separator">·</span>
             {p.photo.id.startsWith("sample") ? t.sample : p.photo.name}
           </span>

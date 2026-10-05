@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Konva from "konva";
 import { Stage, Layer, Image as CanvasImage, Rect } from "react-konva";
 import { ProductLabel } from "./ProductLabel";
@@ -7,6 +7,7 @@ import { labelLayout, formatPrice } from "../lib/labelLayout";
 import { adjustedImage } from "../lib/project";
 import {formatLabelNumber,numberedBrand} from "../lib/labelOrder";
 import {isLabelVisible} from "../lib/labelVisibility";
+import {backgroundColor,blurredCanvasBackground,composedPhoto,withDarkness} from "../lib/canvasBackground";
 import type { ProjectData, ProductLabel as Label } from "../types/project";
 export type CanvasHandle = {
   stage: Konva.Stage | null;
@@ -44,6 +45,11 @@ export function CanvasEditor({
     [pan, setPan] = useState({ x: 0, y: 0 }),
     [fontRevision, setFontRevision] = useState(0);
   const [flash,setFlash]=useState<{id:string;key:number}|null>(null);
+  const [backgroundImage,setBackgroundImage]=useState<HTMLImageElement|null>(null);
+  useEffect(()=>{let active=true;setBackgroundImage(null);if(project.background?.image){const img=new window.Image();img.onload=()=>{if(active)setBackgroundImage(img);};img.src=project.background.image;}return()=>{active=false;};},[project.background?.image]);
+  const backdrop=useMemo(()=>project.background?.mode==="blur"&&backgroundImage?withDarkness(blurredCanvasBackground(backgroundImage,project.canvas,project.background.blur,project.adjustment.brightness,project.adjustment.contrast),project.adjustment.overlay) as HTMLCanvasElement:null,[backgroundImage,project.background?.mode,project.background?.blur,project.canvas.width,project.canvas.height,project.adjustment.brightness,project.adjustment.contrast,project.adjustment.overlay]);
+  const foreground=useMemo(()=>image?withDarkness(pixels??image,project.adjustment.overlay):null,[pixels,image,project.adjustment.overlay]);
+  const scenePixels=useMemo(()=>foreground&&project.background?composedPhoto(foreground,project.canvas,backdrop,backgroundColor(project.background)):foreground,[foreground,backdrop,project.background,project.canvas.width,project.canvas.height]);
   useEffect(()=>{if(!flash)return;const timer=setTimeout(()=>setFlash(null),1850);return()=>clearTimeout(timer);},[flash]);
   useEffect(() => {
     const observer = new ResizeObserver(([e]) =>
@@ -193,7 +199,7 @@ export function CanvasEditor({
   };
   const flashItem=flash&&obstacles.find(item=>item.id===flash.id);
   return (
-    <div className={"canvas-holder mode-" + mode} data-guide="canvas" ref={holder} {...touch}>
+    <div className={"canvas-holder mode-" + mode+(project.background?.mode==="transparent"?" has-transparency":"")} data-guide="canvas" ref={holder} {...touch}>
       <Stage
         ref={stageRef}
         width={size.width}
@@ -243,14 +249,16 @@ export function CanvasEditor({
           clipHeight={project.canvas.height}
         >
           <Rect
+            name="canvas-background"
             width={project.canvas.width}
             height={project.canvas.height}
-            fill="#e3e6e5"
+            fill={backgroundColor(project.background)}
           />
+          {project.background?.mode==="blur"&&<CanvasImage name="background-photo" image={backdrop??undefined} width={project.canvas.width} height={project.canvas.height} listening={false}/>}
           {image && (
             <CanvasImage
               name="photo"
-              image={pixels ?? image}
+              image={foreground??pixels??image}
               x={(project.canvas.width - image.width * cover) / 2}
               y={(project.canvas.height - image.height * cover) / 2}
               width={image.width * cover}
@@ -262,7 +270,7 @@ export function CanvasEditor({
             width={project.canvas.width}
             height={project.canvas.height}
             fill="black"
-            opacity={project.adjustment.overlay / 100}
+            opacity={0}
           />
           {project.labels.map((label,index) => isLabelVisible(label) && (
             <ProductLabel
@@ -273,8 +281,8 @@ export function CanvasEditor({
               obstacles={obstacles}
               scale={scale}
               bounds={project.canvas}
-              photoPixels={pixels ?? image}
-              overlay={project.adjustment.overlay}
+              photoPixels={scenePixels}
+              overlay={0}
               selected={selectedId === label.id}
               priceMode={project.priceMode}
               priceFormat={project.priceFormat}

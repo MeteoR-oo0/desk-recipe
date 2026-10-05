@@ -7,7 +7,7 @@ export const palettes = [
   { id:"graphite", color:"#526171", ja:"グラファイト", en:"Graphite" },
 ] as const;
 export type ThemePreference = { mode:"light"|"dark"|"system"; color:typeof palettes[number]["id"] };
-export const defaultTheme: ThemePreference = {mode:"light",color:"green"};
+export const defaultTheme: ThemePreference = {mode:"system",color:"green"};
 export function parseTheme(value: string | null): ThemePreference {
   try { const parsed=JSON.parse(value??"null");
     return parsed&&["light","dark","system"].includes(parsed.mode)&&palettes.some(p=>p.id===parsed.color)

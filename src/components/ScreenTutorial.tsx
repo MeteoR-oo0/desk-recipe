@@ -15,7 +15,9 @@ export function ScreenTutorial({ t, step, onStep, onClose }: { t: Translation; s
     const update = () => {
       const mobile = window.matchMedia("(max-width: 800px)").matches;
       const key = ["upload", mobile ? "mobile-add" : "desktop-add", "canvas", "canvas", "canvas", "typography", "arrow", "export"][step];
-      const el = Array.from(document.querySelectorAll<HTMLElement>(`[data-guide="${key}"]`)).find((e) => e.getBoundingClientRect().width > 0);
+      const candidates=Array.from(document.querySelectorAll<HTMLElement>(`[data-guide="${key}"]`));
+      for(const candidate of candidates){const panel=candidate.closest<HTMLDetailsElement>("details.settings-section");if(panel&&!panel.open&&getComputedStyle(panel).display!=="none")panel.open=true;}
+      const el = candidates.find((e) => e.getBoundingClientRect().width > 0);
       const viewport={width:window.visualViewport?.width ?? window.innerWidth,height:window.visualViewport?.height ?? window.innerHeight};
       let rect:GuideRect|null=null;
       if (el) {

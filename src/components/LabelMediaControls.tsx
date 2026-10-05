@@ -13,7 +13,6 @@ export function LabelMediaControls({ label, visiblePrice, t, onChange, onEnd }: 
   const [busy, setBusy] = useState(false), [error, setError] = useState(false);
   const image = label.image;
   return <div className="label-media-controls">
-    <h3>{t.labelImage}</h3>
     <input ref={input} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={async event => {
       const file = event.target.files?.[0]; event.target.value = "";
       if (!file) return;

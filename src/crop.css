@@ -1,0 +1,11 @@
+.modal:has(.crop-dialog) {width:min(900px,96vw);}
+.crop-dialog {display:flex;flex-direction:column;gap:15px;padding-top:8px;}
+.crop-presets {display:flex;flex-wrap:wrap;gap:8px;}
+.crop-presets button {min-height:44px;}
+.crop-preview {width:100%;height:350px;background:var(--soft);border:1px solid var(--border);border-radius:8px;touch-action:none;user-select:none;}
+.crop-move {cursor:move;}
+.crop-dimensions {display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.crop-dimensions label {display:flex;flex-direction:column;gap:7px;min-width:0;font-size:13px;color:var(--muted);}
+.crop-dimensions input {width:100%;min-height:40px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);padding:8px;}
+.canvas-holder.has-transparency {background-color:var(--surface);background-image:conic-gradient(var(--soft) 25%,transparent 0 50%,var(--soft) 0 75%,transparent 0);background-size:24px 24px;}
+@media(max-width:800px) {.crop-preview {height:260px;}.crop-dimensions {grid-template-columns:repeat(2,1fr);}.crop-dimensions input {font-size:16px;}.crop-dialog .segmented button {white-space:normal;min-height:44px;}}

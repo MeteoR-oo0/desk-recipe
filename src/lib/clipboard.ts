@@ -77,10 +77,10 @@ export function parseClipboardLabel(text: string): ProductLabel | null {
       l.loopPosition &&
       (!Number.isFinite(l.loopPosition.x) ||
         !Number.isFinite(l.loopPosition.y) ||
-        l.loopPosition.x < -1000 ||
-        l.loopPosition.x > 20000 ||
-        l.loopPosition.y < -1000 ||
-        l.loopPosition.y > 20000)
+        l.loopPosition.x < -1000000 ||
+        l.loopPosition.x > 1000000 ||
+        l.loopPosition.y < -1000000 ||
+        l.loopPosition.y > 1000000)
     )
       return null;
     if (
