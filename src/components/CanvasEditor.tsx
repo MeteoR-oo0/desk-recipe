@@ -12,6 +12,7 @@ export type CanvasHandle = {
   image: HTMLImageElement | null;
   resetView?: () => void;
   focusLabel?: (id: string) => void;
+  flashLabel?: (id: string) => void;
 };
 export function CanvasEditor({
   project,
@@ -41,6 +42,8 @@ export function CanvasEditor({
     [pixels, setPixels] = useState<HTMLCanvasElement | null>(null),
     [pan, setPan] = useState({ x: 0, y: 0 }),
     [fontRevision, setFontRevision] = useState(0);
+  const [flash,setFlash]=useState<{id:string;key:number}|null>(null);
+  useEffect(()=>{if(!flash)return;const timer=setTimeout(()=>setFlash(null),1850);return()=>clearTimeout(timer);},[flash]);
   useEffect(() => {
     const observer = new ResizeObserver(([e]) =>
       setSize({ width: e.contentRect.width, height: e.contentRect.height }),
@@ -82,10 +85,10 @@ export function CanvasEditor({
     let active = true;
     Promise.all(
       project.labels.flatMap((l,i) => [
-        document.fonts.load(`400 17px "${l.fontFamily}"`, numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price),
-        document.fonts.load(`700 28px "${l.fontFamily}"`, l.productName),
-        document.fonts.load('400 17px "Zen Maru Gothic"', numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price),
-        document.fonts.load('700 28px "Zen Maru Gothic"', l.productName),
+        document.fonts.load(`${l.fontWeight??400} 17px "${l.fontFamily}"`, numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price + (l.description??"")),
+        document.fonts.load(`${l.fontWeight??700} 28px "${l.fontFamily}"`, l.productName),
+        document.fonts.load(`${l.fontWeight??400} 17px "${["Inter","Montserrat"].includes(l.fontFamily)?"Noto Sans JP":"Zen Maru Gothic"}"`, numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price + (l.description??"")),
+        document.fonts.load(`${l.fontWeight??700} 28px "${["Inter","Montserrat"].includes(l.fontFamily)?"Noto Sans JP":"Zen Maru Gothic"}"`, l.productName),
       ]),
     ).then(() => {
       if (active) setFontRevision((v) => v + 1);
@@ -95,13 +98,14 @@ export function CanvasEditor({
     };
   }, [
     project.labels
-      .map((l) => l.fontFamily + l.brand + l.productName + l.price)
+      .map((l) => l.fontFamily + l.brand + l.productName + l.price + (l.description??"") + (l.fontWeight??""))
       .join(",") + (project.numberStyle??"none"),
   ]);
   useEffect(() => {
     handle.current = {
       stage: stageRef.current,
       image,
+      flashLabel: id => setFlash({id,key:Date.now()}),
       resetView: () => {
         setPan({ x: 0, y: 0 });
         onZoom(1);
@@ -156,7 +160,7 @@ export function CanvasEditor({
     stopDrag: () => {
       stageRef.current?.stopDrag();
       stageRef.current
-        ?.find(".product-label, .editor-decoration")
+        ?.find(".product-label, .editor-decoration, .label-image-group")
         .forEach((n) => n.stopDrag());
     },
   });
@@ -186,6 +190,7 @@ export function CanvasEditor({
       onAdd(p.x, p.y);
     else onSelect(null);
   };
+  const flashItem=flash&&obstacles.find(item=>item.id===flash.id);
   return (
     <div className={"canvas-holder mode-" + mode} data-guide="canvas" ref={holder} {...touch}>
       <Stage
@@ -278,6 +283,8 @@ export function CanvasEditor({
           ))}
         </Layer>
       </Stage>
+      {flashItem&&<div key={flash!.key} className="new-label-highlight" aria-hidden="true" data-new-label={flash!.id}
+        style={{left:ox+flashItem.x*scale-8,top:oy+flashItem.y*scale-8,width:flashItem.width*scale+16,height:flashItem.height*scale+16}}/>}
     </div>
   );
 }

@@ -46,7 +46,7 @@ export async function drawProductTable(p:ProjectData,t:Translation,showPrices=p.
   if(showTotal){ctx.fillStyle="#e6f2e9";ctx.fillRect(64,y,1472,96);ctx.fillStyle="#28533d";ctx.font='700 36px "Noto Sans JP", Inter, sans-serif';ctx.textAlign="left";ctx.fillText(t.totalPrice,88,y+62);ctx.textAlign="right";ctx.fillText("¥"+total.toLocaleString("ja-JP",{maximumFractionDigits:2}),1512,y+62);y+=96;}
   ctx.textAlign="left";
   if(showTotal&&excluded){ctx.font='22px "Noto Sans JP", Inter, sans-serif';ctx.fillStyle="#806b4c";ctx.fillText(t.tableExcluded.replace("{count}",String(excluded)),64,y+42);y+=70;}
-  ctx.font='20px "Noto Sans JP", Inter, sans-serif';ctx.fillStyle="#81968a";ctx.fillText("DESK RECIPE STUDIO",64,y+52);
+  ctx.font='20px "Noto Sans JP", Inter, sans-serif';ctx.fillStyle="#81968a";ctx.fillText("RECIPE MAKER",64,y+52);
   return canvas;
 }
 export function tableBlob(canvas:HTMLCanvasElement,format:"png"|"jpeg") {

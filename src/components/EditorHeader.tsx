@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Ellipsis,
   Info,
+  Palette,
 } from "lucide-react";
 import type { Language, ProjectData } from "../types/project";
 import type { Translation } from "../lib/i18n";
@@ -24,6 +25,7 @@ export function EditorHeader({
   onExport,
   onMore,
   onAbout,
+  onTheme,
 }: {
   p: ProjectData;
   t: Translation;
@@ -38,6 +40,7 @@ export function EditorHeader({
   onExport: () => void;
   onMore: () => void;
   onAbout: () => void;
+  onTheme: () => void;
 }) {
   return (
     <header className="app-header">
@@ -83,6 +86,7 @@ export function EditorHeader({
         </button>
         <button className="mobile-more-button" aria-label={t.more} onClick={onMore}><Ellipsis size={21}/></button>
         <button className="desktop-about-button" aria-label={t.about} title={t.about} onClick={onAbout}><Info size={19}/></button>
+        <button className="desktop-theme-button" aria-label={t.appearance} title={t.appearance} onClick={onTheme}><Palette size={19}/></button>
         <button
           className="primary header-export"
           disabled={busy || !ready}

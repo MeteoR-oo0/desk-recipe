@@ -13,6 +13,7 @@ import { labelLayout, formatPrice } from "../lib/labelLayout";
 import { FontPicker } from "./FontPicker";
 import type { Translation } from "../lib/i18n";
 import { TextAppearanceControls, FrameAppearanceControls } from "./AppearanceControls";
+import { LabelMediaControls } from "./LabelMediaControls";
 export function LabelPanel({
   label,
   t,
@@ -84,6 +85,8 @@ export function LabelPanel({
             />
           </label>
         ))}
+        <label>{t.description}<textarea value={label.description??""} rows={3} maxLength={1500} onChange={e=>onChange({description:e.target.value},"description")} onBlur={onEnd}/></label>
+        <LabelMediaControls key={label.id} label={label} visiblePrice={visiblePrice} t={t} onChange={onChange} onEnd={onEnd}/>
         <p className="field-note">{t.numberAutoHint}</p>
         <label className="switch-row">
           <span>{t.showPrice}</span>
@@ -138,11 +141,13 @@ export function LabelPanel({
       {onApplyFrameAll && (!section || section === "box") && <button className="apply-frame-all" onClick={onApplyFrameAll}>{t.applyFrameAll}</button>}
       <section className="form-section" data-guide="typography" hidden={!!section && section !== "type"}>
         <h3>{t.typography}</h3>
+        {label.description?.trim()&&<label className="range-label">{t.descriptionSize}<output>{label.fontSizeDescription??label.fontSizePrice}px</output><input aria-label={t.descriptionSize} type="range" min={8} max={48} value={label.fontSizeDescription??label.fontSizePrice} onChange={e=>onChange({fontSizeDescription:+e.target.value},"descriptionSize")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
         <FontPicker
           value={label.fontFamily}
           t={t}
           onChange={(fontFamily) => onChange({ fontFamily })}
         />
+        <label className="range-label">{t.fontWeight}<output>{label.fontWeight??700}</output><input aria-label={t.fontWeight} type="range" min={100} max={900} step={100} value={label.fontWeight??700} onChange={e=>onChange({fontWeight:+e.target.value},"fontWeight")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>
         <label className="range-label">
           {t.textSize}
           <output>{label.fontSizeProduct}px</output>

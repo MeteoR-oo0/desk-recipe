@@ -28,6 +28,11 @@ export async function exportImage(
       listening: false,
     });
     clone.find(".editor-decoration").forEach((node) => node.destroy());
+    await Promise.all(project.labels.filter(label=>label.image).map(async label=>{
+      const node=clone!.findOne((node:Konva.Node)=>node.name()==="label-image"&&node.getAttr("labelImageId")===label.id) as Konva.Image|undefined;
+      if(!node) throw Error("Missing label image");
+      node.image(await decodeImage(label.image!.src));
+    }));
     const photo = clone.findOne(".photo") as Konva.Image;
     const cover = Math.max(
       project.canvas.width / image.width,

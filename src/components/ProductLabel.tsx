@@ -13,6 +13,7 @@ import { labelLayout, fontStack, formatPrice } from "../lib/labelLayout";
 import { textEffects, frameSettings, rgba, frameObstacles, type AppearanceObstacle } from "../lib/labelAppearance";
 import { glassBackdrop, roundedClip } from "../lib/glassBackdrop";
 import { numberedBrand } from "../lib/labelOrder";
+import { LabelImageNode } from "./LabelImageNode";
 export function ProductLabel({
   label,
   selected,
@@ -214,6 +215,7 @@ export function ProductLabel({
           width={layout.width}
           lineHeight={1.2}
           fontSize={label.fontSizeBrand}
+          fontStyle={String(label.fontWeight??400)}
           fontFamily={font}
           fill={label.textColor}
           align={label.align}
@@ -227,12 +229,14 @@ export function ProductLabel({
           width={layout.width}
           lineHeight={1.2}
           fontSize={label.fontSizeProduct}
-          fontStyle="bold"
+          fontStyle={String(label.fontWeight??700)}
           fontFamily={font}
           fill={label.textColor}
           align={label.align}
           {...textProps}
         />
+        {label.description?.trim() && <Text key={`description-${fontRevision}`} y={layout.descriptionY} text={label.description} width={layout.width} lineHeight={1.2}
+          fontSize={label.fontSizeDescription??label.fontSizePrice} fontStyle={String(label.fontWeight??400)} fontFamily={font} fill={label.textColor} align={label.align} {...textProps}/>}
         {show && (
           <Text
             key={`price-${fontRevision}`}
@@ -241,12 +245,14 @@ export function ProductLabel({
             width={layout.width}
             lineHeight={1.2}
             fontSize={label.fontSizePrice}
+            fontStyle={String(label.fontWeight??400)}
             fontFamily={font}
             fill={label.textColor}
             align={label.align}
             {...textProps}
           />
         )}
+        {label.image&&<LabelImageNode label={display} selected={selected} panMode={panMode} scale={scale} bounds={bounds} onSelect={onSelect} onChange={onChange}/>}
       </Group>
       {selected && label.arrowType === "swirl" && (
         <Group

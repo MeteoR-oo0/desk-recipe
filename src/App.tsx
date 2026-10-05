@@ -12,6 +12,10 @@ import { exportImage } from "./lib/exportImage";
 import { ExportDialog } from "./components/ExportDialog";
 import { ScreenTutorial } from "./components/ScreenTutorial";
 import { AboutDialog } from "./components/AboutDialog";
+import { ThemeDialog } from "./components/ThemeDialog";
+import { ResetDialog } from "./components/ResetDialog";
+import { resetProject } from "./lib/resetProject";
+import { useTheme } from "./hooks/useTheme";
 import { ProductTableDialog } from "./components/ProductTableDialog";
 import { FrameApplyDialog } from "./components/FrameApplyDialog";
 import { applyFrameToAll } from "./lib/labelAppearance";
@@ -24,6 +28,7 @@ import { type CanvasHandle } from "./components/CanvasEditor";
 import { LabelPanel } from "./components/LabelPanel";
 import { PhotoPanel } from "./components/PhotoPanel";
 export default function App() {
+  const theme = useTheme();
   const [lang, setLang] = useState<Language>(() => {
       try {
         return localStorage.getItem("desk-recipe-language") === "en"
@@ -72,6 +77,7 @@ export default function App() {
     l.arrowTargetY = Math.min(p.canvas.height, l.arrowTargetY);
     history.update((v) => ({ ...v, labels: [...v.labels, l] }));
     setSelectedId(l.id);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>handle.current.flashLabel?.(l.id)));
     setMode("select");
     setLabelSection("content");
     setMobilePanel("edit");
@@ -92,6 +98,7 @@ export default function App() {
       };
       history.update((v) => ({ ...v, labels: [...v.labels, l] }));
       setSelectedId(l.id);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>handle.current.flashLabel?.(l.id)));
     }
   };
   const remove = () => {
@@ -103,7 +110,7 @@ export default function App() {
   };
   const photoInput = useRef<HTMLInputElement>(null),
     projectInput = useRef<HTMLInputElement>(null),
-    [dialog, setDialog] = useState<"export" | "about" | "table" | "apply-frame" | null>(null),
+    [dialog, setDialog] = useState<"export" | "about" | "table" | "apply-frame" | "theme" | "reset" | null>(null),
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState<{ text: string; error?: boolean } | null>(
       null,
@@ -116,8 +123,8 @@ export default function App() {
     document.documentElement.lang = lang;
     document.title =
       lang === "ja"
-        ? "デスクレシピ — フォトエディター"
-        : "Desk Recipe — Photo editor";
+        ? "〇〇レシピメーカー — フォトエディター"
+        : "〇〇 Recipe Maker — Photo editor";
   }, [lang]);
   useEffect(() => {
     if (!toast) return;
@@ -279,6 +286,7 @@ export default function App() {
     setLabelSection("content");
     setMobilePanel("edit");
     setToast({ text: t.pasted });
+    requestAnimationFrame(()=>requestAnimationFrame(()=>handle.current.flashLabel?.(l.id)));
   };
   const copyLabel = async () => {
     if (!selected) return;
@@ -369,6 +377,7 @@ export default function App() {
       <button disabled={busy} onClick={() => projectInput.current?.click()}>
         {t.openProject}
       </button>
+      <button onClick={()=>setDialog("reset")}>{t.reset}</button>
       {install.available && (
         <button onClick={install.install}>{t.install}</button>
       )}
@@ -437,6 +446,7 @@ export default function App() {
         onExport={() => setDialog("export")}
         onMore={() => setMobilePanel(mobilePanel === "more" ? null : "more")}
         onAbout={() => setDialog("about")}
+        onTheme={() => setDialog("theme")}
       />
       <main className="editor-grid" inert={!history.ready || busy || !!dialog}>
         <aside className="left-sidebar">
@@ -474,7 +484,7 @@ export default function App() {
           onHelp={openGuide}
         />
         <aside className="right-sidebar">{editing()}</aside>
-        <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} onAbout={() => setDialog("about")} onTable={() => setDialog("table")} onNumberStyle={numberStyleChange} onMove={reorder} canUndo={history.canUndo} canRedo={history.canRedo} onUndo={history.undo} onRedo={history.redo} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
+        <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} onAbout={() => setDialog("about")} onTheme={() => setDialog("theme")} onTable={() => setDialog("table")} onNumberStyle={numberStyleChange} onMove={reorder} canUndo={history.canUndo} canRedo={history.canRedo} onUndo={history.undo} onRedo={history.redo} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
       </main>
       {dialog === "export" && (
         <ExportDialog
@@ -488,6 +498,8 @@ export default function App() {
       {dialog === "apply-frame" && selected && <FrameApplyDialog label={selected} count={p.labels.length} t={t} onClose={() => setDialog(null)} onConfirm={() => {history.update(v=>({...v,labels:applyFrameToAll(v.labels,selected)}));setDialog(null);}}/>}
       {dialog === "table" && <ProductTableDialog p={p} t={t} onClose={() => setDialog(null)} onPatch={patch} onMove={reorder} onNumberStyle={numberStyleChange} onPrices={tableShowPrices=>history.update(v=>({...v,tableShowPrices}))} onEnd={history.endGroup}/>}
       {dialog === "about" && <AboutDialog t={t} language={lang} onClose={() => setDialog(null)} onHelp={() => {setDialog(null);openGuide();}}/>}
+      {dialog === "theme" && <ThemeDialog t={t} language={lang} value={theme.preference} onChange={theme.setPreference} onClose={()=>setDialog(null)}/>}
+      {dialog === "reset" && <ResetDialog t={t} onClose={()=>setDialog(null)} onReset={sample=>{history.update(current=>resetProject(current,sample));setSelectedId(null);setMode("select");setMobilePanel(null);setDialog(null);handle.current.resetView?.();}}/>}
       {toast && (
         <div className={"toast " + (toast.error ? "error" : "")} role="status">
           {toast.text}

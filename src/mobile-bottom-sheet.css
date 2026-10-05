@@ -29,7 +29,7 @@
     width: 28px;
     height: 4px;
     margin: 0 3px 0 0;
-    background: #a9bfb1;
+    background: var(--subtle);
   }
 
   .mobile-sheet .mobile-sheet-help {
@@ -38,7 +38,7 @@
 
   .mobile-sheet .mobile-sheet-toggle:hover,
   .mobile-sheet .mobile-sheet-help:hover {
-    background: #f0f5f2;
+    background: var(--surface);
   }
 
   .mobile-sheet .mobile-tabs button {

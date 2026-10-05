@@ -57,7 +57,7 @@ export function Modal({
         aria-label={title}
       >
         <div className="modal-head">
-          <span className="dialog-kicker">DESK RECIPE</span>
+          <span className="dialog-kicker">RECIPE MAKER</span>
           <button onClick={onClose} aria-label={closeText}>
             <X size={19} />
           </button>

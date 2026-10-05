@@ -1,8 +1,8 @@
 import Konva from "konva";
 import type { ProductLabel } from "../types/project";
-import { numberedBrand } from "./labelOrder";
+import { numberedBrand } from "./labelOrder.ts";
 export const fontStack = (font: string) =>
-  `${font}, Zen Maru Gothic, sans-serif`;
+  font === "Inter" || font === "Montserrat" ? `"${font}", "Noto Sans JP", sans-serif` : `"${font}", "Zen Maru Gothic", sans-serif`;
 export function labelLayout(l: ProductLabel, show: boolean) {
   const width = l.boxWidth ?? 330,
     fontFamily = fontStack(l.fontFamily);
@@ -11,7 +11,7 @@ export function labelLayout(l: ProductLabel, show: boolean) {
         text: text || " ",
         fontFamily,
         fontSize,
-        fontStyle,
+        fontStyle: String(l.fontWeight ?? (fontStyle === "bold" ? 700 : 400)),
         width,
         lineHeight: 1.2,
         wrap: "word",
@@ -23,18 +23,22 @@ export function labelLayout(l: ProductLabel, show: boolean) {
   const brandHeight = measure(numberedBrand(l), l.fontSizeBrand),
     productY = brandHeight + 5,
     productHeight = measure(l.productName, l.fontSizeProduct, "bold"),
-    priceY = productY + productHeight + 5;
+    descriptionY = productY + productHeight + 7,
+    descriptionHeight = l.description?.trim() ? measure(l.description, l.fontSizeDescription ?? l.fontSizePrice) : 0,
+    textBottom = descriptionHeight ? descriptionY + descriptionHeight : productY + productHeight,
+    priceY = textBottom + 5;
   return {
     width,
     productY,
+    descriptionY,
     priceY,
     contentHeight: show
       ? priceY + measure(l.price, l.fontSizePrice)
-      : productY + productHeight,
+      : textBottom,
     height:
       (show
         ? priceY + measure(l.price, l.fontSizePrice)
-        : productY + productHeight) + (l.boxExtraHeight ?? 0),
+        : textBottom) + (l.boxExtraHeight ?? 0),
   };
 }
 

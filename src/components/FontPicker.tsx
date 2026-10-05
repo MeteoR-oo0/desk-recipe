@@ -1,3 +1,4 @@
+import { fontStack } from "../lib/labelLayout";
 import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import type { ProductLabel } from "../types/project";
@@ -61,7 +62,7 @@ export function FontPicker({
               value}
           </strong>
           <span
-            style={{ fontFamily: `"${value}", 'Zen Maru Gothic', sans-serif` }}
+            style={{ fontFamily: fontStack(value) }}
           >
             Aa あいうえお
           </span>
@@ -121,7 +122,7 @@ export function FontPicker({
                 <span
                   className="font-sample"
                   style={{
-                    fontFamily: `"${font.name}", 'Zen Maru Gothic', sans-serif`,
+                    fontFamily: fontStack(font.name),
                   }}
                 >
                   Aa {japanese ? "こだわりのデスク" : "My favorite desk"}

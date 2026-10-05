@@ -18,6 +18,10 @@ export type ProductLabel = {
   id: string;
   brand: string;
   productName: string;
+  description?: string;
+  fontSizeDescription?: number;
+  fontWeight?: number;
+  image?: LabelImage;
   labelNumber?: string;
   price: string;
   showPrice: boolean;
@@ -56,6 +60,10 @@ export type ProductLabel = {
   arrowAnchor?: ArrowAnchor;
   align: "left" | "center" | "right";
   opacity: number;
+};
+export type LabelImage = {
+  src: string; name: string; naturalWidth: number; naturalHeight: number;
+  x: number; y: number; width: number; opacity: number; shadow?: TextEffects;
 };
 export type AspectRatio = "Original" | "16:9" | "4:3" | "1:1" | "4:5" | "9:16";
 export type PriceMode = "individual" | "show" | "hide";

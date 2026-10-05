@@ -1,6 +1,7 @@
 import type { ProjectData, Photo, ProductLabel } from "../types/project";
 import { validAppearance } from "./labelAppearance.ts";
 import { validLabelNumber } from "./labelOrder.ts";
+import { validLabelMedia } from "./labelMedia.ts";
 export const MAX_PREVIEW = 1600;
 export async function decodeImage(src: string) {
   const image = new Image();
@@ -216,6 +217,7 @@ export function parseProject(text: string): {
       throw Error("Invalid anchor");
     ids.add(l.id);
     if (!validAppearance(l)) throw Error("Invalid label appearance");
+    if (!validLabelMedia(l)) throw Error("Invalid label media");
     if (!validLabelNumber(l.labelNumber)) throw Error("Invalid label number");
   }
   return { project: p, image };

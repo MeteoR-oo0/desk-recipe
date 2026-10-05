@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Desk Recipe / デスクレシピ",
-  "short_name": "Desk Recipe",
-  "description": "Label your desk photo and export it as PNG or JPEG.",
+  "name": "〇〇 Recipe Maker / 〇〇レシピメーカー",
+  "short_name": "〇〇 Recipe Maker",
+  "description": "Label your photo and export it as PNG or JPEG.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

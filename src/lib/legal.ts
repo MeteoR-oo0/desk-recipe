@@ -12,14 +12,14 @@ export const legalText: Record<Language, {
   privacy: LegalDocument; disclaimer: LegalDocument;
 }> = {
   ja: {
-    date: "制定日・最終更新日：2026年10月4日",
+    date: "制定日：2026年10月4日 / 最終更新日：2026年10月5日",
     back: "アプリのInfoに戻る", close: "閉じる", language: "文書の言語",
     privacy: {
       title: "プライバシーポリシー",
-      introduction: "デスクレシピ（Desk Recipe Studio）は、写真や編集内容を利用者の端末内で扱う画像編集アプリです。本ポリシーは、このアプリにおけるデータの扱いを説明します。",
+      introduction: "〇〇レシピメーカー（〇〇 Recipe Maker）は、写真や編集内容を利用者の端末内で扱う画像編集アプリです。本ポリシーは、このアプリにおけるデータの扱いを説明します。",
       sections: [
-        { title: "1. 写真・編集内容", paragraphs: ["選択した写真、製品名・ブランド・価格、ラベルの位置やデザインなどは、ブラウザ内で処理します。アプリからこれらのデータを運営者のサーバーへ送信する処理はありません。写真・編集内容をアプリからAIサービスへ送信して生成や学習に利用する処理もありません。"] },
-        { title: "2. 端末内への保存", paragraphs: ["写真・編集内容は、作業の再開のため、使用中のブラウザのIndexedDBに自動保存します。言語設定とチュートリアルの表示状況はlocalStorageに、アプリのファイルはオフライン利用のためブラウザのキャッシュに保存します。", "別の端末やブラウザへの自動同期はありません。保存データはブラウザのサイトデータ削除機能で削除できます。ブラウザの設定・保存容量・プライベートモードなどによって、保存できない場合やデータが消える場合があります。"] },
+        { title: "1. 写真・編集内容", paragraphs: ["選択した写真・ラベル画像、製品名・ブランド・価格・説明文、ラベルの位置やデザインなどは、ブラウザ内で処理します。アプリからこれらのデータを運営者のサーバーへ送信する処理はありません。写真・編集内容をアプリからAIサービスへ送信して生成や学習に利用する処理もありません。"] },
+        { title: "2. 端末内への保存", paragraphs: ["写真・編集内容は、作業の再開のため、使用中のブラウザのIndexedDBに自動保存します。言語・配色の設定とチュートリアルの表示状況はlocalStorageに、アプリのファイルはオフライン利用のためブラウザのキャッシュに保存します。", "別の端末やブラウザへの自動同期はありません。保存データはブラウザのサイトデータ削除機能で削除できます。ブラウザの設定・保存容量・プライベートモードなどによって、保存できない場合やデータが消える場合があります。"] },
         { title: "3. 書き出し・バックアップ・共有", paragraphs: ["画像やプロジェクトファイルは、利用者の操作で端末へ保存します。「プロジェクト保存」でダウンロードするJSONには、写真と編集内容が含まれます。大切な作業はこのファイルでバックアップしてください。", "書き出したファイルの投稿や、ブラウザの連携機能などによる他サービスへの共有は、利用者が選んだ共有先の規約・プライバシーポリシーに従います。"] },
         { title: "4. 外部サービスとの通信", paragraphs: ["アプリの配信にはGitHub Pagesを利用しています。GitHubは、サイトへのアクセス時にIPアドレスをセキュリティ目的で記録・保存します。", "フォントの表示にはGoogle Fontsを利用しています。フォント取得時にGoogleのサーバーへ通信し、IPアドレスなどの通信情報が送られます。この通信に写真や製品ラベルの編集内容を含める処理はありません。外部サービス側の情報の扱いは、それぞれのポリシーをご確認ください。"], links: [{ label: "GitHubのプライバシーポリシー", href: githubPrivacy }, { label: "Google Fontsのプライバシーに関する説明", href: fontsPrivacy }] },
         { title: "5. 広告・アクセス解析", paragraphs: ["現在、このアプリ独自の広告、アクセス解析ツール、アカウント登録・ログイン機能は設けていません。これらを追加する場合は、実際のデータの扱いに合わせて本ポリシーを更新します。"] },
@@ -28,7 +28,7 @@ export const legalText: Record<Language, {
     },
     disclaimer: {
       title: "免責事項",
-      introduction: "デスクレシピ（Desk Recipe Studio）は、利用者が入力した情報を写真や一覧表にまとめるためのツールです。利用にあたって、以下をご確認ください。",
+      introduction: "〇〇レシピメーカー（〇〇 Recipe Maker）は、利用者が入力した情報を写真や一覧表にまとめるためのツールです。利用にあたって、以下をご確認ください。",
       sections: [
         { title: "1. 動作・出力結果", paragraphs: ["アプリの正常な動作、すべての端末・ブラウザでの互換性、出力画像の品質や正確性、継続的な提供を保証するものではありません。公開・共有する前に、文字、画像、ラベルの配置などをご確認ください。"] },
         { title: "2. 価格・合計金額", paragraphs: ["価格と合計金額は利用者の入力値をもとに表示・計算します。実際の販売価格、税込・税別、送料、値引きなどを自動で確認する機能はありません。", "合計には写真上で非表示の価格も含み、空欄や金額として読み取れない入力は集計から除外します。表示の切り替えはデータの削除を意味しません。計算結果は参考として扱い、必要に応じて入力内容と内訳をご確認ください。"] },
@@ -40,14 +40,14 @@ export const legalText: Record<Language, {
     },
   },
   en: {
-    date: "Effective date / Last updated: October 4, 2026",
+    date: "Effective: October 4, 2026 / Updated: October 5, 2026",
     back: "Back to app Info", close: "Close", language: "Document language",
     privacy: {
       title: "Privacy Policy",
-      introduction: "Desk Recipe Studio is an image editor that handles photos and edits on your device. This policy explains how the app handles data.",
+      introduction: "〇〇 Recipe Maker is an image editor that handles photos and edits on your device. This policy explains how the app handles data.",
       sections: [
-        { title: "1. Photos and edits", paragraphs: ["Selected photos, product names, brands, prices, label positions and designs are processed in your browser. The app does not send this data to the operator's server. It also does not send photos or edits to AI services for generation or training."] },
-        { title: "2. Storage on your device", paragraphs: ["Photos and edits are automatically saved in your browser's IndexedDB so you can resume your work. Language and tutorial preferences are saved in localStorage. App files are cached in your browser for offline use.", "Data is not automatically synchronized between devices or browsers. You can delete it using your browser's site data controls. Browser settings, storage limits or private browsing may prevent saving or cause data to be lost."] },
+        { title: "1. Photos and edits", paragraphs: ["Selected photos, label images, product names, brands, prices, descriptions, label positions and designs are processed in your browser. The app does not send this data to the operator's server. It also does not send photos or edits to AI services for generation or training."] },
+        { title: "2. Storage on your device", paragraphs: ["Photos and edits are automatically saved in your browser's IndexedDB so you can resume your work. Language, appearance and tutorial preferences are saved in localStorage. App files are cached in your browser for offline use.", "Data is not automatically synchronized between devices or browsers. You can delete it using your browser's site data controls. Browser settings, storage limits or private browsing may prevent saving or cause data to be lost."] },
         { title: "3. Export, backup and sharing", paragraphs: ["Images and project files are saved to your device when you request an export. JSON files downloaded using Save project contain your photo and edits. Use these files to back up important work.", "Posting exported files or sharing data through browser integrations or other services is subject to the terms and privacy policies of the services you choose."] },
         { title: "4. External services", paragraphs: ["The app is hosted on GitHub Pages. GitHub logs and stores visitors' IP addresses for security purposes.", "Fonts are loaded from Google Fonts. Font requests connect to Google's servers and transmit network information such as your IP address. The app does not include photos or edited label content in these requests. Please refer to each provider's policy for its data practices."], links: [{ label: "GitHub Privacy Statement", href: githubPrivacy }, { label: "Google Fonts privacy information", href: fontsPrivacy }] },
         { title: "5. Advertising and analytics", paragraphs: ["The app currently has no app-specific advertising, analytics tools, account registration or login features. If these are added, this policy will be updated to reflect the actual data practices."] },
@@ -56,7 +56,7 @@ export const legalText: Record<Language, {
     },
     disclaimer: {
       title: "Disclaimer",
-      introduction: "Desk Recipe Studio is a tool for presenting information you enter on photos and in product tables. Please review the following when using it.",
+      introduction: "〇〇 Recipe Maker is a tool for presenting information you enter on photos and in product tables. Please review the following when using it.",
       sections: [
         { title: "1. Operation and output", paragraphs: ["The app does not guarantee uninterrupted or error-free operation, compatibility with every device or browser, the quality or accuracy of exported images, or continued availability. Check text, images and label positions before publishing or sharing."] },
         { title: "2. Prices and totals", paragraphs: ["Prices and totals are displayed and calculated from your input. The app does not automatically verify retail prices, taxes, shipping costs or discounts.", "Totals include prices hidden on the photo and exclude blank or unrecognized amounts. Hiding a value does not delete its data. Treat calculations as a reference and check your entries and the breakdown when needed."] },
