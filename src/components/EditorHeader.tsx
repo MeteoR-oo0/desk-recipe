@@ -51,9 +51,7 @@ export function EditorHeader({
         <div>
           <h1>
             {t.app}
-            <span className="beta">STUDIO</span>
           </h1>
-          <span className="brand-caption">{t.editor}</span>
         </div>
       </div>
       <div className="project-heading">

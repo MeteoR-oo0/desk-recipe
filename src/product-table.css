@@ -2,6 +2,10 @@
 .number-style-picker { display:flex; flex-direction:column; gap:7px; margin:10px 0; font-size:13px; color:var(--muted); }
 .number-style-picker select { min-height:44px; min-width:140px; }
 .label-order-row.selected { background: var(--soft); }
+.label-visibility {display:grid;place-items:center;flex-shrink:0;min-width:36px;width:36px;min-height:44px;border:0;background:transparent;color:var(--accent-text);padding:4px;}
+.label-visibility.is-hidden {color:var(--subtle);}
+.label-order-row.is-hidden .label-list-item {opacity:0.5;}
+.hidden-label-note {padding:10px;border:1px solid var(--border);border-radius:7px;background:var(--soft);margin-bottom:12px;}
 .label-order-row .label-list-item { flex: 1; width: auto; min-width: 0; padding: 8px 2px; margin: 0; }
 .label-order-row .label-list-item > span:nth-child(2) { min-width: 0; }
 .label-order-row select { width: 48px; flex-shrink: 0; font-size: 12px; padding: 6px 4px; min-height: 44px; }

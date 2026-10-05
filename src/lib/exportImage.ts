@@ -4,6 +4,7 @@ import { decodeImage, adjustedImage, exportDimensions } from "./project";
 import { glassBackdrop } from "./glassBackdrop";
 import {formatLabelNumber} from "./labelOrder";
 import { labelLayout, formatPrice } from "./labelLayout";
+import { isLabelVisible } from "./labelVisibility";
 export async function exportImage(
   stage: Konva.Stage,
   project: ProjectData,
@@ -28,7 +29,7 @@ export async function exportImage(
       listening: false,
     });
     clone.find(".editor-decoration").forEach((node) => node.destroy());
-    await Promise.all(project.labels.filter(label=>label.image).map(async label=>{
+    await Promise.all(project.labels.filter(label=>label.image&&isLabelVisible(label)).map(async label=>{
       const node=clone!.findOne((node:Konva.Node)=>node.name()==="label-image"&&node.getAttr("labelImageId")===label.id) as Konva.Image|undefined;
       if(!node) throw Error("Missing label image");
       node.image(await decodeImage(label.image!.src));

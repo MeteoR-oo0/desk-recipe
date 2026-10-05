@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { ChevronRight, GripVertical } from "lucide-react";
+import { ChevronRight, GripVertical, Eye, EyeOff } from "lucide-react";
 import type { ProductLabel } from "../types/project";
 import type { LabelReorder } from "../hooks/useLabelReorder";
 
@@ -23,6 +23,7 @@ export function ReorderOverlay({ reorder, label, number, table = false, showPric
       {grip}<div className="label-list-item"><span className="label-index">{number}</span>
         <span><small>{label.brand}</small><strong>{label.productName}</strong></span><ChevronRight size={14}/>
       </div>
+      <span className={"label-visibility"+(label.hidden?" is-hidden":"")}>{label.hidden?<EyeOff size={18}/>:<Eye size={18}/>}</span>
     </>}
   </div>, document.body);
 }

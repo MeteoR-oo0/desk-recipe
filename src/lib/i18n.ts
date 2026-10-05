@@ -1,11 +1,12 @@
 import type { Language } from "../types/project";
 const ja = {
+  labelVisibility: "ラベルの表示", hideLabel: "ラベルを非表示にする", showLabel: "ラベルを表示する", hiddenLabelNote: "このラベルは非表示です。一覧の目のボタンで表示できます。",
   description: "説明文", descriptionSize: "説明文の文字サイズ", fontWeight: "文字の太さ",
   labelImage: "ラベル画像", addImage: "画像を追加", replaceImage: "画像を差し替え", removeImage: "画像を削除",
   imageSize: "画像の大きさ", imageOpacity: "画像の不透明度", imageShadow: "画像の影", imageX: "横位置", imageY: "縦位置",
   imagePositionHint: "位置はラベルからの距離です。画像をドラッグして移動、右下のハンドルで大きさを調整できます。",
   labelImageError: "画像を読み込めませんでした。25MB以内のJPEG・PNG・WebPを選んでください。",
-  appearance: "表示設定", appearanceHint: "アプリ画面の配色を設定します。このブラウザに保存されます。",
+  appearance: "表示設定", appearanceHint: "アプリ画面と製品一覧表の配色を設定します。このブラウザに保存されます。",
   themeMode: "テーマ", lightTheme: "ライト", darkTheme: "ダーク", systemTheme: "端末に合わせる", mainColor: "メインカラー", themePreview: "選択中の配色のプレビュー",
   reset: "リセット", resetHint: "ラベル・説明文・ラベル画像と写真の調整をリセットします。",
   resetTarget: "リセット方法", resetKeepPhoto: "今の写真を残して編集をリセット", resetRestoreSample: "サンプル写真とラベルに戻す", resetUndo: "リセット後も「元に戻す」で取り消せます。", confirmReset: "リセットする",
@@ -232,12 +233,13 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  labelVisibility: "Label visibility", hideLabel: "Hide label", showLabel: "Show label", hiddenLabelNote: "This label is hidden. Use the eye button in the list to show it.",
   description: "Description", descriptionSize: "Description text size", fontWeight: "Font weight",
   labelImage: "Label image", addImage: "Add image", replaceImage: "Replace image", removeImage: "Remove image",
   imageSize: "Image size", imageOpacity: "Image opacity", imageShadow: "Image shadow", imageX: "Horizontal position", imageY: "Vertical position",
   imagePositionHint: "Position is relative to the label. Drag the image to move it and use its lower-right handle to resize it.",
   labelImageError: "Could not load the image. Choose a JPEG, PNG or WebP file up to 25 MB.",
-  appearance: "Appearance", appearanceHint: "Choose the app's colors. Your preferences are saved in this browser.",
+  appearance: "Appearance", appearanceHint: "Choose colors for the app and product table. Your preferences are saved in this browser.",
   themeMode: "Theme", lightTheme: "Light", darkTheme: "Dark", systemTheme: "Use device setting", mainColor: "Main color", themePreview: "Preview of your selected colors",
   reset: "Reset", resetHint: "Reset labels, descriptions, label images and photo adjustments.",
   resetTarget: "Reset options", resetKeepPhoto: "Keep this photo and reset edits", resetRestoreSample: "Restore the sample photo and labels", resetUndo: "You can undo the reset using Undo.", confirmReset: "Reset edits",

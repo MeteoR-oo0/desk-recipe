@@ -71,8 +71,8 @@ export function LabelPanel({
     <div className="label-panel" data-section={section}>
       <div className="section-heading">
         <h2>{t.labelSettings}</h2>
-        <span className="tiny-tag">#{label.id.slice(0, 4).toUpperCase()}</span>
       </div>
+      {label.hidden&&<p className="field-note hidden-label-note">{t.hiddenLabelNote}</p>}
       <section className="form-section" hidden={!!section && section !== "content"}>
         {(["brand", "productName", "price"] as const).map((key) => (
           <label key={key}>

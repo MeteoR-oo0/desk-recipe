@@ -1,3 +1,4 @@
+import type {TableAppearance} from "../lib/theme";
 import {useEffect,useState} from "react";
 import {Download} from "lucide-react";
 import {Modal} from "./Modal";
@@ -12,16 +13,16 @@ import {formatLabelNumber} from "../lib/labelOrder";
 import {ReorderGrip} from "./ReorderGrip";
 import {useLabelReorder} from "../hooks/useLabelReorder";
 import {ReorderOverlay} from "./ReorderOverlay";
-export function ProductTableDialog({p,t,onClose,onPatch,onMove,onNumberStyle,onPrices,onEnd}:{p:ProjectData;t:Translation;onClose:()=>void;onPatch:(id:string,changes:Partial<ProductLabel>,key?:string)=>void;onMove:(id:string,to:number)=>void;onNumberStyle:(s:NonNullable<ProjectData["numberStyle"]>)=>void;onPrices:(show:boolean)=>void;onEnd:()=>void}) {
+export function ProductTableDialog({p,t,onClose,onPatch,onMove,onNumberStyle,onPrices,onEnd,colors}:{colors:TableAppearance;p:ProjectData;t:Translation;onClose:()=>void;onPatch:(id:string,changes:Partial<ProductLabel>,key?:string)=>void;onMove:(id:string,to:number)=>void;onNumberStyle:(s:NonNullable<ProjectData["numberStyle"]>)=>void;onPrices:(show:boolean)=>void;onEnd:()=>void}) {
   const [format,setFormat]=useState<"png"|"jpeg">("png"),[preview,setPreview]=useState<string|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(false),[file,setFile]=useState<{url:string;name:string}|null>(null);
   const showPrices=p.tableShowPrices!==false,showTotal=p.showTotalPrice!==false,numbered=(p.numberStyle??"none")!=="none";
-  useEffect(()=>{let active=true;const timer=setTimeout(()=>{void(async()=>{try{const image=await tableBlob(await drawProductTable(p,t,showPrices),"png");if(active){setPreview(URL.createObjectURL(image));setError(false);}}catch{if(active)setError(true);}})();},200);return()=>{active=false;clearTimeout(timer);};},[p.labels,p.numberStyle,t,showPrices,showTotal]);
+  useEffect(()=>{let active=true;const timer=setTimeout(()=>{void(async()=>{try{const image=await tableBlob(await drawProductTable(p,t,showPrices,colors),"png");if(active){setPreview(URL.createObjectURL(image));setError(false);}}catch{if(active)setError(true);}})();},200);return()=>{active=false;clearTimeout(timer);};},[p.labels,p.numberStyle,t,showPrices,showTotal,colors]);
   useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview);},[preview]);
   useEffect(()=>()=>{if(file)URL.revokeObjectURL(file.url);},[file]);
-  useEffect(()=>setFile(null),[p.labels,p.numberStyle,format,showPrices,showTotal]);
+  useEffect(()=>setFile(null),[p.labels,p.numberStyle,format,showPrices,showTotal,colors]);
   const sum=priceTotal(p.labels);
   const reorder=useLabelReorder(p.labels,onMove);
-  return <Modal title={t.tableTitle} closeText={t.close} onClose={()=>{if(!busy){onEnd();onClose();}}}>
+  return <Modal hideKicker title={t.tableTitle} closeText={t.close} onClose={()=>{if(!busy){onEnd();onClose();}}}>
     <div className="product-table-dialog"><p>{t.tableDescription}</p>
       <div className="table-tools"><NumberStylePicker t={t} value={p.numberStyle??"none"} disabled={busy} onChange={onNumberStyle}/><label className="switch-row"><span>{t.showPrice}</span><input className="switch" type="checkbox" disabled={busy} checked={showPrices} onChange={e=>onPrices(e.target.checked)}/></label></div>
       <span className="sr-only" role="status">{reorder.drag?t.reorderGrabbed:""}</span>
@@ -36,7 +37,7 @@ export function ProductTableDialog({p,t,onClose,onPatch,onMove,onNumberStyle,onP
       {preview&&<img className="product-table-preview" src={preview} alt={t.tablePreview}/>}
       <div className="segmented">{(["png","jpeg"] as const).map(f=><button key={f} disabled={busy} className={f===format?"active":""} onClick={()=>setFormat(f)}>{f.toUpperCase()}</button>)}</div>
       {error&&<p role="alert" className="table-error">{t.tableExportError}</p>}
-      <button className="primary" disabled={busy||!p.labels.length} onClick={async()=>{setBusy(true);try{const image=await tableBlob(await drawProductTable(p,t,showPrices),format),name="desk-recipe-products."+(format==="png"?"png":"jpg");downloadBlob(image,name);setFile({url:URL.createObjectURL(image),name});setError(false);}catch{setError(true);}finally{setBusy(false);}}}><Download size={17}/>{busy?t.exporting:t.exportTable}</button>
+      <button className="primary" disabled={busy||!p.labels.length} onClick={async()=>{setBusy(true);try{const image=await tableBlob(await drawProductTable(p,t,showPrices,colors),format),name="desk-recipe-products."+(format==="png"?"png":"jpg");downloadBlob(image,name);setFile({url:URL.createObjectURL(image),name});setError(false);}catch{setError(true);}finally{setBusy(false);}}}><Download size={17}/>{busy?t.exporting:t.exportTable}</button>
       {file&&<a className="download-link" href={file.url} download={file.name}><Download size={17}/>{t.download}</a>}
     </div>
   </Modal>;

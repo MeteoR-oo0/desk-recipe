@@ -25,6 +25,7 @@ export type ProductLabel = {
   labelNumber?: string;
   price: string;
   showPrice: boolean;
+  hidden?: boolean;
   x: number;
   y: number;
   arrowTargetX: number;

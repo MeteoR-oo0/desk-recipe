@@ -5,11 +5,13 @@ export function Modal({
   closeText,
   onClose,
   children,
+  hideKicker = false,
 }: {
   title: string;
   closeText: string;
   onClose: () => void;
   children: React.ReactNode;
+  hideKicker?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null),
     close = useRef(onClose);
@@ -57,7 +59,7 @@ export function Modal({
         aria-label={title}
       >
         <div className="modal-head">
-          <span className="dialog-kicker">RECIPE MAKER</span>
+          <span className="dialog-kicker">{!hideKicker&&"RECIPE MAKER"}</span>
           <button onClick={onClose} aria-label={closeText}>
             <X size={19} />
           </button>

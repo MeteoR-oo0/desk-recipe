@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useState } from "react";
-import { palettes, parseTheme, type ThemePreference } from "../lib/theme";
+import { useEffect, useLayoutEffect, useState, useMemo } from "react";
+import { palettes, parseTheme, tableAppearance, type ThemePreference } from "../lib/theme";
 export function useTheme() {
   const [preference,setPreference]=useState<ThemePreference>(()=>{try{return parseTheme(localStorage.getItem("recipe-maker-appearance"));}catch{return parseTheme(null);}});
   const [systemDark,setSystemDark]=useState(()=>window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -13,5 +13,6 @@ export function useTheme() {
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content",mode==="dark"?"#1c222c":accent);
     try{localStorage.setItem("recipe-maker-appearance",JSON.stringify(preference));}catch{}
   },[preference,systemDark]);
-  return {preference,setPreference};
+  const tableColors=useMemo(()=>tableAppearance(preference,systemDark),[preference,systemDark]);
+  return {preference,setPreference,tableColors};
 }

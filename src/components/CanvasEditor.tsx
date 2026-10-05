@@ -6,6 +6,7 @@ import { useCanvasZoom } from "../hooks/useCanvasZoom";
 import { labelLayout, formatPrice } from "../lib/labelLayout";
 import { adjustedImage } from "../lib/project";
 import {formatLabelNumber,numberedBrand} from "../lib/labelOrder";
+import {isLabelVisible} from "../lib/labelVisibility";
 import type { ProjectData, ProductLabel as Label } from "../types/project";
 export type CanvasHandle = {
   stage: Konva.Stage | null;
@@ -112,7 +113,7 @@ export function CanvasEditor({
       },
       focusLabel: (id) => {
         const l = project.labels.find((item) => item.id === id);
-        if (!l) return;
+        if (!l || !isLabelVisible(l)) return;
         const h = labelLayout({...l,labelNumber:formatLabelNumber(project.labels.findIndex(item=>item.id===id)+1,project.numberStyle)}, project.priceMode === "show" || (project.priceMode === "individual" && l.showPrice)).height;
         const left = Math.min(l.x - 20, l.arrowTargetX - 20), right = Math.max(l.x + (l.boxWidth ?? 330) + 20, l.arrowTargetX + 20);
         const top = Math.min(l.y - 20, l.arrowTargetY - 20), bottom = Math.max(l.y + h + 20, l.arrowTargetY + 20);
@@ -164,7 +165,7 @@ export function CanvasEditor({
         .forEach((n) => n.stopDrag());
     },
   });
-  const obstacles = project.labels.map((l,i) => ({
+  const obstacles = project.labels.flatMap((l,i) => isLabelVisible(l)?[{
     id: l.id,
     framePadding: l.frame && l.frame.style !== "none" ? 14 + (l.frame.borderWidth ?? 1)/2 : 0,
     x: l.x,
@@ -175,7 +176,7 @@ export function CanvasEditor({
       project.priceMode === "show" ||
         (project.priceMode === "individual" && l.showPrice),
     ).height,
-  }));
+  }]:[]);
   const tap = () => {
     if (touch.suppressed.current) return;
     const p = stageRef.current!.getRelativePointerPosition();
@@ -263,7 +264,7 @@ export function CanvasEditor({
             fill="black"
             opacity={project.adjustment.overlay / 100}
           />
-          {project.labels.map((label,index) => (
+          {project.labels.map((label,index) => isLabelVisible(label) && (
             <ProductLabel
               key={label.id}
               label={{...label,labelNumber:formatLabelNumber(index+1,project.numberStyle)}}
