@@ -28,6 +28,8 @@ export function LabelPanel({
   onPaste,
   section,
   onApplyFrameAll,
+  onImage,
+  onPasteImage,
 }: {
   label: ProductLabel | undefined;
   t: Translation;
@@ -41,6 +43,8 @@ export function LabelPanel({
   onPaste: () => void;
   section?: "content" | "type" | "arrow" | "box";
   onApplyFrameAll?: () => void;
+  onImage: (file: File) => void;
+  onPasteImage: () => void;
 }) {
   if (!label)
     return (
@@ -69,7 +73,7 @@ export function LabelPanel({
   );
   const radius = loop.radius;
   return (
-    <div className="label-panel" data-section={section}>
+    <div className="label-panel" data-section={section} data-image-target="label" data-image-label={label.id}>
       <div className="section-heading">
         <h2>{t.labelSettings}</h2>
       </div>
@@ -101,7 +105,7 @@ export function LabelPanel({
           <p className="field-note">{t.allOverride}</p>
         )}
         <label>{t.description}<textarea value={label.description??""} rows={3} maxLength={1500} onChange={e=>onChange({description:e.target.value},"description")} onBlur={onEnd}/></label>
-        <PanelSection title={t.labelImage}><LabelMediaControls key={label.id} label={label} visiblePrice={visiblePrice} t={t} onChange={onChange} onEnd={onEnd}/></PanelSection>
+        <PanelSection title={t.labelImage}><LabelMediaControls key={label.id} label={label} t={t} onChange={onChange} onEnd={onEnd} onImage={onImage} onPasteImage={onPasteImage}/></PanelSection>
       </PanelSection>
       <PanelSection title={t.boxSize} guide="box" collapsible={!section} hidden={!!section && section !== "box"}>
 

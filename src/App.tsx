@@ -32,6 +32,9 @@ import { parseClipboardLabel, serializeLabel } from "./lib/clipboard";
 import { type CanvasHandle } from "./components/CanvasEditor";
 import { LabelPanel } from "./components/LabelPanel";
 import { PhotoPanel } from "./components/PhotoPanel";
+import { imageFromTransfer, transferHasFiles, isSupportedImage, readClipboardImage } from "./lib/imageImport";
+import { labelImageFromFile, placeLabelImage } from "./lib/labelMedia";
+import { previousLabelStyle } from "./lib/newLabelStyle";
 export default function App() {
   const theme = useTheme();
   const [lang, setLang] = useState<Language>(() => {
@@ -69,13 +72,17 @@ export default function App() {
         }),
         key ? `${id}:${key}` : undefined,
       );
+  const lastSelectedLabel = useRef<string | null>(null);
+  useEffect(()=>{if(selected)lastSelectedLabel.current=selected.id;},[selected]);
   const add = (x: number, y: number, info: Partial<ProductLabel> = {}) => {
     if (!history.ready) throw Error("Project is loading");
+    const style = previousLabelStyle(selected ?? p.labels.find(l=>l.id===lastSelectedLabel.current) ?? p.labels.at(-1));
     const l = {
       ...makeLabel(
-        Math.max(0, Math.min(p.canvas.width - 330, x)),
+        Math.max(0, Math.min(p.canvas.width - (style.boxWidth??330), x)),
         Math.max(0, Math.min(p.canvas.height - 100, y)),
       ),
+      ...style,
       ...info,
     };
     l.arrowTargetX = Math.min(p.canvas.width, l.arrowTargetX);
@@ -121,6 +128,12 @@ export default function App() {
       null,
     ),
     install = useInstall();
+  const imageImportLock = useRef(false), dropDepth = useRef(0);
+  const [imageDropTarget,setImageDropTarget] = useState<string|null>(null);
+  const imageTarget = (target: EventTarget | null) => {
+    const zone = target instanceof Element ? target.closest<HTMLElement>("[data-image-target]") : null;
+    return zone?.dataset.imageTarget === "label" && zone.dataset.imageLabel ? zone.dataset.imageLabel : "photo";
+  };
   const [cropPreview,setCropPreview]=useState<string|null>(null);
   useEffect(()=>()=>{if(cropPreview)URL.revokeObjectURL(cropPreview);},[cropPreview]);
   const openCrop=async()=>{setBusy(true);try{if(!handle.current.stage)throw Error("Not ready");const original=await history.getOriginal(p.photo.id,p.photo.previewSrc);const preview=await exportImage(handle.current.stage,{...p,background:{mode:"transparent",color:"#ffffff",blur:20}},original,"png","standard");setCropPreview(URL.createObjectURL(preview));setDialog("crop");}catch{setToast({text:t.cropError,error:true});}finally{setBusy(false);}};
@@ -180,23 +193,58 @@ export default function App() {
       history.update((v) => ({ ...v, priceMode: mode }));
     },
   );
-  const upload = async (file: File) => {
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+  const importImage = async (file: File, target = "photo") => {
+    if (!history.ready || dialog || imageImportLock.current) return;
+    if (!isSupportedImage(file)) {
       setToast({ text: t.uploadError, error: true });
       return;
     }
+    imageImportLock.current = true;
     setBusy(true);
     try {
-      await history.setPhoto(file, file.name);
-      setSelectedId(null);
-      setZoom(1);
-      setMode("add");
-      setMobilePanel(null);
+      if (target === "photo") {
+        await history.setPhoto(file, file.name || "clipboard-image.png");
+        setSelectedId(null);
+        setZoom(1);
+        setMode("add");
+        setMobilePanel(null);
+        handle.current.resetView?.();
+        setToast({text:t.photoImageAdded});
+      } else {
+        const added = await labelImageFromFile(file);
+        let applied = false;
+        history.update(v=>{
+          if(!v.labels.some(label=>label.id===target))return v;
+          applied = true;
+          return {...v,labels:v.labels.map(label=>label.id===target?{...label,image:placeLabelImage(label,added,v.priceMode==="show"||(v.priceMode==="individual"&&label.showPrice))}:label)};
+        });
+        if(applied){
+          setSelectedId(target);setLabelSection("content");setMobilePanel("edit");
+          setToast({text:t.labelImageAdded});
+          requestAnimationFrame(()=>requestAnimationFrame(()=>{
+            for(const zone of document.querySelectorAll<HTMLElement>(".label-media-controls")) {
+              if(zone.dataset.imageLabel!==target)continue;
+              let ancestor:HTMLElement|null=zone;
+              while(ancestor){if(ancestor instanceof HTMLDetailsElement)ancestor.open=true;ancestor=ancestor.parentElement;}
+            }
+          }));
+        }
+      }
     } catch {
-      setToast({ text: t.photoError, error: true });
+      setToast({ text: target==="photo"?t.photoError:t.labelImageError, error: true });
     } finally {
+      imageImportLock.current = false;
       setBusy(false);
     }
+  };
+  const upload = (file: File) => importImage(file);
+  const pasteImage = async (target="photo") => {
+    if(!history.ready||busy||dialog||imageImportLock.current)return;
+    try {
+      const file=await readClipboardImage();
+      if(file)await importImage(file,target);
+      else setToast({text:t.imagePasteEmpty,error:true});
+    } catch { setToast({text:t.imagePasteError,error:true}); }
   };
   const saveJSON = async () => {
     setBusy(true);
@@ -329,10 +377,14 @@ export default function App() {
       setToast({ text: t.copied });
     };
     const paste = (e: ClipboardEvent) => {
-      if (isEditing(e) || dialog) return;
+      if (dialog || busy || !history.ready) return;
+      const text=e.clipboardData?.getData("text/plain")??"";
+      const image=imageFromTransfer(e.clipboardData);
+      if(image&&(!isEditing(e)||!text)){e.preventDefault();void importImage(image,imageTarget(e.target));return;}
+      if(isEditing(e))return;
+      if(transferHasFiles(e.clipboardData)){e.preventDefault();setToast({text:t.uploadError,error:true});return;}
       const label =
-        parseClipboardLabel(e.clipboardData?.getData("text/plain") ?? "") ??
-        labelClipboard.current?.label;
+        parseClipboardLabel(text) ?? (text?null:labelClipboard.current?.label);
       if (label) {
         e.preventDefault();
         pasteLabel(label);
@@ -344,7 +396,13 @@ export default function App() {
       window.removeEventListener("copy", copy);
       window.removeEventListener("paste", paste);
     };
-  }, [selected, p.canvas, dialog, t]);
+  }, [selected, p, dialog, t, busy, history.ready]);
+  useEffect(()=>{
+    const preventNavigation=(event:DragEvent)=>{if(transferHasFiles(event.dataTransfer))event.preventDefault();};
+    const clearDrop=()=>{dropDepth.current=0;setImageDropTarget(null);};
+    window.addEventListener("dragover",preventNavigation);window.addEventListener("drop",preventNavigation);window.addEventListener("dragend",clearDrop);window.addEventListener("blur",clearDrop);
+    return()=>{window.removeEventListener("dragover",preventNavigation);window.removeEventListener("drop",preventNavigation);window.removeEventListener("dragend",clearDrop);window.removeEventListener("blur",clearDrop);};
+  },[]);
   const guideChecked = useRef(false);
   useEffect(() => {
     if (!history.ready || guideChecked.current) return;
@@ -398,6 +456,7 @@ export default function App() {
       onEnd={history.endGroup}
       onUpload={() => photoInput.current?.click()}
       onCrop={()=>void openCrop()}
+      onPasteImage={()=>void pasteImage()}
     />
   );
   const editing = (section?: LabelSection) => (
@@ -414,10 +473,17 @@ export default function App() {
       onCopy={() => void copyLabel()}
       onPaste={() => void pasteFromClipboard()}
       onEnd={history.endGroup}
+      onImage={file=>{if(selected)void importImage(file,selected.id);}}
+      onPasteImage={()=>{if(selected)void pasteImage(selected.id);}}
     />
   );
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-image-drop={imageDropTarget?(imageDropTarget==="photo"?"photo":"label"):undefined}
+      onDragEnter={event=>{if(!transferHasFiles(event.dataTransfer))return;event.preventDefault();dropDepth.current++;if(!busy&&!dialog&&history.ready)setImageDropTarget(imageTarget(event.target));}}
+      onDragOver={event=>{if(!transferHasFiles(event.dataTransfer))return;event.preventDefault();event.dataTransfer.dropEffect=busy||dialog||!history.ready?"none":"copy";if(!busy&&!dialog&&history.ready)setImageDropTarget(imageTarget(event.target));}}
+      onDragLeave={event=>{if(!transferHasFiles(event.dataTransfer))return;dropDepth.current=Math.max(0,dropDepth.current-1);if(dropDepth.current===0)setImageDropTarget(null);}}
+      onDrop={event=>{if(!transferHasFiles(event.dataTransfer))return;event.preventDefault();dropDepth.current=0;setImageDropTarget(null);if(busy||dialog||!history.ready)return;const image=imageFromTransfer(event.dataTransfer);if(image)void importImage(image,imageTarget(event.target));else setToast({text:t.uploadError,error:true});}}>
+      {imageDropTarget&&<div className="image-drop-notice" role="status">{imageDropTarget==="photo"?t.dropPhotoImage:t.dropLabelImage}</div>}
       <input
         ref={photoInput}
         type="file"
@@ -488,7 +554,7 @@ export default function App() {
           status={history.status}
           onHelp={openGuide}
         />
-        <aside className="right-sidebar">{editing()}</aside>
+        <aside className="right-sidebar" data-image-target={selected?"label":undefined} data-image-label={selected?.id}>{editing()}</aside>
         <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} onAbout={() => setDialog("about")} onTheme={() => setDialog("theme")} onTable={() => setDialog("table")} onNumberStyle={numberStyleChange} onMove={reorder} onToggleVisibility={toggleLabelVisibility} canUndo={history.canUndo} canRedo={history.canRedo} onUndo={history.undo} onRedo={history.redo} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
       </main>
       {dialog === "export" && (

@@ -1,5 +1,11 @@
 import type { Language } from "../types/project";
 const ja = {
+  pasteImage: "画像を貼り付け", photoImportHint: "写真エリアへ画像をドロップ、またはここで Ctrl+V（Macは⌘V）。",
+  labelImageImportHint: "ラベル編集欄へ画像をドロップ、またはここで Ctrl+V（Macは⌘V）。",
+  dropPhotoImage: "ここに落として写真を差し替え", dropLabelImage: "ここに落としてラベル画像を追加・差し替え",
+  imagePasteEmpty: "クリップボードにJPEG・PNG・WebPの画像がありません。画像をコピーしてお試しください。",
+  imagePasteError: "画像を読み取れませんでした。この欄を選択し、Ctrl+V（Macは⌘V）で貼り付けてください。",
+  labelImageAdded: "ラベル画像を追加しました", photoImageAdded: "写真を読み込みました",
   category: "カテゴリ", categoryPlaceholder: "例：PC、モニター", categorySize: "カテゴリの文字サイズ",
   cropTitle:"切り抜き・余白を追加",cropHint:"枠の内側をドラッグして移動、丸いハンドルでサイズ変更。写真の外まで枠を広げると余白を追加できます。",
   cropOriginal:"現在の範囲",cropInside:"内側を切り抜く",cropExpand:"外側へ広げる",cropPreview:"切り抜き範囲のプレビュー",cropX:"左位置",cropY:"上位置",cropWidth:"幅",cropHeight:"高さ",cropFree:"自由サイズ",
@@ -240,6 +246,12 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  pasteImage: "Paste image", photoImportHint: "Drop an image onto the photo area, or paste here with Ctrl+V (⌘V on Mac).",
+  labelImageImportHint: "Drop an image onto the label editor, or paste here with Ctrl+V (⌘V on Mac).",
+  dropPhotoImage: "Drop here to replace the photo", dropLabelImage: "Drop here to add or replace the label image",
+  imagePasteEmpty: "No JPEG, PNG or WebP image found on the clipboard. Copy an image and try again.",
+  imagePasteError: "Could not read the image. Select this area and paste with Ctrl+V (⌘V on Mac).",
+  labelImageAdded: "Label image added", photoImageAdded: "Photo loaded",
   category: "Category", categoryPlaceholder: "e.g. PC, Monitor", categorySize: "Category text size",
   cropTitle:"Crop & extend canvas",cropHint:"Drag inside the frame to move it, or use the round handles to resize. Extend the frame beyond the photo to add space.",
   cropOriginal:"Current bounds",cropInside:"Crop inside",cropExpand:"Extend outside",cropPreview:"Crop selection preview",cropX:"Left",cropY:"Top",cropWidth:"Width",cropHeight:"Height",cropFree:"Custom size",

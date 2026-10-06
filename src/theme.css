@@ -52,6 +52,10 @@ textarea:focus-visible {outline:3px solid var(--focus);outline-offset:2px;}
 .settings-section > summary[aria-expanded="true"] > svg {transform:rotate(180deg);}
 .settings-section-content > .form-section {padding:0 0 14px;margin:0;border:0;}
 .settings-section-content {display:flow-root;}
+.image-drop-notice {position:fixed;z-index:950;top:90px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 32px);padding:16px 22px;border-radius:12px;background:var(--accent);color:#ffffff;box-shadow:0 6px 24px #0003;font-weight:700;text-align:center;pointer-events:none;}
+.app-shell[data-image-drop="photo"] .canvas-area,.app-shell[data-image-drop="photo"] .upload-card,
+.app-shell[data-image-drop="label"] .label-panel {outline:3px dashed var(--accent);outline-offset:-4px;background:var(--soft);}
+.label-media-controls:focus-visible,.workspace:focus-visible {outline:2px solid var(--accent);outline-offset:-2px;}
 @media(prefers-reduced-motion:reduce) {.settings-section > summary > svg {transition:none;}}
 .settings-section[hidden] {display:none;}
 .settings-section > summary:focus-visible {outline:3px solid var(--focus);outline-offset:2px;border-radius:8px;}

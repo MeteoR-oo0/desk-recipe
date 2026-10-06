@@ -1,31 +1,25 @@
-import { useRef, useState } from "react";
-import { ImagePlus, Trash2 } from "lucide-react";
+import { useRef } from "react";
+import { ImagePlus, ClipboardPaste, Trash2 } from "lucide-react";
 import type { ProductLabel } from "../types/project";
 import type { Translation } from "../lib/i18n";
-import { imageHeight, labelImageFromFile } from "../lib/labelMedia";
-import { labelLayout } from "../lib/labelLayout";
 import { Slider, TextAppearanceControls } from "./AppearanceControls";
 
-export function LabelMediaControls({ label, visiblePrice, t, onChange, onEnd }: {
-  label: ProductLabel; visiblePrice: boolean; t: Translation; onChange: (patch: Partial<ProductLabel>, key?: string) => void; onEnd: () => void;
+export function LabelMediaControls({ label, t, onChange, onEnd, onImage, onPasteImage }: {
+  label: ProductLabel; t: Translation; onChange: (patch: Partial<ProductLabel>, key?: string) => void; onEnd: () => void;
+  onImage: (file: File) => void; onPasteImage: () => void;
 }) {
   const input = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false), [error, setError] = useState(false);
   const image = label.image;
-  return <div className="label-media-controls">
-    <input ref={input} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={async event => {
+  return <div className="label-media-controls" data-image-target="label" data-image-label={label.id} tabIndex={0} aria-label={t.labelImage}>
+    <input ref={input} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={event => {
       const file = event.target.files?.[0]; event.target.value = "";
       if (!file) return;
-      setBusy(true); setError(false);
-      try {
-        const added = await labelImageFromFile(file), height = imageHeight(added);
-        onChange({ image: image ? { ...image, src: added.src, name: added.name, naturalWidth: added.naturalWidth, naturalHeight: added.naturalHeight }
-          : { ...added, y: label.y >= height + 12 ? -height - 12 : labelLayout(label, visiblePrice).height + 12 } });
-      } catch { setError(true); } finally { setBusy(false); }
+      onImage(file);
     }}/>
     {image && <img className="label-image-preview" src={image.src} alt={image.name}/>}
-    <button disabled={busy} onClick={() => input.current?.click()}><ImagePlus size={17}/>{busy?t.loading:image?t.replaceImage:t.addImage}</button>
-    {error && <p role="alert" className="field-error">{t.labelImageError}</p>}
+    <button onClick={() => input.current?.click()}><ImagePlus size={17}/>{image?t.replaceImage:t.addImage}</button>
+    <button onClick={onPasteImage}><ClipboardPaste size={17}/>{t.pasteImage}</button>
+    <p className="field-note">{t.labelImageImportHint}</p>
     {image && <>
       <p className="field-note">{t.imagePositionHint}</p>
       <div className="image-position-fields">{(["x", "y"] as const).map(axis => <label key={axis}>{axis === "x" ? t.imageX : t.imageY}

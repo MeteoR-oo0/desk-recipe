@@ -1,7 +1,13 @@
 import type { LabelImage, ProductLabel } from "../types/project";
 import { DEFAULT_TEXT_EFFECTS, validAppearance } from "./labelAppearance.ts";
+import { labelLayout } from "./labelLayout.ts";
 export const imageHeight = (image: LabelImage) => image.width * image.naturalHeight / image.naturalWidth;
 export const imageShadow = (image: LabelImage) => ({ ...DEFAULT_TEXT_EFFECTS, ...image.shadow });
+export function placeLabelImage(label: ProductLabel, added: LabelImage, visiblePrice: boolean): LabelImage {
+  if (label.image) return { ...label.image, src: added.src, name: added.name, naturalWidth: added.naturalWidth, naturalHeight: added.naturalHeight };
+  const height = imageHeight(added);
+  return { ...added, y: label.y >= height + 12 ? -height - 12 : labelLayout(label, visiblePrice).height + 12 };
+}
 const finite = (value: unknown, min: number, max: number) => typeof value === "number" && Number.isFinite(value) && value >= min && value <= max;
 export function validLabelMedia(label: Pick<ProductLabel, "category" | "fontSizeCategory" | "description" | "fontSizeDescription" | "fontWeight" | "image" | "hidden">) {
   if (label.category !== undefined && (typeof label.category !== "string" || label.category.length > 80)) return false;

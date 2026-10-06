@@ -1,5 +1,5 @@
 import {PanelSection} from "./PanelSection";
-import { Camera, Check, ImagePlus } from "lucide-react";
+import { Camera, Check, ImagePlus, ClipboardPaste } from "lucide-react";
 import type { ProjectData, AspectRatio } from "../types/project";
 import type { Translation } from "../lib/i18n";
 import { PriceSummary } from "./PriceSummary";
@@ -10,6 +10,7 @@ export function PhotoPanel({
   onEnd,
   onUpload,
   onCrop,
+  onPasteImage,
 }: {
   p: ProjectData;
   t: Translation;
@@ -17,6 +18,7 @@ export function PhotoPanel({
   onEnd: () => void;
   onUpload: () => void;
   onCrop: () => void;
+  onPasteImage: () => void;
 }) {
   return (
     <>
@@ -26,13 +28,15 @@ export function PhotoPanel({
       </div>
       <PanelSection title={t.photo} defaultOpen>
         <label>{t.photo}</label>
-        <button className="upload-card" data-guide="upload" onClick={onUpload}>
+        <button className="upload-card" data-guide="upload" data-image-target="photo" onClick={onUpload}>
           <div className="upload-icon">
             <ImagePlus size={23} />
           </div>
           <strong>{t.upload}</strong>
           <span>{t.uploadHint}</span>
         </button>
+        <button data-image-target="photo" onClick={onPasteImage}><ClipboardPaste size={17}/>{t.pasteImage}</button>
+        <p className="field-note">{t.photoImportHint}</p>
         <div className="photo-file">
           <Camera size={14} />
           <span>{p.photo.name}</span>

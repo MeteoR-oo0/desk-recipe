@@ -41,7 +41,7 @@ export function EditorWorkspace({
   onHelp: () => void;
 }) {
   return (
-    <section className="workspace">
+    <section className="workspace" data-image-target="photo" tabIndex={0} aria-label={t.photo}>
       <div className="workspace-toolbar">
         <div className="tools">
           <button
