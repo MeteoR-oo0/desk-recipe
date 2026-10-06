@@ -57,3 +57,20 @@ test("number style and table price visibility are retained without changing pric
   const restored=parseProject(JSON.stringify({project:p,image:"data:image/png;base64,AA=="})).project;
   assert.equal(restored.numberStyle,"circle");assert.equal(restored.tableShowPrices,false);assert.deepEqual(restored.labels,p.labels);
 });
+test("categories survive saving, copying and reordering and appear in table rows",()=>{
+  const p=initialProject();p.labels[0].category="モニター";p.labels[0].fontSizeCategory=24;p.labels[1].category="PC";
+  const restored=parseProject(JSON.stringify({project:p,image:"data:image/png;base64,AA=="})).project;
+  assert.deepEqual(restored,p);
+  assert.deepEqual(parseClipboardLabel(serializeLabel(p.labels[0])),p.labels[0]);
+  restored.labels=[...moveLabel(restored.labels,"pc",0)];
+  assert.equal(tableRows(restored)[0].category,"PC");assert.equal(tableRows(restored)[1].category,"モニター");
+  assert.equal(tableRows(restored)[2].category,"");
+});
+test("legacy labels omit categories and invalid category data is rejected on import or paste",()=>{
+  const p=initialProject();assert.equal(parseClipboardLabel(serializeLabel(p.labels[0])).category,undefined);
+  for(const patch of [{category:42},{category:"x".repeat(81)},{fontSizeCategory:7},{fontSizeCategory:121}]) {
+    const label={...p.labels[0],...patch};
+    assert.equal(parseClipboardLabel(serializeLabel(label)),null);
+    assert.throws(()=>parseProject(JSON.stringify({project:{...p,labels:[label]},image:"data:image/png;base64,AA=="})));
+  }
+});

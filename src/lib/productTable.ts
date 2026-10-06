@@ -4,7 +4,7 @@ import {priceTotal,parseYenCents} from "./priceTotal.ts";
 import {formatLabelNumber} from "./labelOrder.ts";
 import {tableAppearance,type TableAppearance} from "./theme.ts";
 export function tableRows(p:ProjectData) {
-  return p.labels.map((l,i)=>({number:formatLabelNumber(i+1,p.numberStyle),brand:l.brand,name:l.productName,price:parseYenCents(l.price)===null?l.price:"¥"+(parseYenCents(l.price)!/100).toLocaleString("ja-JP",{maximumFractionDigits:2})}));
+  return p.labels.map((l,i)=>({number:formatLabelNumber(i+1,p.numberStyle),category:l.category??"",brand:l.brand,name:l.productName,price:parseYenCents(l.price)===null?l.price:"¥"+(parseYenCents(l.price)!/100).toLocaleString("ja-JP",{maximumFractionDigits:2})}));
 }
 export function wrapTableText(text:string,maxWidth:number,measure:(s:string)=>number) {
   const lines:string[]=[];
@@ -17,17 +17,17 @@ export function wrapTableText(text:string,maxWidth:number,measure:(s:string)=>nu
 }
 export async function drawProductTable(p:ProjectData,t:Translation,showPrices=p.tableShowPrices!==false,colors:TableAppearance=tableAppearance()) {
   const table=tableRows(p), showTotal=p.showTotalPrice!==false, numbered=(p.numberStyle??"none")!=="none";
-  await Promise.all([document.fonts.load('400 28px "Noto Sans JP"',t.app+table.map(r=>r.number+r.brand+r.name+r.price).join("")),document.fonts.load('700 48px "Noto Sans JP"',t.tableTitle+t.labelNumber+t.brand+t.productName+t.price+t.totalPrice+table.map(r=>r.name).join("")),document.fonts.ready]).catch(()=>{});
+  await Promise.all([document.fonts.load('400 28px "Noto Sans JP"',t.app+table.map(r=>r.number+r.category+r.brand+r.name+r.price).join("")),document.fonts.load('700 48px "Noto Sans JP"',t.tableTitle+t.labelNumber+t.category+t.brand+t.productName+t.price+t.totalPrice+table.map(r=>r.name).join("")),document.fonts.ready]).catch(()=>{});
   const canvas=document.createElement("canvas");canvas.width=1600;
   let ctx=canvas.getContext("2d")!;
   const font='28px "Noto Sans JP", Inter, sans-serif',bold='700 28px "Noto Sans JP", Inter, sans-serif';
-  const brandWidth=showPrices?288:416,numberWidth=numbered?128:0;
-  const columns:{key:"number"|"brand"|"name"|"price";width:number;title:string;left:number}[]=[];
+  const brandWidth=showPrices?256:320,categoryWidth=showPrices?224:256,numberWidth=numbered?128:0;
+  const columns:{key:"number"|"category"|"brand"|"name"|"price";width:number;title:string;left:number}[]=[];
   let left=64;
-  const add=(key:"number"|"brand"|"name"|"price",width:number,title:string)=>{columns.push({key,width,title,left});left+=width;};
+  const add=(key:"number"|"category"|"brand"|"name"|"price",width:number,title:string)=>{columns.push({key,width,title,left});left+=width;};
   if(numbered)add("number",numberWidth,t.labelNumber);
-  add("brand",brandWidth,t.brand);add("name",1472-numberWidth-brandWidth-(showPrices?288:0),t.productName);
-  if(showPrices)add("price",288,t.price);
+  add("category",categoryWidth,t.category);add("brand",brandWidth,t.brand);add("name",1472-numberWidth-categoryWidth-brandWidth-(showPrices?256:0),t.productName);
+  if(showPrices)add("price",256,t.price);
   const rows=table.map(row=>{const cells=columns.map(col=>{ctx.font=col.key==="name"?bold:font;return wrapTableText(row[col.key],col.width-40,s=>ctx.measureText(s).width);});return {cells,height:Math.max(80,Math.max(...cells.map(c=>c.length))*42+32)};});
   const {total,excluded}=priceTotal(p.labels);
   const height=214+rows.reduce((sum,r)=>sum+r.height,0)+(showTotal?96:0)+(showTotal&&excluded?70:0)+48;

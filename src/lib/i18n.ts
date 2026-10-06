@@ -1,5 +1,6 @@
 import type { Language } from "../types/project";
 const ja = {
+  category: "カテゴリ", categoryPlaceholder: "例：PC、モニター", categorySize: "カテゴリの文字サイズ",
   cropTitle:"切り抜き・余白を追加",cropHint:"枠の内側をドラッグして移動、丸いハンドルでサイズ変更。写真の外まで枠を広げると余白を追加できます。",
   cropOriginal:"現在の範囲",cropInside:"内側を切り抜く",cropExpand:"外側へ広げる",cropPreview:"切り抜き範囲のプレビュー",cropX:"左位置",cropY:"上位置",cropWidth:"幅",cropHeight:"高さ",cropFree:"自由サイズ",
   cropBackground:"余白の背景",cropColor:"背景色",cropBlur:"写真のぼかし",cropTransparent:"透明",cropBlurStrength:"背景のぼかしの強さ",cropApply:"この範囲で適用",
@@ -21,7 +22,7 @@ const ja = {
   arrowEndSize: "先端の大きさ",
   arrowEnd: "先端の形", tipArrow: "矢印", tipOpen: "○", tipFilled: "●",
   moveUp: "上へ移動", moveDown: "下へ移動",
-  numberStyle: "番号のスタイル", numberAutoHint: "番号は一覧の順番から自動で付けます。番号のスタイルは一覧表・製品一覧で変更できます。",
+  numberStyle: "番号のスタイル",
   arrowShadow: "線の影", arrowOutline: "線の縁取り",
   applyFrameAll: "枠設定を全ラベルに適用",
   applyFrameDescription: "選択中のラベルと同じ枠デザイン・色・透明度・線・角丸・サイズを、{count}件のラベルに適用します。",
@@ -239,6 +240,7 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  category: "Category", categoryPlaceholder: "e.g. PC, Monitor", categorySize: "Category text size",
   cropTitle:"Crop & extend canvas",cropHint:"Drag inside the frame to move it, or use the round handles to resize. Extend the frame beyond the photo to add space.",
   cropOriginal:"Current bounds",cropInside:"Crop inside",cropExpand:"Extend outside",cropPreview:"Crop selection preview",cropX:"Left",cropY:"Top",cropWidth:"Width",cropHeight:"Height",cropFree:"Custom size",
   cropBackground:"Added space background",cropColor:"Background color",cropBlur:"Blurred photo",cropTransparent:"Transparent",cropBlurStrength:"Background blur strength",cropApply:"Apply this frame",
@@ -259,7 +261,7 @@ const en: typeof ja = {
   arrowEndSize: "End marker size",
   arrowEnd: "End marker", tipArrow: "Arrowhead", tipOpen: "○", tipFilled: "●",
   moveUp: "Move up", moveDown: "Move down",
-  numberStyle: "Number style", numberAutoHint: "Numbers follow the label order automatically. Choose a number style in the product list or table.",
+  numberStyle: "Number style",
   arrowShadow: "Arrow shadow", arrowOutline: "Arrow outline",
   applyFrameAll: "Apply frame settings to all labels",
   applyFrameDescription: "Apply this label’s frame design, colors, opacity, border, corners and size to all {count} labels.",

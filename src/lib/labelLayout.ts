@@ -20,8 +20,10 @@ export function labelLayout(l: ProductLabel, show: boolean) {
     node.destroy();
     return height;
   };
-  const brandHeight = measure(numberedBrand(l), l.fontSizeBrand),
-    productY = brandHeight + 5,
+  const categoryHeight = l.category?.trim() ? measure(l.category, l.fontSizeCategory ?? l.fontSizeBrand) : 0,
+    brandY = categoryHeight ? categoryHeight + 5 : 0,
+    brandHeight = measure(numberedBrand(l), l.fontSizeBrand),
+    productY = brandY + brandHeight + 5,
     productHeight = measure(l.productName, l.fontSizeProduct, "bold"),
     descriptionY = productY + productHeight + 7,
     descriptionHeight = l.description?.trim() ? measure(l.description, l.fontSizeDescription ?? l.fontSizePrice) : 0,
@@ -29,6 +31,7 @@ export function labelLayout(l: ProductLabel, show: boolean) {
     priceY = textBottom + 5;
   return {
     width,
+    brandY,
     productY,
     descriptionY,
     priceY,

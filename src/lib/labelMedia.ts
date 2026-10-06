@@ -3,7 +3,9 @@ import { DEFAULT_TEXT_EFFECTS, validAppearance } from "./labelAppearance.ts";
 export const imageHeight = (image: LabelImage) => image.width * image.naturalHeight / image.naturalWidth;
 export const imageShadow = (image: LabelImage) => ({ ...DEFAULT_TEXT_EFFECTS, ...image.shadow });
 const finite = (value: unknown, min: number, max: number) => typeof value === "number" && Number.isFinite(value) && value >= min && value <= max;
-export function validLabelMedia(label: Pick<ProductLabel, "description" | "fontSizeDescription" | "fontWeight" | "image" | "hidden">) {
+export function validLabelMedia(label: Pick<ProductLabel, "category" | "fontSizeCategory" | "description" | "fontSizeDescription" | "fontWeight" | "image" | "hidden">) {
+  if (label.category !== undefined && (typeof label.category !== "string" || label.category.length > 80)) return false;
+  if (label.fontSizeCategory !== undefined && !finite(label.fontSizeCategory, 8, 120)) return false;
   if (label.hidden !== undefined && typeof label.hidden !== "boolean") return false;
   if (label.description !== undefined && (typeof label.description !== "string" || label.description.length > 1500)) return false;
   if (label.fontSizeDescription !== undefined && !finite(label.fontSizeDescription, 8, 120)) return false;

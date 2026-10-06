@@ -16,7 +16,7 @@ export function ReorderOverlay({ reorder, label, number, table = false, showPric
       ...(table ? { gridTemplateColumns: drag.columns.map(width => `${width}px`).join(" ") } : {}) }}>
     {table ? <>
       {number && <span>{number}</span>}
-      <span>{label.brand}</span><span>{label.productName}</span>
+      <span>{label.category??""}</span><span>{label.brand}</span><span>{label.productName}</span>
       {showPrices && <span>{label.price}</span>}
       <span>{grip}</span>
     </> : <>

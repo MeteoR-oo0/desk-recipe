@@ -75,6 +75,7 @@ export function LabelPanel({
       </div>
       {label.hidden&&<p className="field-note hidden-label-note">{t.hiddenLabelNote}</p>}
       <PanelSection title={t.editContent} defaultOpen collapsible={!section} hidden={!!section && section !== "content"}>
+        <label>{t.category}<input value={label.category??""} placeholder={t.categoryPlaceholder} maxLength={80} onChange={e=>onChange({category:e.target.value},"category")} onBlur={onEnd}/></label>
         {(["brand", "productName"] as const).map((key) => (
           <label key={key}>
             {t[key]}
@@ -101,7 +102,6 @@ export function LabelPanel({
         )}
         <label>{t.description}<textarea value={label.description??""} rows={3} maxLength={1500} onChange={e=>onChange({description:e.target.value},"description")} onBlur={onEnd}/></label>
         <PanelSection title={t.labelImage}><LabelMediaControls key={label.id} label={label} visiblePrice={visiblePrice} t={t} onChange={onChange} onEnd={onEnd}/></PanelSection>
-        <p className="field-note">{t.numberAutoHint}</p>
       </PanelSection>
       <PanelSection title={t.boxSize} guide="box" collapsible={!section} hidden={!!section && section !== "box"}>
 
@@ -143,6 +143,7 @@ export function LabelPanel({
       </PanelSection>
       <PanelSection title={t.typography} guide="typography" collapsible={!section} hidden={!!section && section !== "type"}>
 
+        {label.category?.trim()&&<label className="range-label">{t.categorySize}<output>{label.fontSizeCategory??label.fontSizeBrand}px</output><input aria-label={t.categorySize} type="range" min={8} max={48} value={label.fontSizeCategory??label.fontSizeBrand} onChange={e=>onChange({fontSizeCategory:+e.target.value},"categorySize")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
         {label.description?.trim()&&<label className="range-label">{t.descriptionSize}<output>{label.fontSizeDescription??label.fontSizePrice}px</output><input aria-label={t.descriptionSize} type="range" min={8} max={48} value={label.fontSizeDescription??label.fontSizePrice} onChange={e=>onChange({fontSizeDescription:+e.target.value},"descriptionSize")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
         <FontPicker
           value={label.fontFamily}

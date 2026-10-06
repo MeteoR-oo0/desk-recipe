@@ -77,6 +77,7 @@ export function useWebMCP(
         properties: {
           x: { type: "number" },
           y: { type: "number" },
+          category: { type: "string", maxLength: 80 },
           brand: { type: "string" },
           productName: { type: "string" },
           price: { type: "string" },
@@ -97,9 +98,9 @@ export function useWebMCP(
         )
           throw Error("Coordinates outside canvas");
         const info: Partial<ProductLabel> = {};
-        for (const key of ["brand", "productName", "price"] as const) {
+        for (const key of ["category", "brand", "productName", "price"] as const) {
           if (input[key] !== undefined) {
-            if (typeof input[key] !== "string" || input[key].length > 120)
+            if (typeof input[key] !== "string" || input[key].length > (key==="category"?80:120))
               throw Error("Invalid text");
             info[key] = input[key];
           }
@@ -109,11 +110,12 @@ export function useWebMCP(
     );
     register(
       "update_product_label",
-      "Update brand, product name, price or individual price visibility on an existing label.",
+      "Update category, brand, product name, price or individual price visibility on an existing label.",
       {
         type: "object",
         properties: {
           id: { type: "string" },
+          category: { type: "string", maxLength: 80 },
           brand: { type: "string" },
           productName: { type: "string" },
           price: { type: "string" },
@@ -129,9 +131,9 @@ export function useWebMCP(
         )
           throw Error("Unknown label");
         const patch: Partial<ProductLabel> = {};
-        for (const key of ["brand", "productName", "price"] as const) {
+        for (const key of ["category", "brand", "productName", "price"] as const) {
           if (input[key] !== undefined) {
-            if (typeof input[key] !== "string" || input[key].length > 120)
+            if (typeof input[key] !== "string" || input[key].length > (key==="category"?80:120))
               throw Error("Invalid text");
             patch[key] = input[key];
           }

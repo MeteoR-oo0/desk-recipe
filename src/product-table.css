@@ -37,7 +37,7 @@
 .table-tools button { min-height: 44px; font-size: 12px; }
 .table-tools label { font-size: 13px; gap: 10px; }
 .product-table-scroll { overflow: auto; overscroll-behavior: contain; }
-.product-table-scroll table { width: 100%; min-width: 650px; border-collapse: collapse; font-size: 13px; }
+.product-table-scroll table { width: 100%; min-width: 800px; border-collapse: collapse; font-size: 13px; }
 .product-table-scroll th { background: var(--soft); text-align: left; font-size: 12px; color: var(--text); }
 .product-table-scroll th,.product-table-scroll td { padding: 8px 6px; border-bottom: 1px solid var(--border); }
 .product-table-scroll input { font-size: 14px !important; min-height: 40px; }
@@ -45,6 +45,7 @@
 .product-table-scroll .table-col-order { width:88px; }
 .product-table-scroll select { min-width:60px; min-height:44px; padding:6px 8px; }
 .product-table-scroll .table-col-brand { width:20%; }
+.product-table-scroll .table-col-category { width:16%; }
 .product-table-scroll .table-col-price { width:130px; }
 .product-table-scroll tfoot { font-weight: 700; color: var(--accent-text); }
 .product-table-scroll tfoot td { text-align: right; }

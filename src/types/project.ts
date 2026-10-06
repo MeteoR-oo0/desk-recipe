@@ -16,6 +16,8 @@ export type ArrowAnchor = {
 };
 export type ProductLabel = {
   id: string;
+  category?: string;
+  fontSizeCategory?: number;
   brand: string;
   productName: string;
   description?: string;

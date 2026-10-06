@@ -92,9 +92,9 @@ export function CanvasEditor({
     let active = true;
     Promise.all(
       project.labels.flatMap((l,i) => [
-        document.fonts.load(`${l.fontWeight??400} 17px "${l.fontFamily}"`, numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price + (l.description??"")),
+        document.fonts.load(`${l.fontWeight??400} 17px "${l.fontFamily}"`, (l.category??"") + numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price + (l.description??"")),
         document.fonts.load(`${l.fontWeight??700} 28px "${l.fontFamily}"`, l.productName),
-        document.fonts.load(`${l.fontWeight??400} 17px "${["Inter","Montserrat"].includes(l.fontFamily)?"Noto Sans JP":"Zen Maru Gothic"}"`, numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price + (l.description??"")),
+        document.fonts.load(`${l.fontWeight??400} 17px "${["Inter","Montserrat"].includes(l.fontFamily)?"Noto Sans JP":"Zen Maru Gothic"}"`, (l.category??"") + numberedBrand({...l,labelNumber:formatLabelNumber(i+1,project.numberStyle)}) + l.price + (l.description??"")),
         document.fonts.load(`${l.fontWeight??700} 28px "${["Inter","Montserrat"].includes(l.fontFamily)?"Noto Sans JP":"Zen Maru Gothic"}"`, l.productName),
       ]),
     ).then(() => {
@@ -105,7 +105,7 @@ export function CanvasEditor({
     };
   }, [
     project.labels
-      .map((l) => l.fontFamily + l.brand + l.productName + l.price + (l.description??"") + (l.fontWeight??""))
+      .map((l) => l.fontFamily + (l.category??"") + l.brand + l.productName + l.price + (l.description??"") + (l.fontWeight??""))
       .join(",") + (project.numberStyle??"none"),
   ]);
   useEffect(() => {

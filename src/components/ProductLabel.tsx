@@ -209,8 +209,11 @@ export function ProductLabel({
             listening={false}
           />
         )}
+        {label.category?.trim() && <Text key={`category-${fontRevision}`} text={label.category} width={layout.width} lineHeight={1.2}
+          fontSize={label.fontSizeCategory??label.fontSizeBrand} fontStyle={String(label.fontWeight??400)} fontFamily={font} fill={label.textColor} align={label.align} {...textProps}/>}
         <Text
           key={`brand-${fontRevision}`}
+          y={layout.brandY}
           text={numberedBrand(label)}
           width={layout.width}
           lineHeight={1.2}
