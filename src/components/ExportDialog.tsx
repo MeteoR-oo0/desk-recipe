@@ -7,9 +7,11 @@ import type {Translation} from "../lib/i18n";
 import {exportDimensions} from "../lib/project";
 import {splitSettings,splitGeometry,type ExportResult,type ExportFile} from "../lib/splitImage";
 import {splitWarnings} from "../lib/splitWarnings";
+import {XPostPreview} from "./XPostPreview";
 type Preview = {files:(ExportFile&{url:string})[];zipUrl?:string};
 export function ExportDialog({p,t,onClose,onExport,onSplit}:{p:ProjectData;t:Translation;onClose:()=>void;onSplit:(s:SplitSettings)=>void;onExport:(f:"png"|"jpeg",r:"standard"|"original")=>Promise<ExportResult|undefined>}) {
   const [format,setFormat]=useState<"png"|"jpeg">("png"),[resolution,setResolution]=useState<"standard"|"original">("standard"),[busy,setBusy]=useState(false),[preview,setPreview]=useState<Preview|null>(null),[error,setError]=useState(false);
+  const [previewMode,setPreviewMode]=useState<"joined"|"post">("post");
   const split=splitSettings(p.exportSplit),d=exportDimensions(p,resolution),geometry=splitGeometry(d.width,split),warnings=splitWarnings(p);
   useEffect(()=>()=>{preview?.files.forEach(file=>URL.revokeObjectURL(file.url));if(preview?.zipUrl)URL.revokeObjectURL(preview.zipUrl);},[preview]);
   useEffect(()=>{setPreview(null);setError(false);},[format,resolution,split.count,split.gapPercent]);
@@ -32,10 +34,13 @@ export function ExportDialog({p,t,onClose,onExport,onSplit}:{p:ProjectData;t:Tra
       {warnings.length>0&&<p role="status" className="split-warning">{t.splitWarning.replace("{count}",String(warnings.length))}</p>}
       {split.count>1&&<p className="field-note">{t.splitOrder.replace("{count}",String(split.count))}</p>}
       {preview&&<>
+        {split.count>1&&<div className="segmented preview-mode-picker" role="group" aria-label={t.splitPostPreview}><button aria-pressed={previewMode==="post"} className={previewMode==="post"?"active":""} onClick={()=>setPreviewMode("post")}>{t.splitPostPreview}</button><button aria-pressed={previewMode==="joined"} className={previewMode==="joined"?"active":""} onClick={()=>setPreviewMode("joined")}>{t.splitPreviewJoined}</button></div>}
+        {split.count>1&&previewMode==="post"?<XPostPreview files={preview.files} t={t}/>:<>
         {split.count>1&&<h3>{t.splitPreview}</h3>}
         <div className="split-joined-preview" style={{gridTemplateColumns:`repeat(${split.count}, minmax(0,1fr))`,columnGap:`${100*(split.gapPercent/100)/(split.count+(split.count-1)*split.gapPercent/100)}%`}}>
           {preview.files.map((file,i)=><img key={file.name} src={file.url} alt={split.count===1?t.exportTitle:`${t.splitPreview} ${i+1}`} />)}
         </div>
+        </>}
         {preview.files.length>1&&<div className="split-file-downloads">{preview.files.map((file,i)=><a className="download-link" key={file.name} href={file.url} download={file.name}><Download size={15}/>{t.splitFile.replace("{index}",String(i+1))}<small>{file.width} × {file.height}px</small></a>)}</div>}
       </>}
       <p className="field-note">{t.exportNote}</p>

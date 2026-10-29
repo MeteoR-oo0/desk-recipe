@@ -11,7 +11,7 @@ import type { ProjectData, ProductLabel } from "../types/project";
 import type { Translation } from "../lib/i18n";
 import { CanvasEditor, type CanvasHandle } from "./CanvasEditor";
 import { PriceSummary } from "./PriceSummary";
-import {SplitControls} from "./SplitControls";
+import {WorkspaceSplitTools} from "./WorkspaceSplitTools";
 import {splitSettings} from "../lib/splitImage";
 import {splitWarnings} from "../lib/splitWarnings";
 import type {SplitSettings} from "../types/project";
@@ -77,7 +77,7 @@ export function EditorWorkspace({
             {t.addLabel}
           </button>
         </div>
-        <div className="zoom-tools">
+        <div className="workspace-view-tools"><div className="zoom-tools">
           <button
             aria-label={t.zoomOut}
             onClick={() => setZoom(Math.max(0.5, zoom - 0.25))}
@@ -98,12 +98,10 @@ export function EditorWorkspace({
           >
             <Maximize size={15} />
           </button>
-        </div>
+        </div><WorkspaceSplitTools value={split} t={t} onChange={onSplit} warningCount={warnings.length}/></div>
       </div>
-      <div className="workspace-split-bar"><SplitControls compact t={t} value={split} onChange={onSplit}/></div>
-      {split.count>1&&<div className="split-editor-note"><span>{t.splitGuideHint}</span>{warnings.length>0&&<strong role="status">{t.splitWarning.replace("{count}",String(warnings.length))}</strong>}</div>}
       <div className="canvas-area">
-        <div className="mobile-canvas-tools"><div className="mobile-cost-status"><span className="status-dot" role="img" aria-label={status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError} title={status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError}/>{p.showTotalPrice === false ? <span className="mobile-save-text">{status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError}</span> : <PriceSummary p={p} t={t} compact/>}</div><div className="zoom-tools"><button aria-label={t.zoomOut} onClick={() => setZoom(Math.max(0.5, zoom - 0.25))}><Minus size={16}/></button><span>{Math.round(zoom * 100)}%</span><button aria-label={t.zoomIn} onClick={() => setZoom(Math.min(6, zoom + 0.25))}><Plus size={16}/></button><button aria-label={t.fit} onClick={() => handle.current.resetView?.()}><Maximize size={16}/></button></div></div>
+        <div className="mobile-canvas-tools"><div className="mobile-cost-status"><span className="status-dot" role="img" aria-label={status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError} title={status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError}/>{p.showTotalPrice === false ? <span className="mobile-save-text">{status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError}</span> : <PriceSummary p={p} t={t} compact/>}</div><div className="workspace-view-tools"><div className="zoom-tools"><button aria-label={t.zoomOut} onClick={() => setZoom(Math.max(0.5, zoom - 0.25))}><Minus size={16}/></button><span>{Math.round(zoom * 100)}%</span><button aria-label={t.zoomIn} onClick={() => setZoom(Math.min(6, zoom + 0.25))}><Plus size={16}/></button><button aria-label={t.fit} onClick={() => handle.current.resetView?.()}><Maximize size={16}/></button></div><WorkspaceSplitTools value={split} t={t} onChange={onSplit} warningCount={warnings.length}/></div></div>
         <div className="canvas-caption">
           <span>
             {p.canvas.aspectRatio==="Custom"?t.cropFree:p.canvas.aspectRatio}

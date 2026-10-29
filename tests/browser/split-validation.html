@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local split image pixel validation</title>
+<style>
+  *{box-sizing:border-box}body{font:14px/1.5 system-ui,sans-serif;margin:0;padding:24px;color:#20313d;background:#f5f7fa}main{max-width:1120px;margin:auto}h1{font-size:24px;margin:0 0 8px}p{margin:6px 0 16px}button{border:0;border-radius:8px;padding:12px 20px;background:#245db0;color:white;font:600 15px system-ui;cursor:pointer}button:disabled{opacity:.6}#status{margin:16px 0;padding:14px;background:white;border:1px solid #ccd5e0;border-radius:8px;font-weight:700}table{border-collapse:collapse;width:100%;background:white}th,td{padding:7px 10px;border:1px solid #dce2e9;text-align:left}th{background:#e8eef7}td.pass{color:#177744;font-weight:700}td.fail{color:#ad2033;font-weight:700}.preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:20px 0}.joined{display:grid;gap:2px;align-items:start;background:#c4cedb}.joined img{width:100%;height:auto;display:block;min-width:0}figure{margin:0;padding:12px;background:white;border:1px solid #dce2e9;border-radius:8px}figcaption{font-size:12px;margin-bottom:8px}small{font-weight:400}@media(max-width:650px){body{padding:12px}.preview-grid{grid-template-columns:1fr}table{font-size:11px}th,td{padding:5px}}
+</style>
+<main>
+  <h1>Local split image pixel validation</h1>
+  <p>Actual <code>src/lib/splitImage.ts</code> and <code>src/lib/exportImage.ts</code>; 50 browser encoding and decoding cases. Gradient pixels independently encode source X and Y. No network images or AI assets.</p>
+  <button id="run">Run pixel validation</button>
+  <div id="status" role="status">Ready. Click Run to begin.</div>
+  <div class="preview-grid" id="previews"></div>
+  <table><thead><tr><th>#</th><th>Source</th><th>Slices / gap</th><th>Format</th><th>Result</th><th>Evidence</th></tr></thead><tbody id="results"></tbody></table>
+</main>
+<script type="module">
+import {splitImage} from '/src/lib/splitImage.ts';
+import {exportImage} from '/src/lib/exportImage.ts';
+import {exportDimensions} from '/src/lib/project.ts';
+import {initialProject} from '/src/types/project.ts';
+import Konva from 'konva';
+const runButton=document.querySelector('#run'),status=document.querySelector('#status'),results=document.querySelector('#results'),previews=document.querySelector('#previews');
+let previewUrls=[];
+const canvasBlob=canvas=>new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error('Source encoding failed')),'image/png'));
+const fixturePixel=(x,y,w,h)=>[Math.round(20+220*x/(w-1)),Math.round(20+200*y/(h-1)),Math.round(40+140*(x/(w-1)+y/(h-1))/2),255];
+async function fixture(w,h,transparent=false){
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const ctx=c.getContext('2d',{willReadFrequently:true}),pixels=ctx.createImageData(w,h),d=pixels.data;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const i=(y*w+x)*4;
+    d[i]=Math.round(20+220*x/(w-1));d[i+1]=Math.round(20+200*y/(h-1));d[i+2]=Math.round(40+140*(x/(w-1)+y/(h-1))/2);d[i+3]=transparent&&y<50?0:255;
+  }
+  ctx.putImageData(pixels,0,0);const blob=await canvasBlob(c);c.width=c.height=1;return blob;
+}
+const check=(condition,message)=>{if(!condition)throw Error(message)};
+function preview(files,w,h,count,gap){
+  const figure=document.createElement('figure'),caption=document.createElement('figcaption'),joined=document.createElement('div');
+  caption.textContent=`${w}×${h} → ${count} equal-width files, gap ${gap}%`;joined.className='joined';joined.style.gridTemplateColumns=`repeat(${count},minmax(0,1fr))`;
+  for(const file of files){const img=document.createElement('img'),url=URL.createObjectURL(file.blob);previewUrls.push(url);img.src=url;img.alt=file.name;joined.append(img)}
+  figure.append(caption,joined);previews.append(figure);
+}
+async function validate(blob,w,h,count,gap,format,transparent=false){
+  const settings={count,gapPercent:gap,showGuides:false};
+  const files=await splitImage(blob,settings,format),sourceWidth=w/(count+(count-1)*gap/100),expectedWidth=Math.max(1,Math.round(sourceWidth));
+  check(files.length===count,`File count ${files.length} ≠ ${count}`);
+  let maxError=0,samples=0;
+  for(let index=0;index<count;index++){
+    const file=files[index],expectedName=`recipe-maker-x-${String(index+1).padStart(2,'0')}-of-${count}.${format==='png'?'png':'jpg'}`;
+    check(file.name===expectedName,`Order/name mismatch: ${file.name}`);
+    check(file.width===expectedWidth&&file.height===h,`Metadata size ${file.width}×${file.height}, expected ${expectedWidth}×${h}`);
+    check(file.blob.type===(format==='png'?'image/png':'image/jpeg'),`Wrong MIME: ${file.blob.type}`);
+    const bitmap=await createImageBitmap(file.blob),c=document.createElement('canvas');c.width=bitmap.width;c.height=bitmap.height;
+    try{
+      check(bitmap.width===expectedWidth&&bitmap.height===h,`Decoded size ${bitmap.width}×${bitmap.height}`);
+      const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(bitmap,0,0);
+      for(const xf of [.17,.5,.83])for(const yf of [.2,.5,.8]){
+        const x=Math.floor(expectedWidth*xf),y=Math.floor(h*yf),sx=index*sourceWidth*(1+gap/100)+(x+.5)*sourceWidth/expectedWidth-.5;
+        const expected=fixturePixel(Math.max(0,Math.min(w-1,sx)),y,w,h),actual=ctx.getImageData(x,y,1,1).data;
+        for(let channel=0;channel<3;channel++)maxError=Math.max(maxError,Math.abs(actual[channel]-expected[channel]));
+        check(actual[3]===255,`Unexpected alpha ${actual[3]} in opaque region`);samples++;
+      }
+      if(transparent){
+        const pixel=ctx.getImageData(Math.floor(expectedWidth/2),10,1,1).data;
+        if(format==='png')check(pixel[3]===0,`PNG transparent region alpha ${pixel[3]} ≠ 0`);
+        else check(pixel[3]===255&&pixel[0]>=253&&pixel[1]>=253&&pixel[2]>=253,`JPEG transparent region not white: ${[...pixel]}`);
+      }
+    }finally{bitmap.close();c.width=c.height=1}
+  }
+  check(maxError<=(format==='png'?3:10),`Pixel error ${maxError} exceeds ${format==='png'?3:10}`);
+  if(format==='png'&&!transparent&&count===3&&gap===1.5&&[[1920,1080],[1080,1920],[1200,1200]].some(([a,b])=>a===w&&b===h))preview(files,w,h,count,gap);
+  return `${count} × ${expectedWidth}×${h}; ${samples} pixel samples; max RGB error ${maxError}${transparent?format==='png'?'; alpha=0 retained':'; alpha flattened white':''}`;
+}
+async function validateRaster(blob,cw,ch,pw,ph,format,resolution){
+  const host=document.createElement('div');host.setAttribute('aria-hidden','true');Object.assign(host.style,{position:'absolute',left:'-10000px',top:'0',pointerEvents:'none'});document.body.append(host);
+  const url=URL.createObjectURL(blob),image=new Image();let stage;
+  try{
+    image.src=url;await image.decode();
+    stage=new Konva.Stage({container:host,width:cw,height:ch});const layer=new Konva.Layer();stage.add(layer);
+    layer.add(new Konva.Rect({name:'canvas-background',width:cw,height:ch,fill:'#e3e6e5'}));
+    layer.add(new Konva.Image({name:'photo',image,width:cw,height:ch}));stage.draw();
+    const p=initialProject();p.labels=[];p.canvas={width:cw,height:ch,aspectRatio:'Custom'};p.photo={id:'qa',name:'fixture.png',previewSrc:url,width:pw,height:ph};p.adjustment={brightness:0,contrast:0,overlay:0};
+    const expected=exportDimensions(p,resolution),exported=await exportImage(stage,p,blob,format,resolution),bitmap=await createImageBitmap(exported);
+    const canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;
+    try{
+      check(bitmap.width===expected.width&&bitmap.height===expected.height,`exportImage decoded ${bitmap.width}×${bitmap.height} ≠ promised ${expected.width}×${expected.height}`);
+      const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(bitmap,0,0);
+      const cover=Math.max(cw/pw,ch/ph),dx=(cw-pw*cover)/2,dy=(ch-ph*cover)/2;let maxError=0;
+      for(const xf of [.2,.5,.8])for(const yf of [.2,.5,.8]){
+        const x=Math.floor(bitmap.width*xf),y=Math.floor(bitmap.height*yf),sx=((x+.5)*cw/bitmap.width-dx)/cover-.5,sy=((y+.5)*ch/bitmap.height-dy)/cover-.5;
+        const pixel=ctx.getImageData(x,y,1,1).data,wanted=fixturePixel(sx,sy,pw,ph);
+        for(let channel=0;channel<3;channel++)maxError=Math.max(maxError,Math.abs(pixel[channel]-wanted[channel]));
+        check(pixel[3]===255,`Raster alpha ${pixel[3]} ≠ 255`);
+      }
+      check(maxError<=(format==='png'?4:10),`Raster RGB error ${maxError}`);
+      return `actual exportImage: ${bitmap.width}×${bitmap.height} exact; ${resolution}; 9 pixel samples; max RGB error ${maxError}`;
+    }finally{bitmap.close();canvas.width=canvas.height=1}
+  }finally{stage?.destroy();host.remove();URL.revokeObjectURL(url)}
+}
+runButton.addEventListener('click',async()=>{
+  runButton.disabled=true;results.replaceChildren();previews.replaceChildren();previewUrls.forEach(URL.revokeObjectURL);previewUrls=[];
+  const started=performance.now();let passed=0,failed=0,total=0;
+  const cases=[];
+  for(const [w,h] of [[1920,1080],[1080,1920],[1200,1200],[1567,1043]])for(const count of [2,3,4])for(const gap of [0,1.5,6])cases.push({w,h,count,gap,format:'png'});
+  for(const count of [3,4])cases.push({w:3840,h:2160,count,gap:1.5,format:'png'});
+  cases.push({w:1920,h:1080,count:3,gap:1.5,format:'jpeg'},{w:1567,h:1043,count:4,gap:6,format:'jpeg'});
+  for(const format of ['png','jpeg'])cases.push({w:960,h:320,count:4,gap:1.5,format,transparent:true});
+  let sourceKey='',sourceBlob;
+  for(const entry of cases){
+    const {w,h,count,gap,format,transparent=false}=entry,key=`${w}x${h}:${transparent}`;
+    status.textContent=`Running ${total+1}/${cases.length+8}: ${w}×${h}, ${count} slices, ${gap}% gap, ${format}`;
+    const tr=document.createElement('tr'),cells=[String(++total),`${w}×${h}`,`${count} / ${gap}%`,format+(transparent?' + alpha':''),'',''];
+    let evidence='',ok=false;
+    try{if(key!==sourceKey){sourceBlob=await fixture(w,h,transparent);sourceKey=key}evidence=await validate(sourceBlob,w,h,count,gap,format,transparent);ok=true;passed++}catch(error){evidence=String(error?.message??error);failed++}
+    cells[4]=ok?'PASS':'FAIL';cells[5]=evidence;
+    cells.forEach((text,i)=>{const td=document.createElement('td');td.textContent=text;if(i===4)td.className=ok?'pass':'fail';tr.append(td)});results.append(tr);
+    await new Promise(resolve=>requestAnimationFrame(resolve));
+  }
+  for(const [cw,ch,pw,ph] of [[1200,801,2401,1603],[1001,667,2401,1601]]){
+    const original=await fixture(pw,ph);
+    for(const resolution of ['standard','original'])for(const format of ['png','jpeg']){
+      status.textContent=`Running ${total+1}/${cases.length+8}: exportImage ${cw}×${ch}, ${resolution}, ${format}`;
+      const tr=document.createElement('tr'),cells=[String(++total),`${cw}×${ch}`,`actual raster / ${resolution}`,format,'',''];let evidence='',ok=false;
+      try{evidence=await validateRaster(original,cw,ch,pw,ph,format,resolution);ok=true;passed++}catch(error){evidence=String(error?.message??error);failed++}
+      cells[4]=ok?'PASS':'FAIL';cells[5]=evidence;cells.forEach((text,i)=>{const td=document.createElement('td');td.textContent=text;if(i===4)td.className=ok?'pass':'fail';tr.append(td)});results.append(tr);
+      await new Promise(resolve=>requestAnimationFrame(resolve));
+    }
+  }
+  const seconds=((performance.now()-started)/1000).toFixed(2);
+  status.textContent=`${failed?'FAIL':'PASS'} — ${passed}/${total} passed, ${failed} failed, ${seconds}s. Equal dimensions, filename order, source position, PNG alpha, JPEG white background and exact exportImage raster dimensions verified.`;
+  status.dataset.complete='true';status.dataset.passed=String(passed);status.dataset.failed=String(failed);runButton.disabled=false;
+});
+</script>
+</html>

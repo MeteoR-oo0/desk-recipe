@@ -1,5 +1,8 @@
 import type { Language } from "../types/project";
 const ja = {
+  splitNotice:"分割時の注意",
+  splitPostPreview:"Xの投稿イメージ",splitDisplayNote:"表示例です。X上の並び方・切り抜きは端末や表示形式で変わります。実際の投稿プレビューもご確認ください。",
+  splitPreviewScroll:"横スクロール",splitPreviewGrid:"グリッド",splitPreviewAccount:"投稿プレビュー",splitPreviewHandle:"@preview",splitPreviewImage:"画像 {number}",splitPreviewJoined:"連結画像",
   saveLayout:"保存レイアウト",singleImage:"通常の1枚",xSplit:"X向け・縦{count}分割",splitGuides:"分割ガイド",
   splitCorrection:"画像間の隙間補正",splitCorrectionHint:"画像幅から継ぎ目の除外幅を自動計算します（初期値1.5%）。0%で補正なし。Xの表示は端末や表示形式で変わるため、必要に応じて調整してください。",
   splitGuideHint:"縦線が分割位置、色付きの帯は補正で除外する範囲です。ガイドは保存画像に入りません。",
@@ -252,6 +255,9 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  splitNotice:"Split guidance",
+  splitPostPreview:"X post preview",splitDisplayNote:"Illustrative preview. X layouts and cropping vary by device and display mode. Check the actual post preview too.",
+  splitPreviewScroll:"Horizontal scroll",splitPreviewGrid:"Grid",splitPreviewAccount:"Post preview",splitPreviewHandle:"@preview",splitPreviewImage:"Image {number}",splitPreviewJoined:"Joined image",
   saveLayout:"Save layout",singleImage:"Single image",xSplit:"X · {count} vertical slices",splitGuides:"Split guides",
   splitCorrection:"Gap correction",splitCorrectionHint:"Automatically calculate omitted seam strips from the image width (default 1.5%). Use 0% for no correction. X layouts vary by device and display mode; adjust as needed.",
   splitGuideHint:"Lines mark the cuts; tinted strips are omitted for gap correction. Guides are excluded from saved images.",

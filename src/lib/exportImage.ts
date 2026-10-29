@@ -71,11 +71,17 @@ export async function exportImage(
       (node as Konva.Image).image(glassBackdrop(scenePixels, project.canvas, 0, label, height, scale));
     });
     clone.draw();
-    const blob = await clone.toBlob({
-      pixelRatio: scale,
-      mimeType: format === "png" ? "image/png" : "image/jpeg",
-      quality: 0.94,
-    });
+    const rendered = clone.toCanvas({pixelRatio:scale});
+    // Konva floors bitmap sizes. Normalize odd dimensions to the exact size
+    // shown in the dialog before splitting, rather than silently losing 1px.
+    let output = rendered;
+    if(rendered.width!==width||rendered.height!==height){
+      output=document.createElement("canvas");output.width=width;output.height=height;
+      output.getContext("2d")!.drawImage(rendered,0,0,width,height);
+    }
+    let blob:Blob|null;
+    try {blob=await new Promise<Blob|null>(resolve=>output.toBlob(resolve,format==="png"?"image/png":"image/jpeg",0.94));}
+    finally {rendered.width=rendered.height=1;if(output!==rendered)output.width=output.height=1;}
     if (!blob || blob.size < 100) throw Error("Empty export");
     return blob;
   } finally {
