@@ -79,9 +79,10 @@ export function LabelPanel({
       </div>
       {label.hidden&&<p className="field-note hidden-label-note">{t.hiddenLabelNote}</p>}
       <PanelSection title={t.editContent} defaultOpen collapsible={!section} hidden={!!section && section !== "content"}>
+        <div className="label-content-fields">
         <label>{t.category}<input value={label.category??""} placeholder={t.categoryPlaceholder} maxLength={80} onChange={e=>onChange({category:e.target.value},"category")} onBlur={onEnd}/></label>
         {(["brand", "productName"] as const).map((key) => (
-          <label key={key}>
+          <label key={key} className={key === "productName" ? "full-field" : undefined}>
             {t[key]}
             <input
               value={label[key]}
@@ -91,8 +92,8 @@ export function LabelPanel({
             />
           </label>
         ))}
-        <label>{t.price}<input value={label.price} maxLength={80} onChange={event=>onChange({price:event.target.value},"price")} onBlur={onEnd}/></label>
-        <label className="switch-row">
+        <label className="full-field">{t.price}<input value={label.price} maxLength={80} onChange={event=>onChange({price:event.target.value},"price")} onBlur={onEnd}/></label>
+        <label className="switch-row full-field price-visibility-field">
           <span>{t.showPrice}</span>
           <input
             type="checkbox"
@@ -102,53 +103,14 @@ export function LabelPanel({
           />
         </label>
         {priceMode !== "individual" && (
-          <p className="field-note">{t.allOverride}</p>
+          <p className="field-note full-field">{t.allOverride}</p>
         )}
-        <label>{t.description}<textarea value={label.description??""} rows={3} maxLength={1500} onChange={e=>onChange({description:e.target.value},"description")} onBlur={onEnd}/></label>
-        <PanelSection title={t.labelImage}><LabelMediaControls key={label.id} label={label} t={t} onChange={onChange} onEnd={onEnd} onImage={onImage} onPasteImage={onPasteImage}/></PanelSection>
+        <label className="full-field">{t.description}<textarea value={label.description??""} rows={2} maxLength={1500} onChange={e=>onChange({description:e.target.value},"description")} onBlur={onEnd}/></label>
+        </div>
       </PanelSection>
-      <PanelSection title={t.boxSize} guide="box" collapsible={!section} hidden={!!section && section !== "box"}>
-
-        <FrameAppearanceControls label={label} t={t} onChange={onChange} onEnd={onEnd}/>
-        <p className="field-note">{t.resizeHint}</p>
-        <label className="range-label">
-          {t.boxWidth}
-          <output>{label.boxWidth ?? 330}px</output>
-          <input
-            type="range"
-            min="120"
-            max="800"
-            value={label.boxWidth ?? 330}
-            onChange={(e) =>
-              onChange({ boxWidth: +e.target.value }, "boxWidth")
-            }
-            onPointerUp={onEnd}
-            onBlur={onEnd}
-            onKeyUp={onEnd}
-          />
-        </label>
-        <label className="range-label">
-          {t.boxHeight}
-          <output>{label.boxExtraHeight ?? 0}px</output>
-          <input
-            type="range"
-            min="0"
-            max="300"
-            value={label.boxExtraHeight ?? 0}
-            onChange={(e) =>
-              onChange({ boxExtraHeight: +e.target.value }, "boxHeight")
-            }
-            onPointerUp={onEnd}
-            onBlur={onEnd}
-            onKeyUp={onEnd}
-          />
-        </label>
-        {onApplyFrameAll && (!section || section === "box") && <button className="apply-frame-all" onClick={onApplyFrameAll}>{t.applyFrameAll}</button>}
-      </PanelSection>
+      <PanelSection title={t.labelImage} hidden={!!section && section !== "content"}><LabelMediaControls key={label.id} label={label} t={t} onChange={onChange} onEnd={onEnd} onImage={onImage} onPasteImage={onPasteImage}/></PanelSection>
       <PanelSection title={t.typography} guide="typography" collapsible={!section} hidden={!!section && section !== "type"}>
 
-        {label.category?.trim()&&<label className="range-label">{t.categorySize}<output>{label.fontSizeCategory??label.fontSizeBrand}px</output><input aria-label={t.categorySize} type="range" min={8} max={48} value={label.fontSizeCategory??label.fontSizeBrand} onChange={e=>onChange({fontSizeCategory:+e.target.value},"categorySize")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
-        {label.description?.trim()&&<label className="range-label">{t.descriptionSize}<output>{label.fontSizeDescription??label.fontSizePrice}px</output><input aria-label={t.descriptionSize} type="range" min={8} max={48} value={label.fontSizeDescription??label.fontSizePrice} onChange={e=>onChange({fontSizeDescription:+e.target.value},"descriptionSize")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
         <FontPicker
           value={label.fontFamily}
           t={t}
@@ -161,6 +123,7 @@ export function LabelPanel({
           <input
             type="range"
             min="16"
+            aria-label={t.textSize}
             max="60"
             value={label.fontSizeProduct}
             onChange={(e) => {
@@ -180,6 +143,8 @@ export function LabelPanel({
             onKeyUp={onEnd}
           />
         </label>
+        {label.category?.trim()&&<label className="range-label">{t.categorySize}<output>{label.fontSizeCategory??label.fontSizeBrand}px</output><input aria-label={t.categorySize} type="range" min={8} max={48} value={label.fontSizeCategory??label.fontSizeBrand} onChange={e=>onChange({fontSizeCategory:+e.target.value},"categorySize")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
+        {label.description?.trim()&&<label className="range-label">{t.descriptionSize}<output>{label.fontSizeDescription??label.fontSizePrice}px</output><input aria-label={t.descriptionSize} type="range" min={8} max={48} value={label.fontSizeDescription??label.fontSizePrice} onChange={e=>onChange({fontSizeDescription:+e.target.value},"descriptionSize")} onPointerUp={onEnd} onBlur={onEnd} onKeyUp={onEnd}/></label>}
         <div className="field-row">
           <span>{t.alignment}</span>
           <div className="segmented icon-segment">
@@ -191,6 +156,7 @@ export function LabelPanel({
                   title={t[align]}
                   aria-label={t[align]}
                   className={label.align === align ? "active" : ""}
+                  aria-pressed={label.align === align}
                   onClick={() => onChange({ align })}
                 >
                   <Icon size={17} />
@@ -212,6 +178,46 @@ export function LabelPanel({
         </label>
         <TextAppearanceControls label={label} t={t} onChange={onChange} onEnd={onEnd}/>
       </PanelSection>
+      <PanelSection title={t.boxSize} guide="box" collapsible={!section} hidden={!!section && section !== "box"}>
+
+        <FrameAppearanceControls label={label} t={t} onChange={onChange} onEnd={onEnd}/>
+        <label className="range-label">
+          {t.boxWidth}
+          <output>{label.boxWidth ?? 330}px</output>
+          <input
+            type="range"
+            min="120"
+            aria-label={t.boxWidth}
+            max="800"
+            value={label.boxWidth ?? 330}
+            onChange={(e) =>
+              onChange({ boxWidth: +e.target.value }, "boxWidth")
+            }
+            onPointerUp={onEnd}
+            onBlur={onEnd}
+            onKeyUp={onEnd}
+          />
+        </label>
+        <label className="range-label">
+          {t.boxHeight}
+          <output>{label.boxExtraHeight ?? 0}px</output>
+          <input
+            type="range"
+            min="0"
+            max="300"
+            aria-label={t.boxHeight}
+            value={label.boxExtraHeight ?? 0}
+            onChange={(e) =>
+              onChange({ boxExtraHeight: +e.target.value }, "boxHeight")
+            }
+            onPointerUp={onEnd}
+            onBlur={onEnd}
+            onKeyUp={onEnd}
+          />
+        </label>
+        <p className="field-note compact-help">{t.resizeHint}</p>
+        {onApplyFrameAll && (!section || section === "box") && <button className="apply-frame-all" onClick={onApplyFrameAll}>{t.applyFrameAll}</button>}
+      </PanelSection>
       <PanelSection title={t.arrow} guide="arrow" collapsible={!section} hidden={!!section && section !== "arrow"}>
 
         <p className="field-note">{t.anchorHint}</p>
@@ -227,6 +233,7 @@ export function LabelPanel({
             <button
               key={type}
               className={label.arrowType === type ? "active" : ""}
+              aria-pressed={label.arrowType === type}
               onClick={() => onChange({ arrowType: type })}
             >
               {t[type]}
@@ -278,6 +285,7 @@ export function LabelPanel({
           <input
             type="range"
             min="1"
+            aria-label={t.lineWidth}
             max="8"
             step=".5"
             value={label.arrowWidth}
@@ -308,6 +316,7 @@ export function LabelPanel({
           <input
             type="range"
             min="20"
+            aria-label={t.opacity}
             max="100"
             value={label.opacity * 100}
             onChange={(e) =>
@@ -320,7 +329,7 @@ export function LabelPanel({
           />
         </label>
       </PanelSection>
-      <div className="label-actions clipboard-actions" hidden={!!section}>
+      <div className="label-actions label-utility-actions" hidden={!!section}>
         <button onClick={onCopy}>
           <Copy size={16} />
           {t.copy}
@@ -329,8 +338,6 @@ export function LabelPanel({
           <ClipboardPaste size={16} />
           {t.paste}
         </button>
-      </div>
-      <div className="label-actions" hidden={!!section}>
         <button onClick={onDuplicate}>
           <Copy size={16} />
           {t.duplicate}

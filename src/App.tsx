@@ -7,7 +7,7 @@ import { getText } from "./lib/i18n";
 import { useProjectState } from "./hooks/useProjectState";
 import { useWebMCP } from "./hooks/useWebMCP";
 import { useInstall } from "./hooks/useInstall";
-import { blobToDataURL, downloadBlob, parseProject } from "./lib/project";
+import { blobToDataURL, downloadBlob, parseProject, exportDimensions } from "./lib/project";
 import { exportImage } from "./lib/exportImage";
 import { ExportDialog } from "./components/ExportDialog";
 import { ScreenTutorial } from "./components/ScreenTutorial";
@@ -35,6 +35,9 @@ import { PhotoPanel } from "./components/PhotoPanel";
 import { imageFromTransfer, transferHasFiles, isSupportedImage, readClipboardImage } from "./lib/imageImport";
 import { labelImageFromFile, placeLabelImage } from "./lib/labelMedia";
 import { previousLabelStyle } from "./lib/newLabelStyle";
+import {splitSettings,splitImage,type ExportResult} from "./lib/splitImage";
+import {zipFiles} from "./lib/zipFiles";
+import "./split-export.css";
 export default function App() {
   const theme = useTheme();
   const [lang, setLang] = useState<Language>(() => {
@@ -285,7 +288,7 @@ export default function App() {
   const doExport = async (
     format: "png" | "jpeg",
     resolution: "standard" | "original",
-  ) => {
+  ):Promise<ExportResult|undefined> => {
     try {
       if (!handle.current.stage) throw Error("Not ready");
       const original = await history.getOriginal(
@@ -299,9 +302,10 @@ export default function App() {
           format,
           resolution,
         );
-      downloadBlob(blob, "desk-recipe." + (format === "jpeg" ? "jpg" : "png"));
-      setToast({ text: t.exportDone });
-      return blob;
+      const split=splitSettings(p.exportSplit);
+      if(split.count>1){const files=await splitImage(blob,split,format);return {files,archive:await zipFiles(files)};}
+      const {width,height}=exportDimensions(p,resolution);
+      return {files:[{name:"recipe-maker."+(format==="jpeg"?"jpg":"png"),blob,width,height}]};
     } catch {
       setToast({ text: t.exportError, error: true });
     }
@@ -553,6 +557,7 @@ export default function App() {
           add={add}
           status={history.status}
           onHelp={openGuide}
+          onSplit={exportSplit=>history.update(v=>({...v,exportSplit}),"split")}
         />
         <aside className="right-sidebar" data-image-target={selected?"label":undefined} data-image-label={selected?.id}>{editing()}</aside>
         <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} onAbout={() => setDialog("about")} onTheme={() => setDialog("theme")} onTable={() => setDialog("table")} onNumberStyle={numberStyleChange} onMove={reorder} onToggleVisibility={toggleLabelVisibility} canUndo={history.canUndo} canRedo={history.canRedo} onUndo={history.undo} onRedo={history.redo} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
@@ -563,6 +568,7 @@ export default function App() {
           t={t}
           onClose={() => setDialog(null)}
           onExport={doExport}
+          onSplit={exportSplit=>history.update(v=>({...v,exportSplit}),"split")}
         />
       )}{" "}
       {guideOpen && !dialog && <ScreenTutorial t={t} step={guideStep} onStep={setGuideStep} onClose={closeGuide}/>}

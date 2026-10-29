@@ -1,5 +1,11 @@
 import type { Language } from "../types/project";
 const ja = {
+  saveLayout:"保存レイアウト",singleImage:"通常の1枚",xSplit:"X向け・縦{count}分割",splitGuides:"分割ガイド",
+  splitCorrection:"画像間の隙間補正",splitCorrectionHint:"画像幅から継ぎ目の除外幅を自動計算します（初期値1.5%）。0%で補正なし。Xの表示は端末や表示形式で変わるため、必要に応じて調整してください。",
+  splitGuideHint:"縦線が分割位置、色付きの帯は補正で除外する範囲です。ガイドは保存画像に入りません。",
+  splitWarning:"分割位置にかかるラベルが{count}件あります。文字や画像の配置をご確認ください。",
+  splitPreview:"連結プレビュー（隙間の目安）",splitOrder:"左から1→{count}の順番でXに添付してください。各画像は同じ幅に調整されます。",
+  prepareImages:"保存画像を作成",downloadZip:"まとめて保存（ZIP）",splitFile:"{index}枚目を保存",splitPixels:"各画像 {width} × {height}px",splitExportError:"画像を作成できませんでした。解像度を下げてお試しください。",
   pasteImage: "画像を貼り付け", photoImportHint: "写真エリアへ画像をドロップ、またはここで Ctrl+V（Macは⌘V）。",
   labelImageImportHint: "ラベル編集欄へ画像をドロップ、またはここで Ctrl+V（Macは⌘V）。",
   dropPhotoImage: "ここに落として写真を差し替え", dropLabelImage: "ここに落としてラベル画像を追加・差し替え",
@@ -246,6 +252,11 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  saveLayout:"Save layout",singleImage:"Single image",xSplit:"X · {count} vertical slices",splitGuides:"Split guides",
+  splitCorrection:"Gap correction",splitCorrectionHint:"Automatically calculate omitted seam strips from the image width (default 1.5%). Use 0% for no correction. X layouts vary by device and display mode; adjust as needed.",
+  splitGuideHint:"Lines mark the cuts; tinted strips are omitted for gap correction. Guides are excluded from saved images.",
+  splitWarning:"{count} labels cross a cut. Check text and image placement.",splitPreview:"Joined preview (approximate gaps)",splitOrder:"Attach the images to X from left to right, 1→{count}. All images are resampled to equal widths.",
+  prepareImages:"Prepare images",downloadZip:"Save all (ZIP)",splitFile:"Save image {index}",splitPixels:"Each image {width} × {height}px",splitExportError:"Could not prepare images. Try a lower resolution.",
   pasteImage: "Paste image", photoImportHint: "Drop an image onto the photo area, or paste here with Ctrl+V (⌘V on Mac).",
   labelImageImportHint: "Drop an image onto the label editor, or paste here with Ctrl+V (⌘V on Mac).",
   dropPhotoImage: "Drop here to replace the photo", dropLabelImage: "Drop here to add or replace the label image",

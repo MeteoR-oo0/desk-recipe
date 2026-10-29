@@ -17,11 +17,12 @@ export function LabelMediaControls({ label, t, onChange, onEnd, onImage, onPaste
       onImage(file);
     }}/>
     {image && <img className="label-image-preview" src={image.src} alt={image.name}/>}
-    <button onClick={() => input.current?.click()}><ImagePlus size={17}/>{image?t.replaceImage:t.addImage}</button>
-    <button onClick={onPasteImage}><ClipboardPaste size={17}/>{t.pasteImage}</button>
-    <p className="field-note">{t.labelImageImportHint}</p>
+    <div className="media-import-actions">
+      <button onClick={() => input.current?.click()}><ImagePlus size={17}/><span>{image?t.replaceImage:t.addImage}</span></button>
+      <button onClick={onPasteImage}><ClipboardPaste size={17}/><span>{t.pasteImage}</span></button>
+    </div>
+    <p className="field-note compact-help">{t.labelImageImportHint}</p>
     {image && <>
-      <p className="field-note">{t.imagePositionHint}</p>
       <div className="image-position-fields">{(["x", "y"] as const).map(axis => <label key={axis}>{axis === "x" ? t.imageX : t.imageY}
         <input type="number" min={-2000} max={2000} step={1} value={Math.round(image[axis])} onChange={event => {
           if (event.target.value !== "" && Number.isFinite(event.target.valueAsNumber)) onChange({ image: { ...image, [axis]: Math.max(-2000, Math.min(2000, event.target.valueAsNumber)) } }, `image:${axis}`);
@@ -29,6 +30,7 @@ export function LabelMediaControls({ label, t, onChange, onEnd, onImage, onPaste
       <Slider name={t.imageSize} value={Math.round(image.width)} min={24} max={600} onChange={width=>onChange({image:{...image,width}},"image:width")} onEnd={onEnd}/>
       <Slider name={t.imageOpacity} value={Math.round(image.opacity*100)} max={100} unit="%" onChange={value=>onChange({image:{...image,opacity:value/100}},"image:opacity")} onEnd={onEnd}/>
       <TextAppearanceControls image label={label} t={t} onChange={onChange} onEnd={onEnd}/>
+      <p className="field-note compact-help">{t.imagePositionHint}</p>
       <button className="danger" onClick={()=>onChange({image:undefined})}><Trash2 size={16}/>{t.removeImage}</button>
     </>}
   </div>;

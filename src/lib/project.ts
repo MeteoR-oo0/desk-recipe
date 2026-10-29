@@ -3,6 +3,7 @@ import { validAppearance } from "./labelAppearance.ts";
 import { validLabelNumber } from "./labelOrder.ts";
 import { validLabelMedia } from "./labelMedia.ts";
 import {validCanvasBackground} from "./canvasBackground.ts";
+import {validSplit} from "./splitImage.ts";
 export const MAX_PREVIEW = 1600;
 export async function decodeImage(src: string) {
   const image = new Image();
@@ -138,7 +139,7 @@ export function parseProject(text: string): {
     (p.numberStyle !== undefined && !["none","plain","dot","paren","circle"].includes(p.numberStyle)) ||
     (p.tableShowPrices !== undefined && typeof p.tableShowPrices !== "boolean") ||
     !["yen", "suffix", "number"].includes(p.priceFormat) ||
-    !validCanvasBackground(p.background) || !p.adjustment ||
+    !validCanvasBackground(p.background) || !validSplit(p.exportSplit) || !p.adjustment ||
     !finite(p.adjustment.brightness, -50, 50) ||
     !finite(p.adjustment.contrast, -50, 50) ||
     !finite(p.adjustment.overlay, 0, 70)

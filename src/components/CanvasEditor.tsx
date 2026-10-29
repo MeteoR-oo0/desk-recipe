@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import Konva from "konva";
-import { Stage, Layer, Image as CanvasImage, Rect } from "react-konva";
+import { Stage, Layer, Image as CanvasImage, Rect, Line, Text, Group } from "react-konva";
+import {splitSettings,splitGeometry} from "../lib/splitImage";
 import { ProductLabel } from "./ProductLabel";
 import { useCanvasZoom } from "../hooks/useCanvasZoom";
 import { labelLayout, formatPrice } from "../lib/labelLayout";
@@ -198,6 +199,7 @@ export function CanvasEditor({
     else onSelect(null);
   };
   const flashItem=flash&&obstacles.find(item=>item.id===flash.id);
+  const split=splitSettings(project.exportSplit),geometry=splitGeometry(project.canvas.width,split);
   return (
     <div className={"canvas-holder mode-" + mode+(project.background?.mode==="transparent"?" has-transparency":"")} data-guide="canvas" ref={holder} {...touch}>
       <Stage
@@ -291,6 +293,16 @@ export function CanvasEditor({
             />
           ))}
         </Layer>
+        {split.count>1&&split.showGuides&&<Layer name="editor-decoration" listening={false} clipX={0} clipY={0} clipWidth={project.canvas.width} clipHeight={project.canvas.height}>
+          {geometry.seams.map((seam,i)=><Group key={i}>
+            <Rect x={seam.x} width={seam.width} height={project.canvas.height} fill="rgba(255,174,42,0.4)"/>
+            <Line points={[seam.center,0,seam.center,project.canvas.height]} stroke="#1c222c" strokeWidth={4/scale}/>
+            <Line points={[seam.center,0,seam.center,project.canvas.height]} stroke="#ffcc55" strokeWidth={2/scale} dash={[6/scale,4/scale]}/>
+          </Group>)}
+          {geometry.slices.map((slice,i)=><Group key={i} x={slice.x+8/scale} y={8/scale}>
+            <Rect width={24/scale} height={24/scale} fill="#1c222c" cornerRadius={5/scale}/><Text width={24/scale} y={4/scale} text={String(i+1)} align="center" fill="#ffffff" fontSize={16/scale}/>
+          </Group>)}
+        </Layer>}
       </Stage>
       {flashItem&&<div key={flash!.key} className="new-label-highlight" aria-hidden="true" data-new-label={flash!.id}
         style={{left:ox+flashItem.x*scale-8,top:oy+flashItem.y*scale-8,width:flashItem.width*scale+16,height:flashItem.height*scale+16}}/>}

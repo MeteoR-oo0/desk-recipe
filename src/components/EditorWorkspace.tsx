@@ -11,6 +11,10 @@ import type { ProjectData, ProductLabel } from "../types/project";
 import type { Translation } from "../lib/i18n";
 import { CanvasEditor, type CanvasHandle } from "./CanvasEditor";
 import { PriceSummary } from "./PriceSummary";
+import {SplitControls} from "./SplitControls";
+import {splitSettings} from "../lib/splitImage";
+import {splitWarnings} from "../lib/splitWarnings";
+import type {SplitSettings} from "../types/project";
 export function EditorWorkspace({
   p,
   t,
@@ -25,6 +29,7 @@ export function EditorWorkspace({
   add,
   status,
   onHelp,
+  onSplit,
 }: {
   p: ProjectData;
   t: Translation;
@@ -39,7 +44,9 @@ export function EditorWorkspace({
   add: (x: number, y: number) => void;
   status: "saving" | "saved" | "error";
   onHelp: () => void;
+  onSplit: (settings:SplitSettings)=>void;
 }) {
+  const split=splitSettings(p.exportSplit),warnings=splitWarnings(p);
   return (
     <section className="workspace" data-image-target="photo" tabIndex={0} aria-label={t.photo}>
       <div className="workspace-toolbar">
@@ -93,6 +100,8 @@ export function EditorWorkspace({
           </button>
         </div>
       </div>
+      <div className="workspace-split-bar"><SplitControls compact t={t} value={split} onChange={onSplit}/></div>
+      {split.count>1&&<div className="split-editor-note"><span>{t.splitGuideHint}</span>{warnings.length>0&&<strong role="status">{t.splitWarning.replace("{count}",String(warnings.length))}</strong>}</div>}
       <div className="canvas-area">
         <div className="mobile-canvas-tools"><div className="mobile-cost-status"><span className="status-dot" role="img" aria-label={status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError} title={status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError}/>{p.showTotalPrice === false ? <span className="mobile-save-text">{status === "saved" ? t.saved : status === "saving" ? t.saving : t.saveError}</span> : <PriceSummary p={p} t={t} compact/>}</div><div className="zoom-tools"><button aria-label={t.zoomOut} onClick={() => setZoom(Math.max(0.5, zoom - 0.25))}><Minus size={16}/></button><span>{Math.round(zoom * 100)}%</span><button aria-label={t.zoomIn} onClick={() => setZoom(Math.min(6, zoom + 0.25))}><Plus size={16}/></button><button aria-label={t.fit} onClick={() => handle.current.resetView?.()}><Maximize size={16}/></button></div></div>
         <div className="canvas-caption">

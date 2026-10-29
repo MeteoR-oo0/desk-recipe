@@ -71,6 +71,7 @@ export type LabelImage = {
 export type AspectRatio = "Original" | "Custom" | "16:9" | "4:3" | "1:1" | "4:5" | "9:16";
 export type CanvasBackground = { mode:"color"|"blur"|"transparent"; color:string; blur:number; image?:string };
 export type PriceMode = "individual" | "show" | "hide";
+export type SplitSettings = { count: 1 | 2 | 3 | 4; gapPercent: number; showGuides: boolean };
 export type Photo = {
   id: string;
   name: string;
@@ -83,6 +84,7 @@ export type ProjectData = {
   photo: Photo;
   canvas: { width: number; height: number; aspectRatio: AspectRatio };
   background?: CanvasBackground;
+  exportSplit?: SplitSettings;
   labels: ProductLabel[];
   priceMode: PriceMode;
   showTotalPrice?: boolean;

@@ -27,16 +27,15 @@ export function PhotoPanel({
         <span className="step-number">01</span>
       </div>
       <PanelSection title={t.photo} defaultOpen>
-        <label>{t.photo}</label>
-        <button className="upload-card" data-guide="upload" data-image-target="photo" onClick={onUpload}>
+        <div className="photo-import-actions">
+        <button className="upload-card" aria-label={t.upload} title={t.upload} data-guide="upload" data-image-target="photo" onClick={onUpload}>
           <div className="upload-icon">
             <ImagePlus size={23} />
           </div>
-          <strong>{t.upload}</strong>
-          <span>{t.uploadHint}</span>
+          <span className="upload-card-copy"><strong>{t.addImage}</strong><span>{t.uploadHint}</span></span>
         </button>
-        <button data-image-target="photo" onClick={onPasteImage}><ClipboardPaste size={17}/>{t.pasteImage}</button>
-        <p className="field-note">{t.photoImportHint}</p>
+        <button className="photo-paste-action" data-image-target="photo" aria-label={t.pasteImage} title={t.pasteImage} onClick={onPasteImage}><ClipboardPaste size={20}/></button>
+        </div>
         <div className="photo-file">
           <Camera size={14} />
           <span>{p.photo.name}</span>
@@ -79,16 +78,16 @@ export function PhotoPanel({
           </select>
         </label>
         <button onClick={onCrop}>{t.cropTitle}</button>
+        <p className="field-note compact-help">{t.photoImportHint}</p>
       </PanelSection>
       <PanelSection title={t.globalPrice}>
 
-        <label className="switch-row"><span>{t.showTotalPrice}</span><input type="checkbox" className="switch" checked={p.showTotalPrice !== false} onChange={e=>onUpdate(v=>({...v,showTotalPrice:e.target.checked}))}/></label>
-        <PriceSummary p={p} t={t}/>
         <div className="segmented prices">
           {(["individual", "show", "hide"] as const).map((v, i) => (
             <button
               key={v}
               className={p.priceMode === v ? "active" : ""}
+              aria-pressed={p.priceMode === v}
               onClick={() => onUpdate((p) => ({ ...p, priceMode: v }))}
             >
               {[t.individual, t.showAll, t.hideAll][i]}
@@ -111,6 +110,10 @@ export function PhotoPanel({
             <option value="number">19,800</option>
           </select>
         </label>
+        <div className="price-total-settings">
+          <label className="switch-row"><span>{t.showTotalPrice}</span><input type="checkbox" className="switch" checked={p.showTotalPrice !== false} onChange={e=>onUpdate(v=>({...v,showTotalPrice:e.target.checked}))}/></label>
+          <PriceSummary p={p} t={t}/>
+        </div>
       </PanelSection>
       <PanelSection title={t.background}>
 
