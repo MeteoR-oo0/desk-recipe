@@ -1,5 +1,6 @@
 import type { Language } from "../types/project";
 const ja = {
+  closeRightPane:"右ペインを折りたたむ",openRightPane:"ラベル編集を開く",
   splitNotice:"分割時の注意",
   splitPostPreview:"Xの投稿イメージ",splitDisplayNote:"表示例です。X上の並び方・切り抜きは端末や表示形式で変わります。実際の投稿プレビューもご確認ください。",
   splitPreviewScroll:"横スクロール",splitPreviewGrid:"グリッド",splitPreviewAccount:"投稿プレビュー",splitPreviewHandle:"@preview",splitPreviewImage:"画像 {number}",splitPreviewJoined:"連結画像",
@@ -255,6 +256,7 @@ const ja = {
   ready: "編集できます",
 };
 const en: typeof ja = {
+  closeRightPane:"Collapse right panel",openRightPane:"Open label editor",
   splitNotice:"Split guidance",
   splitPostPreview:"X post preview",splitDisplayNote:"Illustrative preview. X layouts and cropping vary by device and display mode. Check the actual post preview too.",
   splitPreviewScroll:"Horizontal scroll",splitPreviewGrid:"Grid",splitPreviewAccount:"Post preview",splitPreviewHandle:"@preview",splitPreviewImage:"Image {number}",splitPreviewJoined:"Joined image",

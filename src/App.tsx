@@ -38,8 +38,11 @@ import { previousLabelStyle } from "./lib/newLabelStyle";
 import {splitSettings,splitImage,type ExportResult} from "./lib/splitImage";
 import {zipFiles} from "./lib/zipFiles";
 import "./split-export.css";
+import "./right-pane.css";
 export default function App() {
   const theme = useTheme();
+  const [rightPaneCollapsed,setRightPaneCollapsed]=useState(()=>{try{return localStorage.getItem("recipe-maker-right-pane-collapsed")==="1";}catch{return false;}});
+  useEffect(()=>{try{localStorage.setItem("recipe-maker-right-pane-collapsed",rightPaneCollapsed?"1":"0");}catch{}},[rightPaneCollapsed]);
   const [lang, setLang] = useState<Language>(() => {
       try {
         return localStorage.getItem("desk-recipe-language") === "en"
@@ -427,6 +430,7 @@ export default function App() {
   const startAdd = () => { setMobilePanel(null); setMode("add"); };
   useEffect(() => {
     if (!guideOpen) return;
+    setRightPaneCollapsed(false);
     setMode("select");
     if (guideStep >= 2 && guideStep <= 6 && !selectedId)
       setSelectedId(p.labels[p.labels.length - 1]?.id ?? null);
@@ -526,7 +530,7 @@ export default function App() {
         onAbout={() => setDialog("about")}
         onTheme={() => setDialog("theme")}
       />
-      <main className="editor-grid" inert={!history.ready || busy || !!dialog}>
+      <main className={"editor-grid"+(rightPaneCollapsed?" is-right-pane-collapsed":"")} inert={!history.ready || busy || !!dialog}>
         <aside className="left-sidebar">
           {settings}
           <PanelSection title={`${t.labels} (${p.labels.length})`} defaultOpen><section className="label-list">
@@ -558,8 +562,12 @@ export default function App() {
           status={history.status}
           onHelp={openGuide}
           onSplit={exportSplit=>history.update(v=>({...v,exportSplit}),"split")}
+          rightPaneCollapsed={rightPaneCollapsed}
+          onToggleRightPane={()=>setRightPaneCollapsed(v=>!v)}
         />
-        <aside className="right-sidebar" data-image-target={selected?"label":undefined} data-image-label={selected?.id}>{editing()}</aside>
+        <aside className="right-sidebar-shell" id="desktop-label-sidebar" inert={rightPaneCollapsed} aria-hidden={rightPaneCollapsed}>
+          <div className="right-sidebar" data-image-target={selected?"label":undefined} data-image-label={selected?.id}>{editing()}</div>
+        </aside>
         <MobileControls p={p} t={t} lang={lang} selected={selected} panel={mobilePanel} onPanel={setMobilePanel} section={labelSection} onSection={setLabelSection} mode={mode} onMode={setMode} onSelect={(id) => { setSelectedId(id); if (id) requestAnimationFrame(() => requestAnimationFrame(() => handle.current.focusLabel?.(id))); }} onAdd={startAdd} onDuplicate={duplicate} onCopy={() => void copyLabel()} onPaste={() => void pasteFromClipboard()} onDelete={remove} onLanguage={() => setLang(lang === "ja" ? "en" : "ja")} onHelp={openGuide} onAbout={() => setDialog("about")} onTheme={() => setDialog("theme")} onTable={() => setDialog("table")} onNumberStyle={numberStyleChange} onMove={reorder} onToggleVisibility={toggleLabelVisibility} canUndo={history.canUndo} canRedo={history.canRedo} onUndo={history.undo} onRedo={history.redo} editing={editing(labelSection)} settings={settings} projectActions={projectActions}/>
       </main>
       {dialog === "export" && (

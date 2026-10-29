@@ -159,8 +159,9 @@ svg {
   padding: 0 17px;
 }
 .editor-grid {
+  --right-pane-expanded-width: 280px;
   display: grid;
-  grid-template-columns: 248px minmax(0, 1fr) 280px;
+  grid-template-columns: 248px minmax(0, 1fr) var(--right-pane-width, var(--right-pane-expanded-width));
   flex: 1;
   min-height: 0;
 }
@@ -657,7 +658,8 @@ input[type="color"] {
 }
 @media (min-width: 1500px) {
   .editor-grid {
-    grid-template-columns: 270px minmax(0, 1fr) 310px;
+    --right-pane-expanded-width: 310px;
+    grid-template-columns: 270px minmax(0, 1fr) var(--right-pane-width, var(--right-pane-expanded-width));
   }
   .left-sidebar,
   .right-sidebar {
@@ -669,7 +671,8 @@ input[type="color"] {
 }
 @media (max-width: 1100px) {
   .editor-grid {
-    grid-template-columns: 215px minmax(0, 1fr) 250px;
+    --right-pane-expanded-width: 250px;
+    grid-template-columns: 215px minmax(0, 1fr) var(--right-pane-width, var(--right-pane-expanded-width));
   }
   .left-sidebar,
   .right-sidebar {

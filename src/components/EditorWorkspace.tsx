@@ -6,6 +6,8 @@ import {
   Maximize,
   Layers,
   CircleHelp,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import type { ProjectData, ProductLabel } from "../types/project";
 import type { Translation } from "../lib/i18n";
@@ -30,6 +32,8 @@ export function EditorWorkspace({
   status,
   onHelp,
   onSplit,
+  rightPaneCollapsed,
+  onToggleRightPane,
 }: {
   p: ProjectData;
   t: Translation;
@@ -45,6 +49,8 @@ export function EditorWorkspace({
   status: "saving" | "saved" | "error";
   onHelp: () => void;
   onSplit: (settings:SplitSettings)=>void;
+  rightPaneCollapsed: boolean;
+  onToggleRightPane: ()=>void;
 }) {
   const split=splitSettings(p.exportSplit),warnings=splitWarnings(p);
   return (
@@ -143,6 +149,9 @@ export function EditorWorkspace({
           {t.help}
         </button>
       </div>
+      <button type="button" className="right-pane-toggle" aria-label={rightPaneCollapsed?t.openRightPane:t.closeRightPane} title={rightPaneCollapsed?t.openRightPane:t.closeRightPane} aria-expanded={!rightPaneCollapsed} aria-controls="desktop-label-sidebar" onClick={onToggleRightPane}>
+        {rightPaneCollapsed?<ChevronLeft size={19}/>:<ChevronRight size={19}/>}
+      </button>
     </section>
   );
 }
